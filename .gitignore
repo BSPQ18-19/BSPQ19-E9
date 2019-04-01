@@ -1,4 +1,9 @@
 ## Java
+*/.settings
+*/.settings/
+*/.classpath
+.project
+*/.project
 .idea/
 *.iml
 *.lst

@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from videoclub.lib.session import SESSION_HANDLER, gen_token, is_valid
+from videoclub.lib import vcomdb
 from . import models
 from .utils import check_params, compare_password, hash_password
 
@@ -105,4 +106,14 @@ def watched_movies(request):
             movie.title, user.__str__()
         ))
 
+    return HttpResponse("OK")
+
+
+@csrf_exempt
+def populate_db_movies(request):
+    # omdb client
+    vcomdb.init_client()
+
+    # FIXME: setup breaks if import is made outside of ready()
+    vcomdb.load_movies(models.Movie)
     return HttpResponse("OK")

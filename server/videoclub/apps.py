@@ -1,6 +1,5 @@
 from django.apps import AppConfig
-
-from videoclub.lib import session, vcomdb
+from videoclub.lib import session
 
 
 class VideoclubConfig(AppConfig):
@@ -10,10 +9,3 @@ class VideoclubConfig(AppConfig):
         # session handler
         session.set_session_handler(session.SessionHandler())
         session.SESSION_HANDLER.start()
-
-        # omdb client
-        vcomdb.init_client()
-
-        # FIXME: setup breaks if import is made outside of ready()
-        from . import models
-        vcomdb.load_movies(models.Movie)

@@ -25,16 +25,19 @@ def init_client(key=_OMDB_KEY):
 def load_movies(movie_model, movie_list_path=_MOVIE_LIST_PATH):
     with open(movie_list_path, 'r') as mlf:
         ml = reader(mlf, delimiter=',')
-        for movie in ml:
+        for rmovie in ml:
             # if movie is already stored in DB, skip
             try:
-                movie_model.objects.get(title=movie[0])
+                movie_model.objects.get(title=rmovie[0])
                 continue
             except movie_model.DoesNotExist:
                 pass
-            res = OMDB_CLI.request(t=movie[0], y=movie[1], r="json")
+            res = OMDB_CLI.request(t=rmovie[0], y=rmovie[1], r="json")
             info = res.json()
             movie = movie_model()
+            if "Response" in info.keys() and info["Response"] == "False":
+                print("Failed to add movie '{}', error: {}".format(rmovie[0], info["Error"]))
+                continue
             movie.movie_id = info["imdbID"]
             movie.title = info["Title"]
             movie.year = info["Year"]

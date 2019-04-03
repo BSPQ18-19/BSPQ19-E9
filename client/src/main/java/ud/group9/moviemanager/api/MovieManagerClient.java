@@ -7,6 +7,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.Client;
 
 public class MovieManagerClient {
+	private static Client client;
     private String protocol = "http";
     private String host = "127.0.0.1";
     private int port = 8000;
@@ -15,30 +16,53 @@ public class MovieManagerClient {
     public MovieManagerClient(String host, int port) {
         this.host = host;
         this.port = port;
+        client = Client.create();
         // Open GUI
     }
 
     private String addr() {
         return this.protocol + "://" + this.host + ":" + this.port + "/" + this.basepath;
     }
-    public void SignUp(String username, String password) throws SignupException {
-    
-    	 Client client = Client.create();
-    	    WebResource webResource = client.resource(addr()).path("signup/");
+    public String SignUp( String username, String password) throws SignupException {
+    	String mensaje = "";
+ 	    WebResource webResource = client.resource(addr()).path("signup/");
     	    ClientResponse response = webResource
     	            .queryParam("username", username)
     	            .queryParam("password", password)
     	            .post(ClientResponse.class);
-    	    System.out.println(response);
+    	    switch(response.getStatus()){
+    	    case 200:
+    	    	mensaje = "200 - New user stored properly";
+    	    	break;
+    	    case 401:
+    	    	mensaje = "401 - Username already taken";
+    	    	break;
+    	    default:
+    	    	mensaje = "400 - Error, please contact the administrator";
+    	    	break;
+    	    }
+    	    response.close();
+    	    return mensaje;
+    	    
     	
+    }
+    public void closeClient(){
+    	client.destroy();
     }
 
 	public static void main(String[] args) {    	
 		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
 		System.out.println("MovieManager Client");
 		try {
-			mmc.SignUp("user37894", "user");
+	    	
+			System.out.println(mmc.SignUp("udsf3", "user"));
+			System.out.println(mmc.SignUp("uda2", "user"));
+			Thread.sleep(10000);
+			mmc.closeClient();
 		} catch (SignupException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

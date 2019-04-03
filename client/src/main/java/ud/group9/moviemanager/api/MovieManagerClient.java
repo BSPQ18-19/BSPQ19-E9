@@ -23,6 +23,7 @@ public class MovieManagerClient {
     private String addr() {
         return this.protocol + "://" + this.host + ":" + this.port + "/" + this.basepath;
     }
+    
     public String SignUp( String username, String password) throws SignupException {
     	String mensaje = "";
  	    WebResource webResource = client.resource(addr()).path("signup/");
@@ -43,9 +44,18 @@ public class MovieManagerClient {
     	    }
     	    response.close();
     	    return mensaje;
-    	    
-    	
     }
+    
+    public boolean LogIn( String username, String password) throws SignupException {
+ 	    WebResource webResource = client.resource(addr()).path("login/");
+    	    ClientResponse response = webResource
+    	            .queryParam("username", username)
+    	            .queryParam("password", password)
+    	            .get(ClientResponse.class);
+    	    response.close();
+    	    return (response.getStatus() == 200);
+    }
+    
     public void closeClient(){
     	client.destroy();
     }
@@ -55,8 +65,9 @@ public class MovieManagerClient {
 		System.out.println("MovieManager Client");
 		try {
 	    	
-			System.out.println(mmc.SignUp("udsf3", "user"));
-			System.out.println(mmc.SignUp("uda2", "user"));
+			System.out.println(mmc.SignUp("user1", "user"));
+			System.out.println(mmc.SignUp("user2", "user"));
+			System.out.println(mmc.LogIn("user1", "user"));
 			Thread.sleep(10000);
 			mmc.closeClient();
 		} catch (SignupException e) {

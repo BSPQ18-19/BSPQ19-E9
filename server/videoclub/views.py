@@ -110,10 +110,26 @@ def watched_movies(request):
 
 
 @csrf_exempt
-def populate_db_movies(request):
-    # omdb client
-    vcomdb.init_client()
+@require_http_methods(["GET"])
+def search(request):
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    code, result = vcomdb.search_movies(**query)
+    if code == 200:
+        return JsonResponse(result)
+    return HttpResponse(status=code, content=result)
 
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def movie(request, movie_id):
+    code, result = vcomdb.movie_details(movie_id)
+    if code == 200:
+        return JsonResponse(result)
+    return HttpResponse(status=code, content=result)
+
+
+@csrf_exempt
+def populate_db_movies(request):
     # FIXME: setup breaks if import is made outside of ready()
     vcomdb.load_movies(models.Movie)
     return HttpResponse("OK")

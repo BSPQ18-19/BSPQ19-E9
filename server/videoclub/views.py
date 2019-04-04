@@ -1,11 +1,15 @@
+from logging import getLogger, INFO
+
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from videoclub.lib.session import SESSION_HANDLER, gen_token, is_valid
 from videoclub.lib import vcomdb
+from videoclub.lib.session import SESSION_HANDLER, gen_token, is_valid
 from . import models
 from .utils import check_params, compare_password, hash_password
+
+logger = getLogger(__name__)
 
 
 @csrf_exempt
@@ -38,7 +42,7 @@ def login(request):
     token = gen_token()
     SESSION_HANDLER.add_session(token, user)
 
-    print("log user {} with token {}".format(user.__str__(), token))
+    logger.log(INFO, "log user {} with token {}".format(user.__str__(), token))
     return JsonResponse({"token": token})
 
 
@@ -102,7 +106,7 @@ def signup(request):
 
     user = models.User(username=username, password=password)
     user.save()
-    print("Created user {}".format(user.__str__()))
+    logger.log(INFO, "Created user {}".format(user.__str__()))
 
     return HttpResponse("created user {}".format(username))
 
@@ -140,7 +144,7 @@ def watched_movies(request):
         if movie not in user.watched.all():
             user.watched.add(movie)
             user.save()
-        print("add movie '{}' to watched list of user '{}'".format(
+        logger.log(INFO, "add movie '{}' to watched list of user '{}'".format(
             movie.title, user.__str__()
         ))
 
@@ -148,7 +152,7 @@ def watched_movies(request):
         if movie in user.watched.all():
             user.watched.remove(movie)
             user.save()
-        print("remove movie '{}' from watched list of user '{}'".format(
+        logger.log(INFO, "remove movie '{}' from watched list of user '{}'".format(
             movie.title, user.__str__()
         ))
 

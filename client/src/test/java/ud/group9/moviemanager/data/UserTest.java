@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import ud.group9.moviemanager.data.MovieTest;
 
 public class UserTest {
     @Test

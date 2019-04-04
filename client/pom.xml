@@ -16,7 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-    <exec.mainClass>ud.group9.moviemanager.api.Client</exec.mainClass>
+    <exec.mainClass>ud.group9.moviemanager.api.MovieManagerClient</exec.mainClass>
   </properties>
 
   <dependencies>
@@ -32,12 +32,17 @@
       <artifactId>json</artifactId>
       <version>20180813</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
     <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>2.16</version>
-    </dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-core</artifactId>
+  		<version>1.19</version>
+	</dependency>
+	<dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-bundle</artifactId>
+  		<version>1.19</version>
+	</dependency>
+    
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
     <dependency>
       <groupId>org.apache.commons</groupId>

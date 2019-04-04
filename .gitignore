@@ -36,8 +36,10 @@ hs_err_pid*
 
 
 ## Python
-
+*/migrations/
+!*/migrations/__init__.py
 .idea/
+*/db.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

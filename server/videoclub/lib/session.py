@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
+from logging import getLogger, INFO
 from threading import Thread
 from time import sleep
 from uuid import uuid4
 
+logger = getLogger(__name__)
 SESSION_HANDLER = None
 
 
@@ -96,7 +98,7 @@ class SessionHandler(Thread):
         for token, session in self.sessions.copy().items():
             if session.expired():
                 self.remove_session(token)
-                print("removed session '{}' due to timeout".format(token))
+                logger.log(INFO, "removed session '{}' due to timeout".format(token))
 
     def remove_session(self, token):
         """
@@ -106,6 +108,7 @@ class SessionHandler(Thread):
         :raises: Exception
         """
         if token in self.sessions.keys():
+            logger.log(INFO, "removed session '{}'".format(token))
             self.sessions.pop(token)
         else:
             raise Exception("No session open for token '{}'".format(token))

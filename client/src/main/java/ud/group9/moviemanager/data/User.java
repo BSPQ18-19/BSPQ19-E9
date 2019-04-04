@@ -4,7 +4,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+@XmlRootElement(name = "user")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class User {
     private String  username;
     private ArrayList<Movie> watched;

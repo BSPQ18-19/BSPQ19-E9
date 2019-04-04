@@ -1,20 +1,13 @@
 package ud.group9.moviemanager.api;
 
 import ud.group9.moviemanager.api.exceptions.SignupException;
-import ud.group9.moviemanager.data.User;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.glassfish.jersey.client.ClientConfig;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.Client;
 
 public class MovieManagerClient {
+	private static Client client;
     private String protocol = "http";
     private String host = "127.0.0.1";
     private int port = 8000;
@@ -23,30 +16,64 @@ public class MovieManagerClient {
     public MovieManagerClient(String host, int port) {
         this.host = host;
         this.port = port;
+        client = Client.create();
         // Open GUI
     }
 
     private String addr() {
         return this.protocol + "://" + this.host + ":" + this.port + "/" + this.basepath;
     }
-
-    public void SignUp(String username, String password) throws SignupException {
-    	ClientConfig config = new ClientConfig();
-
-        Client client = ClientBuilder.newClient(config);
-        WebTarget webTarget = client.target(addr()).path("signup/").matrixParam("username", "prueba").matrixParam("password", "prueba");
-        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-        //User user = new User("user", null);
-        //Response response = invocationBuilder.post(Entity.entity(user, MediaType.APPLICATION_XML));
-        //System.out.println(response);
+    
+    public String SignUp( String username, String password) throws SignupException {
+    	String mensaje = "";
+ 	    WebResource webResource = client.resource(addr()).path("signup/");
+    	    ClientResponse response = webResource
+    	            .queryParam("username", username)
+    	            .queryParam("password", password)
+    	            .post(ClientResponse.class);
+    	    switch(response.getStatus()){
+    	    case 200:
+    	    	mensaje = "200 - New user stored properly";
+    	    	break;
+    	    case 401:
+    	    	mensaje = "401 - Username already taken";
+    	    	break;
+    	    default:
+    	    	mensaje = "400 - Error, please contact the administrator";
+    	    	break;
+    	    }
+    	    response.close();
+    	    return mensaje;
+    }
+    
+    public boolean LogIn( String username, String password) throws SignupException {
+ 	    WebResource webResource = client.resource(addr()).path("login/");
+    	    ClientResponse response = webResource
+    	            .queryParam("username", username)
+    	            .queryParam("password", password)
+    	            .get(ClientResponse.class);
+    	    response.close();
+    	    return (response.getStatus() == 200);
+    }
+    
+    public void closeClient(){
+    	client.destroy();
     }
 
 	public static void main(String[] args) {    	
 		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
 		System.out.println("MovieManager Client");
 		try {
-			mmc.SignUp("user", "user");
+	    	
+			System.out.println(mmc.SignUp("user1", "user"));
+			System.out.println(mmc.SignUp("user2", "user"));
+			System.out.println(mmc.LogIn("user1", "user"));
+			Thread.sleep(10000);
+			mmc.closeClient();
 		} catch (SignupException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

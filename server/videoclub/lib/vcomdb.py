@@ -25,7 +25,7 @@ def build_movie(movie_model, omdb_json):
     return movie
 
 
-def movie_details(movie_id):
+def movie_details(movie_id, raw=False):
     """
     movie_details requests information about a movie to IMDB
     given the imdbID of the movie
@@ -37,6 +37,9 @@ def movie_details(movie_id):
 
     if "Error" in info.keys():
         return 404, info["Error"]
+
+    if raw:
+        return 200, info
 
     return 200, {
         "movie_id": info["imdbID"],

@@ -41,24 +41,32 @@ def login(request):
 
     token = gen_token()
     SESSION_HANDLER.add_session(token, user)
-
     logger.log(INFO, "log user {} with token {}".format(user.__str__(), token))
     return JsonResponse({"token": token})
 
 
 @csrf_exempt
 @require_http_methods(["GET"])
-def movie(request, movie_id):
-    """
+def movie_details(request, movie_id):
+    """        return HttpResponse(status=code, content=result)
+
     movie returns detailed information about a movie from IMDB
     :param request: GET request
     :param movie_id: imdbID of the movie
     :return: JsonResponse with details if ok, HttpResponse otherwise
     """
-    code, result = vcomdb.movie_details(movie_id)
-    if code == 200:
-        return JsonResponse(result)
-    return HttpResponse(status=code, content=result)
+    try:
+        movie = models.Movie.objects.get(movie_id=movie_id)
+        return JsonResponse(movie.json())
+    except models.Movie.DoesNotExist:
+        code, result = vcomdb.movie_details(movie_id, True)
+        if code == 200:
+            # store movie
+            movie = vcomdb.build_movie(models.Movie, result)
+            logger.log(INFO, "store movie {}".format(movie.__str__()))
+            movie.save()
+            return JsonResponse(movie.json())
+        return HttpResponse(status=code, content=result)
 
 
 @csrf_exempt
@@ -137,8 +145,15 @@ def watched_movies(request):
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
     except models.Movie.DoesNotExist:
-        return HttpResponse("Movie '{}' not found".format(movie_id),
-                            status=404)
+        # if movie does not exist, try to look for it and store it
+        status, movie_data = vcomdb.movie_details(movie_id, True)
+        if status != 200:
+            return HttpResponse("Movie '{}' not found".format(movie_id),
+                                status=404)
+        # store movie in database
+        movie = vcomdb.build_movie(models.Movie, movie_data)
+        logger.log(INFO, "store movie {}".format(movie.__str__()))
+        movie.save()
 
     if request.method == "POST":
         if movie not in user.watched.all():

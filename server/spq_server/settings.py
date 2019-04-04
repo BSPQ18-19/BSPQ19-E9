@@ -125,19 +125,41 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 LOGGING = {
     'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] [{levelname}] {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'level': 'INFO',
             'stream': sys.stdout,
         }
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO'
+    'loggers': {
+        'videoclub.views': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        }
     }
 }
+
 
 logging.config.dictConfig(LOGGING)

@@ -9,37 +9,13 @@ from .utils import check_params, compare_password, hash_password
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
-def signup(request):
-    # get and check parameters
-    query = QueryDict(request.META.get("QUERY_STRING"))
-    params = ["username", "password"]
-    error_response = check_params(query, params)
-    if error_response:
-        return error_response
-
-    username = query.get("username")
-    password = query.get("password")
-    # hash password
-    password = hash_password(password)
-
-    try:
-        models.User.objects.get(username=username)
-        return HttpResponse("username {} is already taken".format(username),
-                            status=400)
-    except models.User.DoesNotExist:
-        pass
-
-    user = models.User(username=username, password=password)
-    user.save()
-    print("Created user {}".format(user.__str__()))
-
-    return HttpResponse("created user {}".format(username))
-
-
-@csrf_exempt
 @require_http_methods(["GET"])
 def login(request):
+    """
+    login assigns a token to a user if verification is correct
+    :param request: GET request containing username and password
+    :return: JsonResponse with token if ok, HttpResponse otherwise
+    """
     # get and check parameters
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["username", "password"]
@@ -67,8 +43,78 @@ def login(request):
 
 
 @csrf_exempt
+@require_http_methods(["GET"])
+def movie(request, movie_id):
+    """
+    movie returns detailed information about a movie from IMDB
+    :param request: GET request
+    :param movie_id: imdbID of the movie
+    :return: JsonResponse with details if ok, HttpResponse otherwise
+    """
+    code, result = vcomdb.movie_details(movie_id)
+    if code == 200:
+        return JsonResponse(result)
+    return HttpResponse(status=code, content=result)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def search(request):
+    """
+    search sends a search request to IMDB and returns
+    the processes result
+    :param request: GET request containing movie title and optionally year
+    :return: JsonResponse with movies if ok, HttpResponse otherwise
+    """
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    code, result = vcomdb.search_movies(**query)
+    if code == 200:
+        return JsonResponse(result)
+    return HttpResponse(status=code, content=result)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def signup(request):
+    """
+    signup creates a new user and stores it in the database
+    :param request: POST request containing username and password
+    :return: HttpResponse
+    """
+    # get and check parameters
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    params = ["username", "password"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    username = query.get("username")
+    password = query.get("password")
+    # hash password
+    password = hash_password(password)
+
+    try:
+        models.User.objects.get(username=username)
+        return HttpResponse("username {} is already taken".format(username),
+                            status=400)
+    except models.User.DoesNotExist:
+        pass
+
+    user = models.User(username=username, password=password)
+    user.save()
+    print("Created user {}".format(user.__str__()))
+
+    return HttpResponse("created user {}".format(username))
+
+
+@csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 def watched_movies(request):
+    """
+    watched_movies returns the list of watched movies of a user
+    :param request: token to identify the user with
+    :return: list of movies if token was valid
+    """
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token"] if request.method == "GET" else ["token", "movie_id"]
     error_response = check_params(query, params)
@@ -110,26 +156,12 @@ def watched_movies(request):
 
 
 @csrf_exempt
-@require_http_methods(["GET"])
-def search(request):
-    query = QueryDict(request.META.get("QUERY_STRING"))
-    code, result = vcomdb.search_movies(**query)
-    if code == 200:
-        return JsonResponse(result)
-    return HttpResponse(status=code, content=result)
-
-
-@csrf_exempt
-@require_http_methods(["GET"])
-def movie(request, movie_id):
-    code, result = vcomdb.movie_details(movie_id)
-    if code == 200:
-        return JsonResponse(result)
-    return HttpResponse(status=code, content=result)
-
-
-@csrf_exempt
 def populate_db_movies(request):
-    # FIXME: setup breaks if import is made outside of ready()
+    """
+    populate_db_movies requests movie info to IMDB and stores it at the
+    storage engine
+    :param request: HTTP request (any method)
+    :return: 200 OK
+    """
     vcomdb.load_movies(models.Movie)
     return HttpResponse("OK")

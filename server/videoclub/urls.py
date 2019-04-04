@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('login/', views.login, name='login'),
+    path('search/', views.search, name="search"),
     path('signup/', views.signup, name='signup'),
     path('watched/', views.watched_movies, name="watched"),
     # download info about movies

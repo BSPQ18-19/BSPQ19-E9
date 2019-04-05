@@ -1,4 +1,4 @@
-package src; 
+package ud.group9.moviemanager.gui;
  
 import java.awt.EventQueue;
 
@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-public class Singup {
+public class SingupGUI {
 
 	private JFrame frmSingup;
 	private JTextField textField;
@@ -22,7 +22,7 @@ public class Singup {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Singup window = new Singup();
+					SingupGUI window = new SingupGUI();
 					window.frmSingup.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -34,7 +34,7 @@ public class Singup {
 	/**
 	 * Create the application.
 	 */
-	public Singup() {
+	public SingupGUI() {
 		initialize();
 	}
 
@@ -82,12 +82,12 @@ public class Singup {
 		frmSingup.getContentPane().add(textField_2);
 		textField_2.setColumns(10);
 		
-		JButton btnNewButton = new JButton("Singup");
+		JButton btnNewButton = new JButton("SingupGUI");
 		btnNewButton.setBackground(new Color(255, 140, 0));
 		btnNewButton.setForeground(Color.BLACK);
 		btnNewButton.setBounds(75, 161, 89, 23);
 		frmSingup.getContentPane().add(btnNewButton);
-		frmSingup.setTitle("Singup");
+		frmSingup.setTitle("SingupGUI");
 		frmSingup.setBounds(100, 100, 250, 250);
 		frmSingup.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}

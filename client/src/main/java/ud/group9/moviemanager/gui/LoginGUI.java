@@ -1,4 +1,4 @@
-package src; 
+package ud.group9.moviemanager.gui;
 
 import java.awt.EventQueue;
 
@@ -13,11 +13,12 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class Login {
+public class LoginGUI {
 
 	private JFrame frmLogin;
 	private JTextField username;
 	private JTextField password;
+	private JButton btnLogin;
 
 	/**
 	 * Launch the application.
@@ -26,7 +27,7 @@ public class Login {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login window = new Login();
+					LoginGUI window = new LoginGUI();
 					window.frmLogin.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -38,7 +39,7 @@ public class Login {
 	/**
 	 * Create the application.
 	 */
-	public Login() {
+	public LoginGUI() {
 		initialize();
 	}
 
@@ -48,7 +49,7 @@ public class Login {
 	private void initialize() {
 		frmLogin = new JFrame();
 		frmLogin.setAlwaysOnTop(true);
-		frmLogin.setTitle("Login");
+		frmLogin.setTitle("LoginGUI");
 		frmLogin.setBackground(Color.RED);
 		frmLogin.getContentPane().setBackground(Color.ORANGE);
 		frmLogin.getContentPane().setLayout(null);
@@ -71,8 +72,8 @@ public class Login {
 		username.setBounds(132, 56, 112, 20);
 		frmLogin.getContentPane().add(username);
 		username.setColumns(10);
-		
-		JButton btnLogin = new JButton("Login");
+
+		btnLogin = new JButton("LoginGUI");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -81,13 +82,13 @@ public class Login {
 				
 				if(usname.equals("username") && pswrd.equals("password")) {
 					
-					JOptionPane.showMessageDialog(btnLogin, "Login succesfull!");
+					JOptionPane.showMessageDialog(btnLogin, "LoginGUI succesfull!");
 					
 				}
 				
 				else {
 					
-					JOptionPane.showMessageDialog(btnLogin, "Login error!");
+					JOptionPane.showMessageDialog(btnLogin, "LoginGUI error!");
 					
 				}
 			}
@@ -110,8 +111,8 @@ public class Login {
 		btnSingup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				new Singup();
-				Singup.main(null);;
+				new SingupGUI();
+				SingupGUI.main(null);;
 			    
 				
 			}

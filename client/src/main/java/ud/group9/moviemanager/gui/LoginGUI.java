@@ -1,5 +1,8 @@
 package ud.group9.moviemanager.gui;
 
+import ud.group9.moviemanager.api.MovieManagerClient;
+import ud.group9.moviemanager.api.exceptions.SignupException;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -79,17 +82,15 @@ public class LoginGUI {
 				
 				String usname = username.getText();
 				String pswrd = password.getText();
-				
-				if(usname.equals("username") && pswrd.equals("password")) {
-					
+
+				MovieManagerClient mmc = new MovieManagerClient();
+				try {
+					mmc.LogIn(usname, pswrd);
 					JOptionPane.showMessageDialog(btnLogin, "LoginGUI succesfull!");
-					
-				}
-				
-				else {
-					
-					JOptionPane.showMessageDialog(btnLogin, "LoginGUI error!");
-					
+					new MovieManagerGUI();
+					MovieManagerGUI.main(null);
+				} catch (SignupException e1) {
+					JOptionPane.showMessageDialog(btnLogin, e1);
 				}
 			}
 		});

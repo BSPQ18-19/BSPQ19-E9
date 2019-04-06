@@ -1,19 +1,21 @@
 package ud.group9.moviemanager.gui;
  
+import ud.group9.moviemanager.api.MovieManagerClient;
+import ud.group9.moviemanager.api.exceptions.SignupException;
+
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SingupGUI {
 
 	private JFrame frmSingup;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField username;
+	private JTextField password;
+	private JTextField passwordConf;
 
 	/**
 	 * Launch the application.
@@ -64,29 +66,53 @@ public class SingupGUI {
 		lblAreYouNew.setBounds(83, 22, 81, 14);
 		frmSingup.getContentPane().add(lblAreYouNew);
 		
-		textField = new JTextField();
-		textField.setBackground(new Color(255, 222, 173));
-		textField.setBounds(139, 57, 95, 20);
-		frmSingup.getContentPane().add(textField);
-		textField.setColumns(10);
+		username = new JTextField();
+		username.setBackground(new Color(255, 222, 173));
+		username.setBounds(139, 57, 95, 20);
+		frmSingup.getContentPane().add(username);
+		username.setColumns(10);
+
+		password = new JTextField();
+		password.setBackground(new Color(255, 222, 173));
+		password.setBounds(139, 82, 95, 20);
+		frmSingup.getContentPane().add(password);
+		password.setColumns(10);
+
+		passwordConf = new JTextField();
+		passwordConf.setBackground(new Color(255, 222, 173));
+		passwordConf.setBounds(139, 107, 95, 20);
+		frmSingup.getContentPane().add(passwordConf);
+		passwordConf.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setBackground(new Color(255, 222, 173));
-		textField_1.setBounds(139, 82, 95, 20);
-		frmSingup.getContentPane().add(textField_1);
-		textField_1.setColumns(10);
-		
-		textField_2 = new JTextField();
-		textField_2.setBackground(new Color(255, 222, 173));
-		textField_2.setBounds(139, 107, 95, 20);
-		frmSingup.getContentPane().add(textField_2);
-		textField_2.setColumns(10);
-		
-		JButton btnNewButton = new JButton("SingupGUI");
-		btnNewButton.setBackground(new Color(255, 140, 0));
-		btnNewButton.setForeground(Color.BLACK);
-		btnNewButton.setBounds(75, 161, 89, 23);
-		frmSingup.getContentPane().add(btnNewButton);
+		JButton btnSignUp = new JButton("SingupGUI");
+		btnSignUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				String usname = username.getText();
+				String pswrd = "";
+				if(password.getText().equals(passwordConf.getText()))
+					pswrd = password.getText();
+				else
+					JOptionPane.showMessageDialog(btnSignUp, "Passwords do not match!!");
+
+				MovieManagerClient mmc = new MovieManagerClient();
+				try {
+					mmc.SignUp(usname, pswrd);
+					JOptionPane.showMessageDialog(btnSignUp, "SignUp succesfull!");
+					mmc.LogIn(usname, pswrd);
+
+					new MovieManagerGUI();
+					MovieManagerGUI.main(null);
+				} catch (SignupException e1) {
+					JOptionPane.showMessageDialog(btnSignUp, e1);
+				}
+			}
+		});
+		btnSignUp.setBackground(new Color(255, 140, 0));
+		btnSignUp.setForeground(Color.BLACK);
+		btnSignUp.setBounds(75, 161, 89, 23);
+		frmSingup.getContentPane().add(btnSignUp);
 		frmSingup.setTitle("SingupGUI");
 		frmSingup.setBounds(100, 100, 250, 250);
 		frmSingup.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

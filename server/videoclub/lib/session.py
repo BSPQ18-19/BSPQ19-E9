@@ -16,13 +16,18 @@ def gen_token():
     return uuid4().__str__()
 
 
-def is_valid(token):
+def validate(token):
     """
-    is_valid checks if the session token is present in SESSION_HANDLER
+    validate checks if the session token is present in SESSION_HANDLER
+    and calls renew_session with that token
     :param token: session token
     :return: True if present, False if not
     """
-    return SESSION_HANDLER.get(token) is not None
+
+    valid = SESSION_HANDLER.get(token) is not None
+    if valid:
+        SESSION_HANDLER.renew_session(token)
+    return valid
 
 
 def set_session_handler(session_handler):

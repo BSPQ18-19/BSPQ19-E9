@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from videoclub.lib import vcomdb
-from videoclub.lib.session import SESSION_HANDLER, gen_token, is_valid
+from videoclub.lib.session import SESSION_HANDLER, gen_token, validate
 from . import models
 from .utils import check_params, compare_password, hash_password
 
@@ -134,7 +134,7 @@ def watched_movies(request):
         return error_response
 
     token = query.get("token")
-    if not is_valid(token):
+    if not validate(token):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
 
     user = SESSION_HANDLER.get(token).user

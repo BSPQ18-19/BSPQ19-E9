@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 public class SingupGUI {
 
 	private JFrame frmSingup;
-	private JButton btnSignUp
+	private JButton btnSignUp;
 	private JTextField username;
 	private JPasswordField password;
 	private JPasswordField passwordConf;
@@ -92,15 +92,21 @@ public class SingupGUI {
 
 				String usname = username.getText();
 				String pswrd = "";
-				if(password.getPassword().equals(passwordConf.getPassword()))
-					pswrd = String.valueOf(password.getPassword());
-				else
-					JOptionPane.showMessageDialog(btnSignUp, "Passwords do not match!!");
 
+				if (password.getPassword().length == 0) {
+					JOptionPane.showMessageDialog(btnSignUp, "passwords can't be empty");
+					return;
+				}
+
+				if(!password.getPassword().equals(passwordConf.getPassword())) {
+					JOptionPane.showMessageDialog(btnSignUp, "passwords do not match");
+					return;
+				}
+				pswrd = String.valueOf(password.getPassword());
 				MovieManagerClient mmc = new MovieManagerClient();
 				try {
 					mmc.SignUp(usname, pswrd);
-					JOptionPane.showMessageDialog(btnSignUp, "SignUp succesfull!");
+					JOptionPane.showMessageDialog(btnSignUp, "signup successful");
 					mmc.LogIn(usname, pswrd);
 
 					new MovieManagerGUI();

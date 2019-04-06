@@ -82,7 +82,7 @@ public class LoginGUI {
 				MovieManagerClient mmc = new MovieManagerClient();
 				try {
 					mmc.LogIn(usname, pswrd);
-					JOptionPane.showMessageDialog(btnLogin, "LoginGUI succesfull!");
+					JOptionPane.showMessageDialog(btnLogin, "login successful");
 					new MovieManagerGUI();
 					MovieManagerGUI.main(null);
 				} catch (SignupException e1) {

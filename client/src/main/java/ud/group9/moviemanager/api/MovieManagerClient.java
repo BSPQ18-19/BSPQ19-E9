@@ -5,6 +5,7 @@ import ud.group9.moviemanager.api.exceptions.SignupException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.Client;
+import ud.group9.moviemanager.utils.Hash;
 
 public class MovieManagerClient {
 	private static Client client;
@@ -25,11 +26,14 @@ public class MovieManagerClient {
     }
     
     public String SignUp( String username, String password) throws SignupException {
+		// Hash password so no plaintext password is sent through the network
+		String hashedPassword = Hash.encodeHash(Hash.sha256Hash(password));
+
     	String mensaje = "";
  	    WebResource webResource = client.resource(addr()).path("signup/");
     	    ClientResponse response = webResource
     	            .queryParam("username", username)
-    	            .queryParam("password", password)
+    	            .queryParam("password", hashedPassword)
     	            .post(ClientResponse.class);
     	    switch(response.getStatus()){
     	    case 200:
@@ -47,10 +51,13 @@ public class MovieManagerClient {
     }
     
     public boolean LogIn( String username, String password) throws SignupException {
+    	// Hash password so no plaintext password is sent through the network
+    	String hashedPassword = Hash.encodeHash(Hash.sha256Hash(password));
+
  	    WebResource webResource = client.resource(addr()).path("login/");
     	    ClientResponse response = webResource
     	            .queryParam("username", username)
-    	            .queryParam("password", password)
+    	            .queryParam("password", hashedPassword)
     	            .get(ClientResponse.class);
     	    response.close();
     	    return (response.getStatus() == 200);

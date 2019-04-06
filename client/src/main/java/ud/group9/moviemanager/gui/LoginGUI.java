@@ -5,14 +5,10 @@ import ud.group9.moviemanager.api.exceptions.SignupException;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -20,7 +16,7 @@ public class LoginGUI {
 
 	private JFrame frmLogin;
 	private JTextField username;
-	private JTextField password;
+	private JPasswordField password;
 	private JButton btnLogin;
 
 	/**
@@ -81,7 +77,7 @@ public class LoginGUI {
 			public void actionPerformed(ActionEvent e) {
 				
 				String usname = username.getText();
-				String pswrd = password.getText();
+				String pswrd = String.valueOf(password.getPassword());
 
 				MovieManagerClient mmc = new MovieManagerClient();
 				try {
@@ -95,7 +91,7 @@ public class LoginGUI {
 			}
 		});
 		
-		password = new JTextField();
+		password = new JPasswordField();
 		password.setBackground(new Color(255, 222, 173));
 		password.setBounds(132, 87, 112, 20);
 		frmLogin.getContentPane().add(password);

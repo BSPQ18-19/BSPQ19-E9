@@ -13,9 +13,10 @@ import java.awt.event.ActionListener;
 public class SingupGUI {
 
 	private JFrame frmSingup;
+	private JButton btnSignUp
 	private JTextField username;
-	private JTextField password;
-	private JTextField passwordConf;
+	private JPasswordField password;
+	private JPasswordField passwordConf;
 
 	/**
 	 * Launch the application.
@@ -72,27 +73,27 @@ public class SingupGUI {
 		frmSingup.getContentPane().add(username);
 		username.setColumns(10);
 
-		password = new JTextField();
+		password = new JPasswordField();
 		password.setBackground(new Color(255, 222, 173));
 		password.setBounds(139, 82, 95, 20);
 		frmSingup.getContentPane().add(password);
 		password.setColumns(10);
 
-		passwordConf = new JTextField();
+		passwordConf = new JPasswordField();
 		passwordConf.setBackground(new Color(255, 222, 173));
 		passwordConf.setBounds(139, 107, 95, 20);
 		frmSingup.getContentPane().add(passwordConf);
 		passwordConf.setColumns(10);
 		
-		JButton btnSignUp = new JButton("SingupGUI");
+		btnSignUp = new JButton("SingupGUI");
 		btnSignUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				String usname = username.getText();
 				String pswrd = "";
-				if(password.getText().equals(passwordConf.getText()))
-					pswrd = password.getText();
+				if(password.getPassword().equals(passwordConf.getPassword()))
+					pswrd = String.valueOf(password.getPassword());
 				else
 					JOptionPane.showMessageDialog(btnSignUp, "Passwords do not match!!");
 

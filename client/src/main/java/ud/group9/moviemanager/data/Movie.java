@@ -19,7 +19,7 @@ public class Movie {
     }
 
     public static Movie fromJSON(JSONObject movie)  {
-        String movieID = movie.getString("imdbID");
+        String movieID = movie.getString("movie_id");
         String title = movie.getString("Title");
         int year = movie.getInt("Year");
         String type = movie.getString("Type");

@@ -66,8 +66,7 @@ public class MovieManagerClient {
  	    WebResource webResource = client.resource(addr()).path("login/");
     	    ClientResponse response = webResource
     	            .queryParam("username", username)
-    	            //TODO change
-    	            .queryParam("password", password)
+    	            .queryParam("password", hashedPassword)
     	            .get(ClientResponse.class);
     	    JSONObject jo = new JSONObject(response.getEntity(String.class));
     	    sessionToken = jo.get("token").toString();

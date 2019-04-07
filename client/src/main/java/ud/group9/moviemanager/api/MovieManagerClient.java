@@ -1,9 +1,16 @@
 package ud.group9.moviemanager.api;
 
-import ud.group9.moviemanager.api.exceptions.SignupException;
+import ud.group9.moviemanager.api.exceptions.*;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.json.JSONObject;
+
 import com.sun.jersey.api.client.Client;
 import ud.group9.moviemanager.utils.Hash;
 
@@ -13,6 +20,8 @@ public class MovieManagerClient {
     private String host = "127.0.0.1";
     private int port = 8000;
     private String basepath = "videoclub";
+    
+    private String sessionToken = null;
 
     public MovieManagerClient(String host, int port) {
         this.host = host;
@@ -50,14 +59,39 @@ public class MovieManagerClient {
     	    return mensaje;
     }
     
-    public boolean LogIn( String username, String password) throws SignupException {
+    public boolean LogIn( String username, String password ) throws SignupException {
     	// Hash password so no plaintext password is sent through the network
     	String hashedPassword = Hash.encodeHash(Hash.sha256Hash(password));
 
  	    WebResource webResource = client.resource(addr()).path("login/");
     	    ClientResponse response = webResource
     	            .queryParam("username", username)
-    	            .queryParam("password", hashedPassword)
+    	            //TODO change
+    	            .queryParam("password", password)
+    	            .get(ClientResponse.class);
+    	    JSONObject jo = new JSONObject(response.getEntity(String.class));
+    	    sessionToken = jo.get("token").toString();
+    	    response.close();
+    	    return (response.getStatus() == 200);
+    }
+    
+    public String searchForMovie( String title, String year ) throws SearchMovieException {
+
+ 	    WebResource webResource = client.resource(addr()).path("search/");
+    	    ClientResponse response = webResource
+    	            .queryParam("title", title)
+    	            .queryParam("year", year)
+    	            .get(ClientResponse.class);
+    	    response.close();
+    	    return (response.toString());
+    }
+    
+    public boolean addToWatched( String movieID ) throws SearchMovieException {
+
+ 	    WebResource webResource = client.resource(addr()).path("watched/");
+    	    ClientResponse response = webResource
+    	            .queryParam("token", sessionToken)
+    	            .queryParam("movie_id", movieID)
     	            .get(ClientResponse.class);
     	    response.close();
     	    return (response.getStatus() == 200);
@@ -72,15 +106,19 @@ public class MovieManagerClient {
 		System.out.println("MovieManager Client");
 		try {
 	    	
-			System.out.println(mmc.SignUp("user1", "user"));
-			System.out.println(mmc.SignUp("user2", "user"));
-			System.out.println(mmc.LogIn("user1", "user"));
+//			System.out.println(mmc.SignUp("user1", "user"));
+//			System.out.println(mmc.SignUp("user2", "user"));
+			System.out.println(mmc.LogIn("test_user", "test_password"));
+			System.out.println(mmc.addToWatched("tt0446029"));
 			Thread.sleep(10000);
 			mmc.closeClient();
 		} catch (SignupException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SearchMovieException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

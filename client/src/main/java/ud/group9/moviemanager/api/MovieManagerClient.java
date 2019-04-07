@@ -1,14 +1,14 @@
 package ud.group9.moviemanager.api;
 
 import ud.group9.moviemanager.api.exceptions.*;
+import ud.group9.moviemanager.data.Movie;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.jersey.api.client.Client;
@@ -75,15 +75,22 @@ public class MovieManagerClient {
     	    return (response.getStatus() == 200);
     }
     
-    public String searchForMovie( String title, String year ) throws SearchMovieException {
-
+    public ArrayList<Movie> searchForMovie( String title, String year ) throws SearchMovieException {
+    	
+    	ArrayList<Movie> moviesSearched = new ArrayList<>();
+    	
  	    WebResource webResource = client.resource(addr()).path("search/");
     	    ClientResponse response = webResource
     	            .queryParam("title", title)
     	            .queryParam("year", year)
     	            .get(ClientResponse.class);
+    	    JSONObject jo = new JSONObject(response.getEntity(String.class));
+    	    JSONArray joa = jo.getJSONArray("movies");
+    	    for (int i = 0; i < joa.length(); i++){
+    	    	moviesSearched.add(Movie.fromJSON(joa.getJSONObject(i)));
+    	    }
     	    response.close();
-    	    return (response.toString());
+    	    return moviesSearched;
     }
     
     public boolean addToWatched( String movieID ) throws SearchMovieException {
@@ -109,7 +116,8 @@ public class MovieManagerClient {
 //			System.out.println(mmc.SignUp("user1", "user"));
 //			System.out.println(mmc.SignUp("user2", "user"));
 			System.out.println(mmc.LogIn("test_user", "test_password"));
-			System.out.println(mmc.addToWatched("tt0446029"));
+			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010"));
+			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 			Thread.sleep(10000);
 			mmc.closeClient();
 		} catch (SignupException e) {

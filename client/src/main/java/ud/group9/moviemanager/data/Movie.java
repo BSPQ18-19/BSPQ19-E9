@@ -6,31 +6,25 @@ public class Movie {
     private String movieID;
     private String title;
     private int    year;
-    private int  avgRating;
-    private String plot;
-    private String posterUrl;
-    private String genre;
+    private String type;
+    private String poster;
 
-    public Movie(String movieID, String title, int year, int avgRating,
-                 String plot, String posterUrl, String genre) {
+    public Movie(String movieID, String title, int year, String type,
+                 String poster) {
         this.movieID   = movieID;
         this.title     = title;
         this.year      = year;
-        this.avgRating = avgRating;
-        this.plot      = plot;
-        this.posterUrl = posterUrl;
-        this.genre     = genre;
+        this.type      = type;
+        this.poster    = poster;
     }
 
     public static Movie fromJSON(JSONObject movie)  {
-        String movieID = movie.getString("movie_id");
-        String title = movie.getString("title");
-        int year = movie.getInt("year");
-        int avgRating = movie.getInt("avg_rating");
-        String plot = movie.getString("plot");
-        String posterUrl = movie.getString("poster_url");
-        String genre = movie.getString("genre");
-        return new Movie(movieID, title, year, avgRating, plot, posterUrl, genre);
+        String movieID = movie.getString("imdbID");
+        String title = movie.getString("Title");
+        int year = movie.getInt("Year");
+        String type = movie.getString("Type");
+        String poster = movie.getString("Poster");
+        return new Movie(movieID, title, year, type, poster);
     }
 
     public String getMovieID() {
@@ -57,35 +51,26 @@ public class Movie {
         this.year = year;
     }
 
-    public int getAvgRating() {
-        return avgRating;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setAvgRating(int avgRating) {
-        this.avgRating = avgRating;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public String getPlot() {
-        return plot;
-    }
+	public String getPoster() {
+		return poster;
+	}
 
-    public void setPlot(String plot) {
-        this.plot = plot;
-    }
+	public void setPoster(String poster) {
+		this.poster = poster;
+	}
 
-    public String getPosterUrl() {
-        return posterUrl;
-    }
+	@Override
+	public String toString() {
+		return "Movie [movieID=" + movieID + ", title=" + title + ", year=" + year + ", type=" + type + ", poster="
+				+ poster + "]";
+	}
 
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
 }

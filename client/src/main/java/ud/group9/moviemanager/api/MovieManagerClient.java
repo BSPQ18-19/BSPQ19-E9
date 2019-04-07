@@ -60,7 +60,7 @@ public class MovieManagerClient {
     }
     
     public boolean LogIn( String username, String password ) throws SignupException {
-    	// Hash password so no plaintext password is sent through the network
+    	// Hash password so no plaintext password is sent through the network 
     	String hashedPassword = Hash.encodeHash(Hash.sha256Hash(password));
 
  	    WebResource webResource = client.resource(addr()).path("login/");

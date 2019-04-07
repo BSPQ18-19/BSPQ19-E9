@@ -2,6 +2,7 @@ package ud.group9.moviemanager.data;
 
 import org.json.JSONObject;
 
+
 public class Movie {
     private String movieID;
     private String title;

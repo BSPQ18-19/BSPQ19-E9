@@ -10,84 +10,84 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SingupGUI {
+public class SignupGUI extends JFrame{
 
+	private static final long serialVersionUID = 1L;
+	
 	private MovieManagerClient mmc;
-	private JFrame frmSingup;
 	private JButton btnSignUp;
 	private JTextField username;
 	private JPasswordField password;
 	private JPasswordField passwordConf;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					SingupGUI window = new SingupGUI(new MovieManagerClient("127.0.0.1", 8000));
-					window.frmSingup.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	/**
+//	 * Launch the application.
+//	 */
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					new SignupGUI(new MovieManagerClient("127.0.0.1", 8000));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
 	 */
-	public SingupGUI(MovieManagerClient mmc) {
+	public SignupGUI(MovieManagerClient mmc) {
 		this.mmc = mmc;
 		initialize();
+		this.setVisible(true);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmSingup = new JFrame();
-		frmSingup.setAlwaysOnTop(true);
-		frmSingup.setResizable(false);
-		frmSingup.getContentPane().setBackground(Color.ORANGE);
-		frmSingup.getContentPane().setLayout(null);
+		this.setAlwaysOnTop(true);
+		this.setResizable(false);
+		this.getContentPane().setBackground(Color.ORANGE);
+		this.getContentPane().setLayout(null);
 		
-		JLabel lblUsername = new JLabel("Username:");
+		JLabel lblUsername = new JLabel(mmc.getBundle().getString("username") + ":");
 		lblUsername.setBounds(10, 60, 79, 14);
-		frmSingup.getContentPane().add(lblUsername);
+		this.getContentPane().add(lblUsername);
 		
-		JLabel lblPassword = new JLabel("Password: ");
+		JLabel lblPassword = new JLabel(mmc.getBundle().getString("password") + ":");
 		lblPassword.setBounds(10, 85, 79, 14);
-		frmSingup.getContentPane().add(lblPassword);
+		this.getContentPane().add(lblPassword);
 		
-		JLabel lblConfirm = new JLabel("Confirm \r\n\r\npassword:");
+		JLabel lblConfirm = new JLabel(mmc.getBundle().getString("confirmpassword") + ":");
 		lblConfirm.setBounds(10, 110, 122, 14);
-		frmSingup.getContentPane().add(lblConfirm);
+		this.getContentPane().add(lblConfirm);
 		
-		JLabel lblAreYouNew = new JLabel("Are you new? ");
-		lblAreYouNew.setBounds(83, 22, 81, 14);
-		frmSingup.getContentPane().add(lblAreYouNew);
+		JLabel lblAreYouNew = new JLabel(mmc.getBundle().getString("welcome"));
+		lblAreYouNew.setBounds(30, 22, 250, 14);
+		this.getContentPane().add(lblAreYouNew);
 		
 		username = new JTextField();
 		username.setBackground(new Color(255, 222, 173));
 		username.setBounds(139, 57, 95, 20);
-		frmSingup.getContentPane().add(username);
+		this.getContentPane().add(username);
 		username.setColumns(10);
 
 		password = new JPasswordField();
 		password.setBackground(new Color(255, 222, 173));
 		password.setBounds(139, 82, 95, 20);
-		frmSingup.getContentPane().add(password);
+		this.getContentPane().add(password);
 		password.setColumns(10);
 
 		passwordConf = new JPasswordField();
 		passwordConf.setBackground(new Color(255, 222, 173));
 		passwordConf.setBounds(139, 107, 95, 20);
-		frmSingup.getContentPane().add(passwordConf);
+		this.getContentPane().add(passwordConf);
 		passwordConf.setColumns(10);
 		
-		btnSignUp = new JButton("SingupGUI");
+		btnSignUp = new JButton(mmc.getBundle().getString("signup"));
 		btnSignUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -96,22 +96,20 @@ public class SingupGUI {
 				String pswrd = "";
 
 				if (password.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(btnSignUp, "passwords can't be empty");
+					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("emptypassword"));
 					return;
 				}
-
-				if(!password.getPassword().equals(passwordConf.getPassword())) {
-					JOptionPane.showMessageDialog(btnSignUp, "passwords do not match");
+				if(!(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConf.getPassword())))) {
+					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("differentpasswords"));
 					return;
 				}
 				pswrd = String.valueOf(password.getPassword());
 				try {
 					mmc.SignUp(usname, pswrd);
-					JOptionPane.showMessageDialog(btnSignUp, "signup successful");
+					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("signupsuccessful"));
 					mmc.LogIn(usname, pswrd);
-
+					setVisible(false);
 					new MovieManagerGUI();
-					MovieManagerGUI.main(null);
 				} catch (SignupException e1) {
 					JOptionPane.showMessageDialog(btnSignUp, e1);
 				}
@@ -120,9 +118,9 @@ public class SingupGUI {
 		btnSignUp.setBackground(new Color(255, 140, 0));
 		btnSignUp.setForeground(Color.BLACK);
 		btnSignUp.setBounds(75, 161, 89, 23);
-		frmSingup.getContentPane().add(btnSignUp);
-		frmSingup.setTitle("SingupGUI");
-		frmSingup.setBounds(100, 100, 250, 250);
-		frmSingup.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.getContentPane().add(btnSignUp);
+		this.setTitle("SignupGUI");
+		this.setBounds(100, 100, 300, 300);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

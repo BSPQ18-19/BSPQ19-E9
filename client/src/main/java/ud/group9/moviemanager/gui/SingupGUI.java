@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 
 public class SingupGUI {
 
+	private MovieManagerClient mmc;
 	private JFrame frmSingup;
 	private JButton btnSignUp;
 	private JTextField username;
@@ -25,7 +26,7 @@ public class SingupGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SingupGUI window = new SingupGUI();
+					SingupGUI window = new SingupGUI(new MovieManagerClient("127.0.0.1", 8000));
 					window.frmSingup.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,7 +38,8 @@ public class SingupGUI {
 	/**
 	 * Create the application.
 	 */
-	public SingupGUI() {
+	public SingupGUI(MovieManagerClient mmc) {
+		this.mmc = mmc;
 		initialize();
 	}
 
@@ -103,7 +105,6 @@ public class SingupGUI {
 					return;
 				}
 				pswrd = String.valueOf(password.getPassword());
-				MovieManagerClient mmc = new MovieManagerClient();
 				try {
 					mmc.SignUp(usname, pswrd);
 					JOptionPane.showMessageDialog(btnSignUp, "signup successful");

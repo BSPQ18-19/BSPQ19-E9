@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 
 public class LoginGUI {
 
+	private MovieManagerClient mmc;
 	private JFrame frmLogin;
 	private JTextField username;
 	private JPasswordField password;
@@ -26,7 +27,7 @@ public class LoginGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LoginGUI window = new LoginGUI();
+					LoginGUI window = new LoginGUI(new MovieManagerClient("127.0.0.1", 8000));
 					window.frmLogin.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -38,7 +39,8 @@ public class LoginGUI {
 	/**
 	 * Create the application.
 	 */
-	public LoginGUI() {
+	public LoginGUI(MovieManagerClient mmc) {
+		this.mmc = mmc;
 		initialize();
 	}
 
@@ -79,7 +81,6 @@ public class LoginGUI {
 				String usname = username.getText();
 				String pswrd = String.valueOf(password.getPassword());
 
-				MovieManagerClient mmc = new MovieManagerClient();
 				try {
 					mmc.LogIn(usname, pswrd);
 					JOptionPane.showMessageDialog(btnLogin, "login successful");
@@ -108,7 +109,7 @@ public class LoginGUI {
 		btnSingup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				new SingupGUI();
+				new SingupGUI(mmc);
 				SingupGUI.main(null);;
 			    
 				

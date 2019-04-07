@@ -74,7 +74,18 @@ def search_movies(**kwargs):
     if "Response" in res.keys() and "Error" in res.keys():
         return 404, res["Error"]
 
-    return 200, {"movies": res["Search"]}
+    movies = {
+        "movies": [
+            {
+                "movie_id": m["imdbID"],
+                "title": m["Title"],
+                "year": m["Year"],
+                "poster_url": m["Poster"]
+            } for m in res["Search"]
+        ]
+    }
+
+    return 200, movies
 
 
 @DeprecationWarning

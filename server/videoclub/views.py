@@ -4,8 +4,8 @@ from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from videoclub.lib import vcomdb
-from videoclub.lib.session import SESSION_HANDLER, gen_token, validate
+from videoclub.gateways import omdb_gw
+from videoclub.internals.session import SESSION_HANDLER, gen_token, validate
 from . import models
 from .utils import check_params, compare_password, hash_password
 
@@ -20,28 +20,34 @@ def login(request):
     :param request: GET request containing username and password
     :return: JsonResponse with token if ok, HttpResponse otherwise
     """
-    # get and check parameters
+    # check that are required parameters are present
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["username", "password"]
     error_response = check_params(query, params)
     if error_response:
         return error_response
 
+    # assign parameters to variables
     username = query.get("username")
     password = query.get("password")
+
+    # find user
     try:
         user = models.User.objects.get(username=username)
     except models.User.DoesNotExist:
         # user not found
         return HttpResponse("no user with username {}".format(username),
                             status=403)
-    # password doesn't match
+    # match passwords
     if not compare_password(password, user.password):
         return HttpResponse("Invalid username or password", status=403)
 
+    # generate a token for the user
     token = gen_token()
+    # create a session with the token and the user
     SESSION_HANDLER.add_session(token, user)
     logger.log(INFO, "log user {} with token {}".format(user.__str__(), token))
+    # return token to user
     return JsonResponse({"token": token})
 
 
@@ -55,17 +61,21 @@ def movie_details(request, movie_id):
     :param movie_id: imdbID of the movie
     :return: JsonResponse with details if ok, HttpResponse otherwise
     """
+    # if movie is stored locally in the DB, return it to the user
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
         return JsonResponse(movie.json())
+    # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:
-        code, result = vcomdb.movie_details(movie_id, True)
+        code, result = omdb_gw.movie_details(movie_id, True)
         if code == 200:
-            # store movie
-            movie = vcomdb.build_movie(models.Movie, result)
+            # store movie in local DB
+            movie = omdb_gw.build_movie(models.Movie, result)
             logger.log(INFO, "store movie {}".format(movie.__str__()))
             movie.save()
+            # return movie info to the user
             return JsonResponse(movie.json())
+        # return error returned by the gateways
         return HttpResponse(status=code, content=result)
 
 
@@ -78,10 +88,19 @@ def search(request):
     :param request: GET request containing movie title and optionally year
     :return: JsonResponse with movies if ok, HttpResponse otherwise
     """
+
     query = QueryDict(request.META.get("QUERY_STRING"))
-    code, result = vcomdb.search_movies(**query)
+    params = ["username", "password"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # delegate movie search to the OMDB gateways
+    code, result = omdb_gw.search_movies(**query)
+    # movies found
     if code == 200:
         return JsonResponse(result)
+    # movies not found
     return HttpResponse(status=code, content=result)
 
 
@@ -93,18 +112,21 @@ def signup(request):
     :param request: POST request containing username and password
     :return: HttpResponse
     """
-    # get and check parameters
+    # check that are required parameters are present
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["username", "password"]
     error_response = check_params(query, params)
     if error_response:
         return error_response
 
+    # assign query parameters to variables
     username = query.get("username")
     password = query.get("password")
+
     # hash password
     password = hash_password(password)
 
+    # check if username is taken
     try:
         models.User.objects.get(username=username)
         return HttpResponse("username {} is already taken".format(username),
@@ -112,6 +134,7 @@ def signup(request):
     except models.User.DoesNotExist:
         pass
 
+    # create user and store it in DB
     user = models.User(username=username, password=password)
     user.save()
     logger.log(INFO, "Created user {}".format(user.__str__()))
@@ -127,34 +150,47 @@ def watched_movies(request):
     :param request: token to identify the user with
     :return: list of movies if token was valid
     """
+    # check that are required parameters are present
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token"] if request.method == "GET" else ["token", "movie_id"]
     error_response = check_params(query, params)
     if error_response:
         return error_response
 
+    # check that the token is valid
     token = query.get("token")
     if not validate(token):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
 
+    # get user the token was assigned to
     user = SESSION_HANDLER.get(token).user
+
+    #
+    # GET: the user requested their list of watched movies
+    #
     if request.method == "GET":
         return JsonResponse({"watched": user.json().get("watched")})
 
+    # get referenced movie
     movie_id = query.get("movie_id")
+    # check if movie is stored in local DB
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
+    # if not request it to the gateways
     except models.Movie.DoesNotExist:
         # if movie does not exist, try to look for it and store it
-        status, movie_data = vcomdb.movie_details(movie_id, True)
+        status, movie_data = omdb_gw.movie_details(movie_id, True)
         if status != 200:
             return HttpResponse("Movie '{}' not found".format(movie_id),
                                 status=404)
         # store movie in database
-        movie = vcomdb.build_movie(models.Movie, movie_data)
+        movie = omdb_gw.build_movie(models.Movie, movie_data)
         logger.log(INFO, "store movie {}".format(movie.__str__()))
         movie.save()
 
+    #
+    # POST: the user wants to add a movie to their watched list
+    #
     if request.method == "POST":
         if movie not in user.watched.all():
             user.watched.add(movie)
@@ -163,6 +199,9 @@ def watched_movies(request):
             movie.title, user.__str__()
         ))
 
+    #
+    # DELETE: the user wants to delete a movie from their watched list
+    #
     elif request.method == "DELETE":
         if movie in user.watched.all():
             user.watched.remove(movie)
@@ -171,16 +210,4 @@ def watched_movies(request):
             movie.title, user.__str__()
         ))
 
-    return HttpResponse("OK")
-
-
-@csrf_exempt
-def populate_db_movies(request):
-    """
-    populate_db_movies requests movie info to IMDB and stores it at the
-    storage engine
-    :param request: HTTP request (any method)
-    :return: 200 OK
-    """
-    vcomdb.load_movies(models.Movie)
     return HttpResponse("OK")

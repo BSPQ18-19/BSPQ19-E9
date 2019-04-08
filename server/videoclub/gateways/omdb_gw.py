@@ -1,4 +1,7 @@
-from csv import reader
+"""
+omdb_gw.py is a gateways file to the OMDB API,
+used to retrieve information about movies from IMDB
+"""
 from os.path import dirname, join, realpath
 
 from . import OMDB_CLI
@@ -59,6 +62,7 @@ def search_movies(**kwargs):
     :param kwargs: title=<movie title>, year(optional)=<release year>
     :return: {"movies":[<list of movies>]}
     """
+    # criteria will store the query parameters required by the OMDB API
     criteria = {}
     if "title" not in kwargs.keys():
         return 400, "Missing movie title"
@@ -67,13 +71,18 @@ def search_movies(**kwargs):
     if "year" in kwargs.keys():
         criteria["y"] = kwargs["year"]
 
+    # response format and search type are always "json" and "movie" respectively
     criteria["r"] = "json"
     criteria["type"] = "movie"
+
+    # send search query to the OMDB API
     res = OMDB_CLI.request(**criteria).json()
 
+    # incorrect serach
     if "Response" in res.keys() and "Error" in res.keys():
         return 404, res["Error"]
 
+    # adapt response to the format expected by the client
     movies = {
         "movies": [
             {
@@ -86,30 +95,3 @@ def search_movies(**kwargs):
     }
 
     return 200, movies
-
-
-@DeprecationWarning
-def load_movies(movie_model, movie_list_path=_MOVIE_LIST_PATH):
-    """
-    load_movies requests movie information to OMDB and stores it in storage engine
-    :param movie_model: model of a movie: models.Movie
-    :param movie_list_path: path to csv containing movie titles and years
-    :return: None
-    """
-    with open(movie_list_path, 'r') as mlf:
-        movie_list = reader(mlf, delimiter=',')
-        for m in movie_list:
-            # if movie is already stored in DB, skip
-            try:
-                movie_model.objects.get(title=m[0])
-                continue
-            except movie_model.DoesNotExist:
-                pass
-            res = OMDB_CLI.request(t=m[0], y=m[1], r="json")
-            info = res.json()
-            if "Response" in info.keys() and info["Response"] == "False":
-                print("Failed to add movie '{}', error: {}".format(m[0], info["Error"]))
-                continue
-            movie = build_movie(movie_model, info)
-            movie.save()
-            print("stored movie {}".format(movie.__str__()))

@@ -1,7 +1,7 @@
 from logging import getLogger, INFO
 
 from django.apps import AppConfig
-from videoclub.lib import session
+from videoclub.internals import session
 
 logger = getLogger(__name__)
 

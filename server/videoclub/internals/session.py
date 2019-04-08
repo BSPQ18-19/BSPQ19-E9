@@ -1,3 +1,8 @@
+"""
+sessions.py contains classes, constants and functions that have to do
+with user-session handling
+"""
+
 from datetime import datetime, timedelta
 from logging import getLogger, INFO
 from threading import Thread
@@ -5,6 +10,9 @@ from time import sleep
 from uuid import uuid4
 
 logger = getLogger(__name__)
+
+# SESSION_HANDLER is used as the only instance of
+# SessionHandler
 SESSION_HANDLER = None
 
 

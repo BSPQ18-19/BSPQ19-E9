@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "videoclub.apps.VideoclubConfig",
+    "moviemanager.apps.MovieManagerConfig",
 ]
 
 MIDDLEWARE = [
@@ -146,7 +146,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'videoclub.views': {
+        'moviemanager.views': {
             'handlers': ['console'],
             'level': 'INFO',
         },

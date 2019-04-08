@@ -4,8 +4,8 @@ from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from videoclub.gateways import omdb_gw
-from videoclub.internals.session import SESSION_HANDLER, gen_token, validate
+from moviemanager.gateways import omdb_gw
+from moviemanager.internals.session import SESSION_HANDLER, gen_token, validate
 from . import models
 from .utils import check_params, compare_password, hash_password
 
@@ -90,7 +90,7 @@ def search(request):
     """
 
     query = QueryDict(request.META.get("QUERY_STRING"))
-    params = ["username", "password"]
+    params = ["title"]
     error_response = check_params(query, params)
     if error_response:
         return error_response

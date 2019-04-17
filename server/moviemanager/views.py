@@ -1,4 +1,5 @@
 from logging import getLogger, INFO
+from uuid import uuid4
 
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +11,41 @@ from . import models
 from .utils import check_params, compare_password, hash_password
 
 logger = getLogger(__name__)
+
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def create_album(request):
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    params = ["token"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    album = models.Album()
+    title = query.get("title")
+    session = SESSION_HANDLER.get(token)
+
+    # if album with the same name already exists: error
+    try:
+        models.Album.objects.get(owner=session.user, title=title)
+        return HttpResponse(
+            "There is already an album titled '{}' for user '{}'".format(
+                title, session.user.username
+            ))
+    except models.Album.DoesNotExist:
+        pass
+
+    album.owner = session.user
+    album.album_id = uuid4().__str__()
+    album.title = title
+    album.save()
+    print("create album {}".format(album.json()))
+    return JsonResponse({"album_id": album.album_id})
 
 
 @csrf_exempt

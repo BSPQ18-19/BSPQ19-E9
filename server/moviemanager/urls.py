@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('album/', views.create_album, name="create album"),
     path('login/', views.login, name='login'),  # log user in
     path('movie/<str:movie_id>/', views.movie_details, name='movie'),  # signup user
     path('search/', views.search, name="search"),  # search for movies

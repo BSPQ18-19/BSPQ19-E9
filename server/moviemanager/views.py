@@ -5,10 +5,11 @@ from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+import moviemanager.internals.album as libalbum
 from moviemanager.gateways import omdb_gw
 from moviemanager.internals.session import SESSION_HANDLER, gen_token, validate
 from . import models
-from .utils import check_params, compare_password, hash_password
+from .utils import check_params, compare_password, hash_password, search_movie_by_id
 
 logger = getLogger(__name__)
 
@@ -46,6 +47,58 @@ def create_album(request):
     album.save()
     print("create album {}".format(album.json()))
     return JsonResponse({"album_id": album.album_id})
+
+
+@csrf_exempt
+@require_http_methods(["DELETE", "GET", "POST"])
+def handle_album(request, album_id):
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    params = ["token", "movie_id"] if request.method == "POST" else ["token"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # verify token
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    # verify that album exists
+    try:
+        album = models.Album.objects.get(album_id=album_id)
+    except models.Album.DoesNotExist:
+        return HttpResponse("Album '{}' not found".format(album_id), status=404)
+
+    # verify that the album belongs to the user
+    session = SESSION_HANDLER.get(token)
+    if album.owner != session.user:
+        return HttpResponse("Forbidden", status=405)
+
+    if request.method == "GET":
+        return libalbum.get(album)
+
+    elif request.method == "POST":
+        # check that movie exists
+        movie_id = query.get("movie_id")
+        return libalbum.post(album, movie_id)
+
+    elif request.method == "DELETE":
+        # check that movie exists
+        movie_id = query.get("movie_id")
+
+        # delete album
+        if movie_id is None:
+            try:
+                return libalbum.delete_album(album)
+            # ValueError is raised by django after deleting the album as the
+            # reference is now invalid
+            except ValueError:
+                pass
+        # delete movie from album
+        else:
+            libalbum.delete_movie_from_album(album, movie_id)
+
+    return HttpResponse("OK")
 
 
 @csrf_exempt
@@ -179,6 +232,27 @@ def signup(request):
 
 
 @csrf_exempt
+@require_http_methods(["GET"])
+def user_albums(request):
+    # check that are required parameters are present
+    query = QueryDict(request.META.get("QUERY_STRING"))
+    params = ["token"] if request.method == "GET" else ["token"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # check that the token is valid
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+    user = SESSION_HANDLER.get(token).user
+    albums = models.Album.objects.filter(owner=user)
+    return JsonResponse({
+        "albums": [album.json() for album in albums]
+    })
+
+
+@csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 def watched_movies(request):
     """
@@ -209,20 +283,10 @@ def watched_movies(request):
 
     # get referenced movie
     movie_id = query.get("movie_id")
-    # check if movie is stored in local DB
-    try:
-        movie = models.Movie.objects.get(movie_id=movie_id)
-    # if not request it to the gateways
-    except models.Movie.DoesNotExist:
-        # if movie does not exist, try to look for it and store it
-        status, movie_data = omdb_gw.movie_details(movie_id, True)
-        if status != 200:
-            return HttpResponse("Movie '{}' not found".format(movie_id),
-                                status=404)
-        # store movie in database
-        movie = omdb_gw.build_movie(models.Movie, movie_data)
-        logger.log(INFO, "store movie {}".format(movie.__str__()))
-        movie.save()
+    found, movie = search_movie_by_id(movie_id)
+    if not found:
+        return HttpResponse("Movie '{}' not found".format(movie_id),
+                            status=404)
 
     #
     # POST: the user wants to add a movie to their watched list

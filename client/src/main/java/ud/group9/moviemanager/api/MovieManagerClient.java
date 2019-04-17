@@ -21,7 +21,7 @@ public class MovieManagerClient {
 	private String protocol = "http";
 	private String host = "127.0.0.1";
 	private int port = 8000;
-	private String basepath = "videoclub";
+	private String basepath = "moviemanager";
 
 	private ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_en");
 	private String sessionToken = null;
@@ -109,6 +109,17 @@ public class MovieManagerClient {
 		return (response.getStatus() == 200);
 	}
 
+	public boolean createAlbum( String title ){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("title", title)
+				.post(ClientResponse.class);
+		response.close();
+		System.out.println(response.toString());
+		return true;
+	}
+
 	public void closeClient(){
 		client.destroy();
 	}
@@ -122,26 +133,19 @@ public class MovieManagerClient {
 	}
 
 	public static void main(String[] args) { 
-//		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
-		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
-		//		try {
-
-		//			System.out.println(mmc.SignUp("user1", "user"));
-		//			System.out.println(mmc.SignUp("user2", "user"));
-		//			System.out.println(mmc.LogIn("test_user", "test_password"));
-		//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010"));
-		//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
-		//			Thread.sleep(10000);
-		// mmc.closeClient();
-		//		} catch (SignupException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		} catch (InterruptedException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		} catch (SearchMovieException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
+		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
+		try {
+//			System.out.println(mmc.SignUp("user", "test_password"));
+			System.out.println(mmc.LogIn("user", "test_password"));
+			mmc.createAlbum("newAlbum");
+			//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
+			//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
+			//			Thread.sleep(10000);
+			// mmc.closeClient();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

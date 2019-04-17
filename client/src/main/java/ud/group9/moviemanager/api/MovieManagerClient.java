@@ -114,12 +114,33 @@ public class MovieManagerClient {
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
 				.queryParam("title", title)
+				.put(ClientResponse.class);
+		response.close();
+		System.out.println(response.toString());
+		return true;
+	}
+	
+	public boolean getAlbums(){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.get(ClientResponse.class);
+		response.close();
+		System.out.println(response.toString());
+		return true;
+	}
+	
+	public boolean addMovieToAlbum( String movieID ){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
 		System.out.println(response.toString());
 		return true;
 	}
-
+	
 	public void closeClient(){
 		client.destroy();
 	}

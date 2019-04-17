@@ -123,8 +123,7 @@ public class MovieManagerClient {
 
 	public static void main(String[] args) { 
 //		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
-		MovieManagerClient mmc = new MovieManagerClient(args[0], Integer.parseInt(args[1]));
-		System.out.println("MovieManager Client");
+		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		//		try {
 
 		//			System.out.println(mmc.SignUp("user1", "user"));

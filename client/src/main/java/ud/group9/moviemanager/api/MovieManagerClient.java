@@ -146,6 +146,15 @@ public class MovieManagerClient {
 		return Album.fromJSON(jo);
 	}
 	
+	public int deleteAlbum(String albumID){
+		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.delete(ClientResponse.class);
+		response.close();
+		return response.getStatus();
+	}
+	
 	public boolean addMovieToAlbum( String movieID ){
 		WebResource webResource = client.resource(addr()).path("album/");
 		ClientResponse response = webResource
@@ -175,8 +184,9 @@ public class MovieManagerClient {
 		try {
 //			System.out.println(mmc.SignUp("user", "test_password"));
 			mmc.LogIn("user", "test_password");
-//			mmc.createAlbum("anotherAlbum");
-			System.out.println(mmc.getAlbum(mmc.getAlbums().get(0).getAlbumID()));
+//			mmc.createAlbum("albumToDelete");
+			mmc.deleteAlbum(mmc.getAlbums().get(0).getAlbumID());
+//			System.out.println(mmc.getAlbums());
 			//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
 			//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 						Thread.sleep(10000);

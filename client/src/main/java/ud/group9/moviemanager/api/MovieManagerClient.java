@@ -109,7 +109,7 @@ public class MovieManagerClient {
 		response.close();
 		return (response.getStatus() == 200);
 	}
-	
+
 	public int createAlbum( String title ){
 		WebResource webResource = client.resource(addr()).path("album/");
 		ClientResponse response = webResource
@@ -119,10 +119,10 @@ public class MovieManagerClient {
 		response.close();
 		return response.getStatus();
 	}
-	
+
 	public ArrayList<Album> getAlbums(){
 		ArrayList<Album> albums = new ArrayList<>();
-		
+
 		WebResource webResource = client.resource(addr()).path("user/albums/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
@@ -135,7 +135,7 @@ public class MovieManagerClient {
 		response.close();
 		return albums;
 	}
-	
+
 	public Album getAlbum(String albumID){
 		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
 		ClientResponse response = webResource
@@ -145,7 +145,7 @@ public class MovieManagerClient {
 		response.close();
 		return Album.fromJSON(jo);
 	}
-	
+
 	public int deleteAlbum(String albumID){
 		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
 		ClientResponse response = webResource
@@ -154,18 +154,17 @@ public class MovieManagerClient {
 		response.close();
 		return response.getStatus();
 	}
-	
-	public boolean addMovieToAlbum( String movieID ){
-		WebResource webResource = client.resource(addr()).path("album/");
+
+	public int addMovieToAlbum( String albumID, String movieID ){
+		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
 				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
-		System.out.println(response.toString());
-		return true;
+		return response.getStatus();
 	}
-	
+
 	public void closeClient(){
 		client.destroy();
 	}
@@ -177,19 +176,21 @@ public class MovieManagerClient {
 	public void setBundle(ResourceBundle bundle) {
 		this.bundle = bundle;
 	}
-	
+
 	public static void main(String[] args) { 
 		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
 		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		try {
-//			System.out.println(mmc.SignUp("user", "test_password"));
+			//			System.out.println(mmc.SignUp("user", "test_password"));
 			mmc.LogIn("user", "test_password");
-//			mmc.createAlbum("albumToDelete");
-			mmc.deleteAlbum(mmc.getAlbums().get(0).getAlbumID());
-//			System.out.println(mmc.getAlbums());
-			//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
+			//			mmc.createAlbum("albumToDelete");
+			//			mmc.deleteAlbum(mmc.getAlbums().get(0).getAlbumID());
+			System.out.println(mmc.getAlbums());
+			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
+			System.out.println(mmc.addMovieToAlbum(mmc.getAlbums().get(0).getAlbumID(), mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
+			System.out.println(mmc.getAlbums());
 			//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
-						Thread.sleep(10000);
+			Thread.sleep(10000);
 			// mmc.closeClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

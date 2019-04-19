@@ -7,10 +7,10 @@ import java.util.ArrayList;
 public class Album {
     private String  albumID;
     private String  title;
-    private User    owner;
+    private String    owner;
     private ArrayList<Movie> movies;
 
-    public Album(String albumID, String title, User owner, ArrayList<Movie>  movies) {
+    public Album(String albumID, String title, String owner, ArrayList<Movie>  movies) {
         this.albumID = albumID;
         this.title   = title;
         this.owner   = owner;
@@ -20,7 +20,7 @@ public class Album {
     public static Album fromJSON(JSONObject album) {
         String albumID = album.getString("album_id");
         String title = album.getString("title");
-        User owner = User.fromJSON(album.getJSONObject("owner"));
+        String owner = album.getString("owner");
         ArrayList<Movie> movies = new ArrayList<>();
 
         for (Object movie: album.getJSONArray("movies")) {
@@ -46,11 +46,11 @@ public class Album {
         this.title = title;
     }
 
-    public User getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
@@ -61,4 +61,10 @@ public class Album {
     public void setMovies(ArrayList<Movie>  movies) {
         this.movies = movies;
     }
+
+	@Override
+	public String toString() {
+		return "Album [albumID=" + albumID + ", title=" + title + ", owner=" + owner + ", movies=" + movies + "]";
+	}
+    
 }

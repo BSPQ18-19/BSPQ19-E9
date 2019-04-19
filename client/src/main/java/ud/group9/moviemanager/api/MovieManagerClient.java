@@ -1,6 +1,7 @@
 package ud.group9.moviemanager.api;
 
 import ud.group9.moviemanager.api.exceptions.*;
+import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 import ud.group9.moviemanager.gui.LoginGUI;
 
@@ -109,25 +110,30 @@ public class MovieManagerClient {
 		return (response.getStatus() == 200);
 	}
 
-	public boolean createAlbum( String title ){
+	public int createAlbum( String title ){
 		WebResource webResource = client.resource(addr()).path("album/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
 				.queryParam("title", title)
 				.put(ClientResponse.class);
 		response.close();
-		System.out.println(response.toString());
-		return true;
+		return response.getStatus();
 	}
 	
-	public boolean getAlbums(){
-		WebResource webResource = client.resource(addr()).path("album/");
+	public ArrayList<Album> getAlbums(){
+		ArrayList<Album> albums = new ArrayList<>();
+		
+		WebResource webResource = client.resource(addr()).path("user/albums/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
 				.get(ClientResponse.class);
+		JSONObject jo = new JSONObject(response.getEntity(String.class));
+		JSONArray joa = jo.getJSONArray("albums");
+		for (int i = 0; i < joa.length(); i++){
+			albums.add(Album.fromJSON(joa.getJSONObject(i)));
+		}
 		response.close();
-		System.out.println(response.toString());
-		return true;
+		return albums;
 	}
 	
 	public boolean addMovieToAlbum( String movieID ){
@@ -158,11 +164,12 @@ public class MovieManagerClient {
 		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		try {
 //			System.out.println(mmc.SignUp("user", "test_password"));
-			System.out.println(mmc.LogIn("user", "test_password"));
-			mmc.createAlbum("newAlbum");
+			mmc.LogIn("user", "test_password");
+//			mmc.createAlbum("anotherAlbum");
+//			System.out.println(mmc.getAlbums().toString());
 			//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
 			//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
-			//			Thread.sleep(10000);
+						Thread.sleep(10000);
 			// mmc.closeClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

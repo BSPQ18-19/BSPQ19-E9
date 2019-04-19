@@ -100,17 +100,6 @@ public class MovieManagerClient {
 		return moviesSearched;
 	}
 
-	public boolean addToWatched( String movieID ) throws SearchMovieException {
-
-		WebResource webResource = client.resource(addr()).path("watched/");
-		ClientResponse response = webResource
-				.queryParam("token", sessionToken)
-				.queryParam("movie_id", movieID)
-				.post(ClientResponse.class);
-		response.close();
-		return (response.getStatus() == 200);
-	}
-
 	public ArrayList<Movie> getWatched() throws SearchMovieException {
 		
 		ArrayList<Movie> movies = new ArrayList<>();
@@ -128,6 +117,27 @@ public class MovieManagerClient {
 		return movies;
 	}
 	
+	public boolean addToWatched( String movieID ) throws SearchMovieException {
+
+		WebResource webResource = client.resource(addr()).path("watched/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.post(ClientResponse.class);
+		response.close();
+		return (response.getStatus() == 200);
+	}
+	
+	public boolean deleteFromWatched( String movieID ) throws SearchMovieException {
+
+		WebResource webResource = client.resource(addr()).path("watched/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.delete(ClientResponse.class);
+		response.close();
+		return (response.getStatus() == 200);
+	}
 	public int createAlbum( String title ){
 		WebResource webResource = client.resource(addr()).path("album/");
 		ClientResponse response = webResource
@@ -217,6 +227,9 @@ public class MovieManagerClient {
 //			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
 			System.out.println(mmc.getWatched());
 			System.out.println(mmc.addToWatched( mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
+			System.out.println(mmc.addToWatched( mmc.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
+			System.out.println(mmc.getWatched());
+			System.out.println(mmc.deleteFromWatched( mmc.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
 			System.out.println(mmc.getWatched());
 //			System.out.println(mmc.addMovieToAlbum(mmc.getAlbums().get(0).getAlbumID(), mmc.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
 //			System.out.println(mmc.getAlbums());

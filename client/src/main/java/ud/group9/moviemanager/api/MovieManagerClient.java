@@ -109,7 +109,7 @@ public class MovieManagerClient {
 		response.close();
 		return (response.getStatus() == 200);
 	}
-
+	
 	public int createAlbum( String title ){
 		WebResource webResource = client.resource(addr()).path("album/");
 		ClientResponse response = webResource
@@ -168,7 +168,7 @@ public class MovieManagerClient {
 	public void setBundle(ResourceBundle bundle) {
 		this.bundle = bundle;
 	}
-
+	
 	public static void main(String[] args) { 
 		MovieManagerClient mmc = new MovieManagerClient("127.0.0.1", 8000);
 		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));

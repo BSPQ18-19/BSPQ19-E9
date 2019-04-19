@@ -1,6 +1,7 @@
 package ud.group9.moviemanager.api;
 
-import ud.group9.moviemanager.api.exceptions.*;
+import ud.group9.moviemanager.api.exceptions.SearchMovieException;
+import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 import ud.group9.moviemanager.gui.LoginGUI;

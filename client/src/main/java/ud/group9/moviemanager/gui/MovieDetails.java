@@ -14,8 +14,12 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MovieDetails extends JFrame {
 
@@ -42,7 +46,7 @@ public class MovieDetails extends JFrame {
 	 */
 	public MovieDetails() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -52,55 +56,67 @@ public class MovieDetails extends JFrame {
 		contentPane.add(lblMovie);
 		
 		JPanel panel = new JPanel();
+		panel.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		contentPane.add(panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{14, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel.setLayout(gbl_panel);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		panel.add(panel_1);
+		GridBagLayout panelData = new GridBagLayout();
+		panelData.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		panelData.rowHeights = new int[]{0, 0, 0, 0, 0};
+		panelData.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelData.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel_1.setLayout(panelData);
 		
 		JLabel lblTitle = new JLabel("Title:");
-		lblTitle.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
 		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
-		gbc_lblTitle.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblTitle.gridx = 0;
 		gbc_lblTitle.gridy = 1;
-		panel.add(lblTitle, gbc_lblTitle);
+		panel_1.add(lblTitle, gbc_lblTitle);
+		lblTitle.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JLabel lblTitleField = new JLabel("");
+		JLabel lblTitleField = new JLabel("title");
 		GridBagConstraints gbc_lblTitleField = new GridBagConstraints();
 		gbc_lblTitleField.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTitleField.gridx = 1;
 		gbc_lblTitleField.gridy = 1;
-		panel.add(lblTitleField, gbc_lblTitleField);
-		
-		ImageIcon image = new ImageIcon((ImageIO.read(input)).getScaledInstance(300, 300, Image.SCALE_DEFAULT););
-		JLabel lblPoster = new JLabel("");
-		GridBagConstraints gbc_lblPoster = new GridBagConstraints();
-		gbc_lblPoster.insets = new Insets(0, 0, 5, 0);
-		gbc_lblPoster.gridx = 10;
-		gbc_lblPoster.gridy = 1;
-		panel.add(lblPoster, gbc_lblPoster);
+		panel_1.add(lblTitleField, gbc_lblTitleField);
 		
 		JLabel lblYear = new JLabel("Year:");
-		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
-		lblYear.setAlignmentY(1.0f);
 		GridBagConstraints gbc_lblYear = new GridBagConstraints();
-		gbc_lblYear.insets = new Insets(0, 0, 0, 5);
+		gbc_lblYear.insets = new Insets(0, 0, 5, 5);
 		gbc_lblYear.gridx = 0;
 		gbc_lblYear.gridy = 2;
-		panel.add(lblYear, gbc_lblYear);
+		panel_1.add(lblYear, gbc_lblYear);
+		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
+		lblYear.setAlignmentY(1.0f);
 		
-		JLabel lblYearField = new JLabel("");
+		JLabel lblYearField = new JLabel("year");
 		GridBagConstraints gbc_lblYearField = new GridBagConstraints();
-		gbc_lblYearField.insets = new Insets(0, 0, 0, 5);
-		gbc_lblYearField.gridx = 2;
+		gbc_lblYearField.insets = new Insets(0, 0, 5, 5);
+		gbc_lblYearField.gridx = 1;
 		gbc_lblYearField.gridy = 2;
-		panel.add(lblYearField, gbc_lblYearField);
+		panel_1.add(lblYearField, gbc_lblYearField);
+		
+		try {
+			ImageIcon image = new ImageIcon((ImageIO.read(new URL("https://m.media-amazon.com/images/M/MV5BMTkwNTczNTMyOF5BMl5BanBnXkFtZTcwNzUxOTUyMw@@._V1_SX300.jpg"))).getScaledInstance(300, 300, Image.SCALE_DEFAULT));
+			
+			JPanel panelPoster = new JPanel();
+			panel.add(panelPoster);
+			JLabel lblPoster = new JLabel("", image, SwingConstants.CENTER);
+			panelPoster.add(lblPoster);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

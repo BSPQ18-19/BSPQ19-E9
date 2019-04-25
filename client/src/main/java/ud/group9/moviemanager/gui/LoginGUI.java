@@ -3,8 +3,6 @@ package ud.group9.moviemanager.gui;
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 
-import java.awt.EventQueue;
-
 import javax.swing.*;
 import java.awt.Color;
 
@@ -16,7 +14,6 @@ public class LoginGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	private MovieManagerClient mmc;
 	private JTextField username;
 	private JPasswordField password;
 	private JButton btnLogin;
@@ -39,8 +36,7 @@ public class LoginGUI extends JFrame{
 	/**
 	 * Create the application.
 	 */
-	public LoginGUI(MovieManagerClient mmc) {
-		this.mmc = mmc;
+	public LoginGUI() {
 		initialize();
 		this.setVisible(true);
 	}
@@ -55,13 +51,13 @@ public class LoginGUI extends JFrame{
 		this.getContentPane().setBackground(Color.ORANGE);
 		this.getContentPane().setLayout(null);
 		
-		JLabel lblPassword = new JLabel(mmc.getBundle().getString("password") + ":");
+		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password") + ":");
 		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblPassword.setLabelFor(this);
 		lblPassword.setBounds(62, 90, 61, 14);
 		this.getContentPane().add(lblPassword);
 		
-		JLabel lblNewLabel = new JLabel(mmc.getBundle().getString("username") + ":");
+		JLabel lblNewLabel = new JLabel(MovieManagerClient.getBundle().getString("username") + ":");
 		lblNewLabel.setBackground(new Color(240, 240, 240));
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblNewLabel.setLabelFor(this);
@@ -74,7 +70,7 @@ public class LoginGUI extends JFrame{
 		this.getContentPane().add(username);
 		username.setColumns(10);
 
-		btnLogin = new JButton(mmc.getBundle().getString("login"));
+		btnLogin = new JButton(MovieManagerClient.getBundle().getString("login"));
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -82,12 +78,12 @@ public class LoginGUI extends JFrame{
 				String pswrd = String.valueOf(password.getPassword());
 
 				try {
-					if (mmc.LogIn(usname, pswrd)){
-						JOptionPane.showMessageDialog(btnLogin, mmc.getBundle().getString("loginsuccessful"));
+					if (MovieManagerClient.LogIn(usname, pswrd)){
+						JOptionPane.showMessageDialog(btnLogin, MovieManagerClient.getBundle().getString("loginsuccessful"));
 						setVisible(false);
 						new MovieManagerGUI();
 					}else{
-						JOptionPane.showMessageDialog(btnLogin, mmc.getBundle().getString("loginunsuccessful"));
+						JOptionPane.showMessageDialog(btnLogin, MovieManagerClient.getBundle().getString("loginunsuccessful"));
 					}
 				} catch (SignupException e1) {
 					JOptionPane.showMessageDialog(btnLogin, e1);
@@ -104,7 +100,7 @@ public class LoginGUI extends JFrame{
 		btnLogin.setBounds(97, 127, 89, 23);
 		this.getContentPane().add(btnLogin);
 		
-		JButton btnSingup = new JButton(mmc.getBundle().getString("signup"));
+		JButton btnSingup = new JButton(MovieManagerClient.getBundle().getString("signup"));
 		btnSingup.setBackground(new Color(255, 140, 0));
 		btnSingup.setBounds(97, 200, 89, 23);
 		this.getContentPane().add(btnSingup);
@@ -113,12 +109,12 @@ public class LoginGUI extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				
 				setVisible(false);
-				new SignupGUI(mmc);
+				new SignupGUI();
 			}
 		});
 		
 		
-		JLabel lblAreYouNew = new JLabel(mmc.getBundle().getString("newuserquestion"));
+		JLabel lblAreYouNew = new JLabel(MovieManagerClient.getBundle().getString("newuserquestion"));
 		//TODO Change the location of the text depending on the length of the message in different languages
 		lblAreYouNew.setBounds(60, 175, 250, 14);
 		this.getContentPane().add(lblAreYouNew);

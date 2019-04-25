@@ -1,12 +1,14 @@
 package ud.group9.moviemanager.gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
+
+import ud.group9.moviemanager.api.MovieManagerClient;
+import ud.group9.moviemanager.data.Movie;
+
 import javax.swing.JLabel;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -21,8 +23,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class MovieDetails extends JFrame {
+public class MovieGUI extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 	/**
@@ -32,7 +35,7 @@ public class MovieDetails extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MovieDetails frame = new MovieDetails();
+					MovieGUI frame = new MovieGUI("tt0446029");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -44,7 +47,8 @@ public class MovieDetails extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MovieDetails() {
+	public MovieGUI(String movieID) {
+		Movie movie = MovieManagerClient.getMovie(movieID);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
@@ -52,7 +56,7 @@ public class MovieDetails extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		
-		JLabel lblMovie = new JLabel("Movie: ");
+		JLabel lblMovie = new JLabel("Movie: " + movie.getTitle());
 		contentPane.add(lblMovie);
 		
 		JPanel panel = new JPanel();
@@ -65,7 +69,7 @@ public class MovieDetails extends JFrame {
 		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		panel.add(panel_1);
 		GridBagLayout panelData = new GridBagLayout();
-		panelData.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		panelData.columnWidths = new int[]{57, 0, 0, 0, 0, 0, 0, 0, 0};
 		panelData.rowHeights = new int[]{0, 0, 0, 0, 0};
 		panelData.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panelData.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
@@ -80,7 +84,7 @@ public class MovieDetails extends JFrame {
 		lblTitle.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JLabel lblTitleField = new JLabel("title");
+		JLabel lblTitleField = new JLabel(movie.getTitle());
 		GridBagConstraints gbc_lblTitleField = new GridBagConstraints();
 		gbc_lblTitleField.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTitleField.gridx = 1;
@@ -96,15 +100,17 @@ public class MovieDetails extends JFrame {
 		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
 		lblYear.setAlignmentY(1.0f);
 		
-		JLabel lblYearField = new JLabel("year");
+		JLabel lblYearField = new JLabel(String.valueOf(movie.getYear()));
+		lblYearField.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblYearField = new GridBagConstraints();
+		gbc_lblYearField.anchor = GridBagConstraints.WEST;
 		gbc_lblYearField.insets = new Insets(0, 0, 5, 5);
 		gbc_lblYearField.gridx = 1;
 		gbc_lblYearField.gridy = 2;
 		panel_1.add(lblYearField, gbc_lblYearField);
 		
 		try {
-			ImageIcon image = new ImageIcon((ImageIO.read(new URL("https://m.media-amazon.com/images/M/MV5BMTkwNTczNTMyOF5BMl5BanBnXkFtZTcwNzUxOTUyMw@@._V1_SX300.jpg"))).getScaledInstance(300, 300, Image.SCALE_DEFAULT));
+			ImageIcon image = new ImageIcon((ImageIO.read(new URL(movie.getPoster()))).getScaledInstance(300, 300, Image.SCALE_DEFAULT));
 			
 			JPanel panelPoster = new JPanel();
 			panel.add(panelPoster);

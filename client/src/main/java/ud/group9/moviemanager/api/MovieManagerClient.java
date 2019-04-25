@@ -103,6 +103,16 @@ public enum MovieManagerClient {
 		return moviesSearched;
 	}
 
+	public static Movie getMovie( String movieID ){
+		Movie movie = null;
+		WebResource webResource = client.resource(addr()).path("movie/" + movieID + "/");
+		ClientResponse response = webResource
+				.get(ClientResponse.class);
+		movie = Movie.fromJSON( new JSONObject(response.getEntity(String.class)));
+		response.close();
+		return movie;
+	}
+	
 	public static ArrayList<Movie> getWatched() throws SearchMovieException {
 		
 		ArrayList<Movie> movies = new ArrayList<>();
@@ -229,6 +239,7 @@ public enum MovieManagerClient {
 //			System.out.println(mmc.getAlbums());
 //			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
 			System.out.println(MovieManagerClient.getWatched());
+			System.out.println(MovieManagerClient.getMovie(MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 //			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 //			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
 //			System.out.println(MovieManagerClient.getWatched());

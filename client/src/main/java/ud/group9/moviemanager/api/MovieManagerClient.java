@@ -5,6 +5,7 @@ import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 import ud.group9.moviemanager.gui.LoginGUI;
+import ud.group9.moviemanager.gui.SignupGUI;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -37,7 +38,7 @@ public enum MovieManagerClient {
 		MovieManagerClient.port = port;
 	}
 	public static void start(){
-		new LoginGUI();
+		new SignupGUI();
 	}
 	private static String addr() {
 		return protocol + "://" + host + ":" + port + "/" + basepath;

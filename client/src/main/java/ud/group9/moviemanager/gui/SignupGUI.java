@@ -7,6 +7,10 @@ import javax.swing.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.BorderLayout;
 
 public class SignupGUI extends JFrame{
 
@@ -47,41 +51,11 @@ public class SignupGUI extends JFrame{
 		this.setAlwaysOnTop(true);
 		this.setResizable(false);
 		this.getContentPane().setBackground(Color.ORANGE);
-		this.getContentPane().setLayout(null);
-		
-		JLabel lblUsername = new JLabel(MovieManagerClient.getBundle().getString("username") + ":");
-		lblUsername.setBounds(10, 60, 79, 14);
-		this.getContentPane().add(lblUsername);
-		
-		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password") + ":");
-		lblPassword.setBounds(10, 85, 79, 14);
-		this.getContentPane().add(lblPassword);
-		
-		JLabel lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword") + ":");
-		lblConfirm.setBounds(10, 110, 122, 14);
-		this.getContentPane().add(lblConfirm);
+		getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblAreYouNew = new JLabel(MovieManagerClient.getBundle().getString("welcome"));
-		lblAreYouNew.setBounds(30, 22, 250, 14);
-		this.getContentPane().add(lblAreYouNew);
-		
-		username = new JTextField();
-		username.setBackground(new Color(255, 222, 173));
-		username.setBounds(139, 57, 95, 20);
-		this.getContentPane().add(username);
-		username.setColumns(10);
-
-		password = new JPasswordField();
-		password.setBackground(new Color(255, 222, 173));
-		password.setBounds(139, 82, 95, 20);
-		this.getContentPane().add(password);
-		password.setColumns(10);
-
-		passwordConf = new JPasswordField();
-		passwordConf.setBackground(new Color(255, 222, 173));
-		passwordConf.setBounds(139, 107, 95, 20);
-		this.getContentPane().add(passwordConf);
-		passwordConf.setColumns(10);
+		lblAreYouNew.setHorizontalAlignment(SwingConstants.CENTER);
+		this.getContentPane().add(lblAreYouNew, BorderLayout.NORTH);
 		
 		btnSignUp = new JButton(MovieManagerClient.getBundle().getString("signup"));
 		btnSignUp.addActionListener(new ActionListener() {
@@ -113,8 +87,65 @@ public class SignupGUI extends JFrame{
 		});
 		btnSignUp.setBackground(new Color(255, 140, 0));
 		btnSignUp.setForeground(Color.BLACK);
-		btnSignUp.setBounds(75, 161, 89, 23);
-		this.getContentPane().add(btnSignUp);
+		this.getContentPane().add(btnSignUp, BorderLayout.SOUTH);
+		
+		JPanel panelUserData = new JPanel();
+		panelUserData.setBackground(Color.ORANGE);
+		getContentPane().add(panelUserData);
+		GridBagLayout gbl_panelUserData = new GridBagLayout();
+		gbl_panelUserData.columnWidths = new int[]{0, 0, 0, 0};
+		gbl_panelUserData.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gbl_panelUserData.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panelUserData.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelUserData.setLayout(gbl_panelUserData);
+								
+								JLabel lblUsername = new JLabel(MovieManagerClient.getBundle().getString("username") + ":");
+								lblUsername.setHorizontalAlignment(SwingConstants.LEFT);
+								GridBagConstraints gbc_lblUsername = new GridBagConstraints();
+								gbc_lblUsername.insets = new Insets(0, 0, 5, 5);
+								gbc_lblUsername.gridx = 1;
+								gbc_lblUsername.gridy = 1;
+								panelUserData.add(lblUsername, gbc_lblUsername);
+								
+								username = new JTextField();
+								GridBagConstraints gbc_username = new GridBagConstraints();
+								gbc_username.insets = new Insets(0, 0, 5, 0);
+								gbc_username.gridx = 2;
+								gbc_username.gridy = 1;
+								panelUserData.add(username, gbc_username);
+								username.setBackground(new Color(255, 222, 173));
+								username.setColumns(10);
+								
+								JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password") + ":");
+								GridBagConstraints gbc_lblPassword = new GridBagConstraints();
+								gbc_lblPassword.insets = new Insets(0, 0, 5, 5);
+								gbc_lblPassword.gridx = 1;
+								gbc_lblPassword.gridy = 2;
+								panelUserData.add(lblPassword, gbc_lblPassword);
+								
+										password = new JPasswordField();
+										GridBagConstraints gbc_password = new GridBagConstraints();
+										gbc_password.insets = new Insets(0, 0, 5, 0);
+										gbc_password.gridx = 2;
+										gbc_password.gridy = 2;
+										panelUserData.add(password, gbc_password);
+										password.setBackground(new Color(255, 222, 173));
+										password.setColumns(10);
+								
+								JLabel lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword") + ":");
+								GridBagConstraints gbc_lblConfirm = new GridBagConstraints();
+								gbc_lblConfirm.insets = new Insets(0, 0, 0, 5);
+								gbc_lblConfirm.gridx = 1;
+								gbc_lblConfirm.gridy = 3;
+								panelUserData.add(lblConfirm, gbc_lblConfirm);
+								
+										passwordConf = new JPasswordField();
+										GridBagConstraints gbc_passwordConf = new GridBagConstraints();
+										gbc_passwordConf.gridx = 2;
+										gbc_passwordConf.gridy = 3;
+										panelUserData.add(passwordConf, gbc_passwordConf);
+										passwordConf.setBackground(new Color(255, 222, 173));
+										passwordConf.setColumns(10);
 		this.setTitle("SignupGUI");
 		this.setBounds(100, 100, 300, 300);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

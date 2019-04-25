@@ -3,8 +3,6 @@ package ud.group9.moviemanager.gui;
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 
-import java.awt.EventQueue;
-
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -14,7 +12,6 @@ public class SignupGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	private MovieManagerClient mmc;
 	private JButton btnSignUp;
 	private JTextField username;
 	private JPasswordField password;
@@ -38,8 +35,7 @@ public class SignupGUI extends JFrame{
 	/**
 	 * Create the application.
 	 */
-	public SignupGUI(MovieManagerClient mmc) {
-		this.mmc = mmc;
+	public SignupGUI() {
 		initialize();
 		this.setVisible(true);
 	}
@@ -53,19 +49,19 @@ public class SignupGUI extends JFrame{
 		this.getContentPane().setBackground(Color.ORANGE);
 		this.getContentPane().setLayout(null);
 		
-		JLabel lblUsername = new JLabel(mmc.getBundle().getString("username") + ":");
+		JLabel lblUsername = new JLabel(MovieManagerClient.getBundle().getString("username") + ":");
 		lblUsername.setBounds(10, 60, 79, 14);
 		this.getContentPane().add(lblUsername);
 		
-		JLabel lblPassword = new JLabel(mmc.getBundle().getString("password") + ":");
+		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password") + ":");
 		lblPassword.setBounds(10, 85, 79, 14);
 		this.getContentPane().add(lblPassword);
 		
-		JLabel lblConfirm = new JLabel(mmc.getBundle().getString("confirmpassword") + ":");
+		JLabel lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword") + ":");
 		lblConfirm.setBounds(10, 110, 122, 14);
 		this.getContentPane().add(lblConfirm);
 		
-		JLabel lblAreYouNew = new JLabel(mmc.getBundle().getString("welcome"));
+		JLabel lblAreYouNew = new JLabel(MovieManagerClient.getBundle().getString("welcome"));
 		lblAreYouNew.setBounds(30, 22, 250, 14);
 		this.getContentPane().add(lblAreYouNew);
 		
@@ -87,7 +83,7 @@ public class SignupGUI extends JFrame{
 		this.getContentPane().add(passwordConf);
 		passwordConf.setColumns(10);
 		
-		btnSignUp = new JButton(mmc.getBundle().getString("signup"));
+		btnSignUp = new JButton(MovieManagerClient.getBundle().getString("signup"));
 		btnSignUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -96,18 +92,18 @@ public class SignupGUI extends JFrame{
 				String pswrd = "";
 
 				if (password.getPassword().length == 0) {
-					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("emptypassword"));
+					JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("emptypassword"));
 					return;
 				}
 				if(!(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConf.getPassword())))) {
-					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("differentpasswords"));
+					JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("differentpasswords"));
 					return;
 				}
 				pswrd = String.valueOf(password.getPassword());
 				try {
-					mmc.SignUp(usname, pswrd);
-					JOptionPane.showMessageDialog(btnSignUp, mmc.getBundle().getString("signupsuccessful"));
-					mmc.LogIn(usname, pswrd);
+					MovieManagerClient.SignUp(usname, pswrd);
+					JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("signupsuccessful"));
+					MovieManagerClient.LogIn(usname, pswrd);
 					setVisible(false);
 					new MovieManagerGUI();
 				} catch (SignupException e1) {

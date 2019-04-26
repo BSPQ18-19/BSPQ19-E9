@@ -4,7 +4,6 @@ import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
-import ud.group9.moviemanager.gui.LoginGUI;
 import ud.group9.moviemanager.gui.SignupGUI;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -27,7 +26,7 @@ public enum MovieManagerClient {
 	private static int port = 8000;
 	private static String basepath = "moviemanager";
 
-	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_en");
+	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_es");
 	private static String sessionToken = null;
 	
 	private MovieManagerClient(){
@@ -234,13 +233,13 @@ public enum MovieManagerClient {
 		try {
 			MovieManagerClient.start();
 			//			System.out.println(mmc.SignUp("user", "test_password"));
-			MovieManagerClient.LogIn("user", "test_password");
+//			MovieManagerClient.LogIn("user", "test_password");
 			//			mmc.createAlbum("albumToDelete");
 			//			mmc.deleteAlbum(mmc.getAlbums().get(0).getAlbumID());
 //			System.out.println(mmc.getAlbums());
 //			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
-			System.out.println(MovieManagerClient.getWatched());
-			System.out.println(MovieManagerClient.getMovie(MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
+//			System.out.println(MovieManagerClient.getWatched());
+//			System.out.println(MovieManagerClient.getMovie(MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 //			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 //			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
 //			System.out.println(MovieManagerClient.getWatched());

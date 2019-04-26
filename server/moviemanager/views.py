@@ -247,8 +247,16 @@ def user_albums(request):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
     user = SESSION_HANDLER.get(token).user
     albums = models.Album.objects.filter(owner=user)
+
+    # if detailed return entire json, if not only album_id and title
+    detailed = query.get("detailed") == "true"
     return JsonResponse({
-        "albums": [album.json() for album in albums]
+        "albums": [
+            album.json() if detailed else {
+                "album_id": album.json()["album_id"],
+                "title": album.json()["title"]
+            } for album in albums
+        ]
     })
 
 

@@ -55,13 +55,13 @@ public enum MovieManagerClient {
 				.post(ClientResponse.class);
 		switch(response.getStatus()){
 		case 200:
-			mensaje = "200 - New user stored properly";
+			mensaje = MovieManagerClient.getBundle().getString("newuserstored");
 			break;
 		case 401:
-			mensaje = "401 - Username already taken";
+			mensaje = MovieManagerClient.getBundle().getString("usernametaken");
 			break;
 		default:
-			mensaje = "400 - Error, please contact the administrator";
+			mensaje = MovieManagerClient.getBundle().getString("generalerror");
 			break;
 		}
 		response.close();

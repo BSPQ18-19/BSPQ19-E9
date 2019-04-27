@@ -16,8 +16,13 @@ public class Album {
         this.owner   = owner;
         this.movies  = movies;
     }
+    
+    public Album(String albumID, String title) {
+        this.albumID = albumID;
+        this.title   = title;
+    }
 
-    public static Album fromJSON(JSONObject album) {
+    public static Album fromJSONComplete(JSONObject album) {
         String albumID = album.getString("album_id");
         String title = album.getString("title");
         String owner = album.getString("owner");
@@ -28,6 +33,12 @@ public class Album {
         }
 
         return new Album(albumID, title, owner, movies);
+    }
+    
+    public static Album fromJSONSimple(JSONObject album) {
+        String albumID = album.getString("album_id");
+        String title = album.getString("title");
+        return new Album(albumID, title);
     }
 
     public String getAlbumID() {

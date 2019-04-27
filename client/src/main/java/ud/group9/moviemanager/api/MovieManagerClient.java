@@ -171,7 +171,7 @@ public enum MovieManagerClient {
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		JSONArray joa = jo.getJSONArray("albums");
 		for (int i = 0; i < joa.length(); i++){
-			albums.add(Album.fromJSON(joa.getJSONObject(i)));
+			albums.add(Album.fromJSONSimple(joa.getJSONObject(i)));
 		}
 		response.close();
 		return albums;
@@ -184,7 +184,7 @@ public enum MovieManagerClient {
 				.get(ClientResponse.class);
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
-		return Album.fromJSON(jo);
+		return Album.fromJSONComplete(jo);
 	}
 
 	public static int deleteAlbum(String albumID){

@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 
 
 @csrf_exempt
-@require_http_methods(["PUT"])
+@require_http_methods(["GET", "PUT"])
 def create_album(request):
     """
     create_album creates an album with the specified title associated to the
@@ -25,19 +25,30 @@ def create_album(request):
     :return: JSON containing album_id if all went well, error otherwise
     """
     query = QueryDict(request.META.get("QUERY_STRING"))
-    params = ["token"]
+    params = ["token", "title"]
     error_response = check_params(query, params)
     if error_response:
         return error_response
 
     token = query.get("token")
+    title = query.get("title")
     if not validate(token):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
-
-    album = models.Album()
-    title = query.get("title")
     session = SESSION_HANDLER.get(token)
 
+    # GET
+
+    if request.method == "GET":
+        try:
+            album = models.Album.objects.get(title=title, owner=session.user)
+            return handle_album(request, album.album_id)
+        except models.Album.DoesNotExist:
+            return HttpResponse(404, "No album '{}' for user '{}'"
+                                .format(title, session.user.username))
+
+    # PUT
+
+    album = models.Album()
     # if album with the same name already exists: error
     try:
         models.Album.objects.get(owner=session.user, title=title)

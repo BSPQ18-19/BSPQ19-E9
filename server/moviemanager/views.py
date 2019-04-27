@@ -17,6 +17,13 @@ logger = getLogger(__name__)
 @csrf_exempt
 @require_http_methods(["PUT"])
 def create_album(request):
+    """
+    create_album creates an album with the specified title associated to the
+    user
+    :param request: HTTP REST request with the title of the album and the user
+    token
+    :return: JSON containing album_id if all went well, error otherwise
+    """
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token"]
     error_response = check_params(query, params)
@@ -52,6 +59,16 @@ def create_album(request):
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 def handle_album(request, album_id):
+    """
+    handle_album is used to:
+        delete an album
+        delete a movie from an album
+        retrieve an album
+        add a movie to an album
+    :param request: DELETE, GET or POST request
+    :param album_id: ID of the album to be deleted
+    :return: HTTP response
+    """
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token", "movie_id"] if request.method == "POST" else ["token"]
     error_response = check_params(query, params)
@@ -234,6 +251,12 @@ def signup(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def user_albums(request):
+    """
+    user_albums retrieves a list of all the albums of a user
+    :param request: GET request with the user token as a REST param and
+    detailed=true as an optional parameter
+    :return: JSOn with the list of the user
+    """
     # check that are required parameters are present
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token"] if request.method == "GET" else ["token"]

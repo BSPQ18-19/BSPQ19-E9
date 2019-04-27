@@ -39,14 +39,30 @@ def _params_present(query, params):
 
 
 def hash_password(password):
+    """
+    hash_password hashes and salts a password
+    :param password: raw password, usually sha256sum of the original password
+    :return: hashed+salted password
+    """
     return hashpw(password.encode(_encoding), gensalt()).decode(_encoding)
 
 
 def compare_password(unhashed, hashed):
+    """
+    compare_password compares a password to the hashed+salted stored one
+    :param unhashed: raw password
+    :param hashed: hashed+salted password to compare againts
+    :return: True if they are equivalent, False otherwise
+    """
     return checkpw(unhashed.encode(_encoding), hashed.encode(_encoding))
 
 
 def search_movie_by_id(movie_id):
+    """
+    search for a movie first in the local DB, then in OMDB
+    :param movie_id: imdbID of the movie to be searched
+    :return: models.Movie object of the movie
+    """
     # check if movie is stored in local DB
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)

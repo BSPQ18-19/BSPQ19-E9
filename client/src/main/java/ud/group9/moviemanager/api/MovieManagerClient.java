@@ -186,6 +186,17 @@ public enum MovieManagerClient {
 		response.close();
 		return Album.fromJSONComplete(jo);
 	}
+	
+	public static Album getAlbumByTitle(String albumTitle){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("title", albumTitle)
+				.get(ClientResponse.class);
+		JSONObject jo = new JSONObject(response.getEntity(String.class));
+		response.close();
+		return Album.fromJSONComplete(jo);
+	}
 
 	public static int deleteAlbum(String albumID){
 		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");

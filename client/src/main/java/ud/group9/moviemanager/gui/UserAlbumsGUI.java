@@ -2,6 +2,8 @@ package ud.group9.moviemanager.gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,8 +21,11 @@ import ud.group9.moviemanager.data.Movie;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-
+import javax.swing.JButton;
 import javax.swing.JList;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -73,9 +78,8 @@ public class UserAlbumsGUI extends JFrame {
 		panel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
-		for (Album album: MovieManagerClient.getAlbums()){
-			l1.addElement(album.getTitle());  
-		}
+		showAlbums();
+		
 		JList<String> list = new JList<>(l1); 
 		list.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("unchecked")
@@ -84,10 +88,7 @@ public class UserAlbumsGUI extends JFrame {
 				if (e.getClickCount() == 2) {
 					if (!movies){
 						System.out.println((((JList<String>)e.getComponent()).getSelectedValue()));
-						//        		    albumMovies((((JList<String>)e.getComponent()).getSelectedValue()));
-						//TODO Change to Album title when that search is implemented on the server
-						albumMovies(MovieManagerClient.getAlbums().get(0).getAlbumID());
-						movies = true;
+						showAlbumMovies((((JList<String>)e.getComponent()).getSelectedValue()));
 					}else{
 						System.out.println((((JList<String>)e.getComponent()).getSelectedValue()));
 						MovieGUI movieGUI = new MovieGUI("tt0446029");
@@ -114,14 +115,44 @@ public class UserAlbumsGUI extends JFrame {
 				);
 
 		albumsScrollPanel.setViewportView(list);
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(Color.ORANGE);
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.gridwidth = 2;
+		gbc_panel_2.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 0;
+		gbc_panel_2.gridy = 3;
+		contentPane.add(panel_2, BorderLayout.SOUTH);
+		
+		JButton btnLogIn = new JButton(MovieManagerClient.getBundle().getString("back"));
+		btnLogIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (movies){
+					showAlbums();
+				}
+			}
+		});
+		panel_2.add(btnLogIn);
+		btnLogIn.setForeground(Color.BLACK);
+		btnLogIn.setBackground(new Color(255, 140, 0));
 	}
 
-	private void albumMovies(String albumTitle){
+	private void showAlbumMovies(String albumTitle){
 		l1.clear();
 		movieIDs.clear();
-		for (Movie movie: MovieManagerClient.getAlbum(albumTitle).getMovies()){
+		for (Movie movie: MovieManagerClient.getAlbumByTitle(albumTitle).getMovies()){
 			l1.addElement("Movie: " + movie.getTitle());  
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
+		movies = true;
+	}
+	
+	private void showAlbums(){
+		l1.clear();
+		for (Album album: MovieManagerClient.getAlbums()){
+			l1.addElement(album.getTitle());  
+		}
+		movies = false;
 	}
 }

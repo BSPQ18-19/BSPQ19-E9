@@ -155,7 +155,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO Delete album once the server has the function to delete it through name
-				showAlbums();
+				showAlbums(); 
 			}
 		});
 		panel_2.add(btnBorrarAlbum);

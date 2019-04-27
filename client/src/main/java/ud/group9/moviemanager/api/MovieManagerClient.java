@@ -228,7 +228,11 @@ public enum MovieManagerClient {
 		MovieManagerClient.bundle = bundle;
 	}
 
-	public static void main(String[] args) { 
+	public static String getSessionToken() {
+		return sessionToken;
+	}
+
+	public static void main(String[] args) {
 		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		try {
 			MovieManagerClient.start();

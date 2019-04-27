@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Component;
@@ -23,6 +24,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +39,7 @@ public class UserAlbumsGUI extends JFrame {
 	private DefaultListModel<String> l1;
 	private boolean movies = false;
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -58,6 +61,8 @@ public class UserAlbumsGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public UserAlbumsGUI() {
+		UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
+		UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("createalbum"));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -87,11 +92,17 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (!movies){
-						System.out.println((((JList<String>)e.getComponent()).getSelectedValue()));
-						showAlbumMovies((((JList<String>)e.getComponent()).getSelectedValue()));
+						if (((JList<String>)e.getComponent()).getSelectedIndex() != ((JList<String>)e.getComponent()).getLastVisibleIndex())
+							showAlbumMovies((((JList<String>)e.getComponent()).getSelectedValue()));
+						else{
+							String m = JOptionPane.showInputDialog(MovieManagerClient.getBundle().getString("albumtitle"));
+							if (m != null){
+								MovieManagerClient.createAlbum(m);
+								showAlbums();
+							}
+						}
 					}else{
-						System.out.println((((JList<String>)e.getComponent()).getSelectedValue()));
-						MovieGUI movieGUI = new MovieGUI("tt0446029");
+						MovieGUI movieGUI = new MovieGUI(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue())));
 						movieGUI.setVisible(true);
 						setVisible(false);
 					}
@@ -136,13 +147,14 @@ public class UserAlbumsGUI extends JFrame {
 		panel_2.add(btnLogIn);
 		btnLogIn.setForeground(Color.BLACK);
 		btnLogIn.setBackground(new Color(255, 140, 0));
+		
 	}
 
 	private void showAlbumMovies(String albumTitle){
 		l1.clear();
 		movieIDs.clear();
 		for (Movie movie: MovieManagerClient.getAlbumByTitle(albumTitle).getMovies()){
-			l1.addElement("Movie: " + movie.getTitle());  
+			l1.addElement(movie.getTitle());  
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
 		movies = true;
@@ -153,6 +165,7 @@ public class UserAlbumsGUI extends JFrame {
 		for (Album album: MovieManagerClient.getAlbums()){
 			l1.addElement(album.getTitle());  
 		}
+		l1.addElement(MovieManagerClient.getBundle().getString("newalbum"));
 		movies = false;
 	}
 }

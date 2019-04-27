@@ -39,6 +39,7 @@ public class UserAlbumsGUI extends JFrame {
 	private DefaultListModel<String> l1;
 	private boolean movies = false;
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
+	private JButton btnBorrarAlbum;
 	
 	/**
 	 * Launch the application.
@@ -83,7 +84,6 @@ public class UserAlbumsGUI extends JFrame {
 		panel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
-		showAlbums();
 		
 		JList<String> list = new JList<>(l1); 
 		list.addMouseListener(new MouseAdapter() {
@@ -136,18 +136,31 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_panel_2.gridy = 3;
 		contentPane.add(panel_2, BorderLayout.SOUTH);
 		
-		JButton btnLogIn = new JButton(MovieManagerClient.getBundle().getString("back"));
-		btnLogIn.addActionListener(new ActionListener() {
+		JButton btnBack = new JButton(MovieManagerClient.getBundle().getString("back"));
+		btnBack.setForeground(Color.BLACK);
+		btnBack.setBackground(new Color(255, 140, 0));
+		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (movies){
 					showAlbums();
 				}
 			}
 		});
-		panel_2.add(btnLogIn);
-		btnLogIn.setForeground(Color.BLACK);
-		btnLogIn.setBackground(new Color(255, 140, 0));
+		panel_2.add(btnBack);
 		
+		btnBorrarAlbum = new JButton(MovieManagerClient.getBundle().getString("deletealbum"));
+		btnBorrarAlbum.setVisible(false);
+		btnBorrarAlbum.setForeground(Color.BLACK);
+		btnBorrarAlbum.setBackground(new Color(255, 140, 0));
+		btnBorrarAlbum.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO Delete album once the server has the function to delete it through name
+				showAlbums();
+			}
+		});
+		panel_2.add(btnBorrarAlbum);
+		
+		showAlbums();
 	}
 
 	private void showAlbumMovies(String albumTitle){
@@ -157,6 +170,7 @@ public class UserAlbumsGUI extends JFrame {
 			l1.addElement(movie.getTitle());  
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
+		btnBorrarAlbum.setVisible(true);
 		movies = true;
 	}
 	
@@ -166,6 +180,7 @@ public class UserAlbumsGUI extends JFrame {
 			l1.addElement(album.getTitle());  
 		}
 		l1.addElement(MovieManagerClient.getBundle().getString("newalbum"));
+		btnBorrarAlbum.setVisible(false);
 		movies = false;
 	}
 }

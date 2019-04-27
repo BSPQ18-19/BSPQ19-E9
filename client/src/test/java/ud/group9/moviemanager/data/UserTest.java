@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import ud.group9.moviemanager.data.MovieTest;
 
 public class UserTest {
+    @SuppressWarnings("Duplicates")
     @Test
     public void fromJSON() {
         // read json example from file

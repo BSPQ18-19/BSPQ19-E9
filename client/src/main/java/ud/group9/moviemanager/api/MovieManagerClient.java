@@ -207,6 +207,16 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 
+	public static int deleteAlbumByTitle(String albumTitle){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("title", albumTitle)
+				.delete(ClientResponse.class);
+		response.close();
+		return response.getStatus();
+	}
+	
 	public static int addMovieToAlbum( String albumID, String movieID ){
 		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
 		ClientResponse response = webResource

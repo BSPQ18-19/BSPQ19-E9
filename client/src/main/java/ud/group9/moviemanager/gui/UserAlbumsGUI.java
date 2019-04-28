@@ -40,6 +40,7 @@ public class UserAlbumsGUI extends JFrame {
 	private boolean movies = false;
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
 	private JButton btnBorrarAlbum;
+	private String shownAlbum;
 	
 	/**
 	 * Launch the application.
@@ -154,7 +155,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.setBackground(new Color(255, 140, 0));
 		btnBorrarAlbum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO Delete album once the server has the function to delete it through name
+				MovieManagerClient.deleteAlbumByTitle(shownAlbum);
 				showAlbums(); 
 			}
 		});
@@ -171,11 +172,13 @@ public class UserAlbumsGUI extends JFrame {
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
 		btnBorrarAlbum.setVisible(true);
+		shownAlbum = albumTitle;
 		movies = true;
 	}
 	
 	private void showAlbums(){
 		l1.clear();
+		shownAlbum = null;
 		for (Album album: MovieManagerClient.getAlbums()){
 			l1.addElement(album.getTitle());  
 		}

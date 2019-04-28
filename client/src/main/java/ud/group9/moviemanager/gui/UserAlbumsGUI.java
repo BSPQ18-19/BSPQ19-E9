@@ -26,6 +26,7 @@ import ud.group9.moviemanager.data.Movie;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
@@ -48,6 +49,7 @@ public class UserAlbumsGUI extends JFrame {
 	private boolean movies = false;
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
 	private JButton btnBorrarAlbum;
+	private JButton btnAddToAlbum;
 	private String shownAlbum;
 	private JButton btnSearchForMovie;
 	private JButton btnMyAlbums;
@@ -57,7 +59,7 @@ public class UserAlbumsGUI extends JFrame {
 	private JList<String> list;
 	private JLabel lblMyAlbums;
 	private boolean searching = false;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -105,7 +107,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelUpperLabel.setBackground(Color.ORANGE);
 		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
-		lblMyAlbums = new JLabel("My albums:");
+		lblMyAlbums = new JLabel(MovieManagerClient.getBundle().getString("moviemanager"));
 		panelUpperLabel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
@@ -140,8 +142,25 @@ public class UserAlbumsGUI extends JFrame {
 						setVisible(false);
 					}
 				}else{
-					if (movies)
+					if (movies){
 						showMovieInAlbumOptions(MovieManagerClient.isWatched(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1)))));
+						if (searching){
+							btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("addtoalbum"));
+							btnAddToAlbum.setVisible(true);
+						}else if (movies){
+							btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("removefromalbum"));
+							btnAddToAlbum.setVisible(true);
+						}
+					}else{
+						if (((JList<String>)e.getComponent()).getSelectedIndex() == ((JList<String>)e.getComponent()).getModel().getSize()-1
+								|| ((JList<String>)e.getComponent()).getSelectedIndex() == 0){
+							btnBorrarAlbum.setVisible(false);
+						}else{
+							btnBorrarAlbum.setVisible(true);
+							btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("deletealbum"));
+
+						}
+					}
 				}
 			}
 		});
@@ -182,7 +201,10 @@ public class UserAlbumsGUI extends JFrame {
 				}else{
 					searching = false;
 					hideMainOptions(false);
+					btnBorrarAlbum.setVisible(false);
+					lblMyAlbums.setText(MovieManagerClient.getBundle().getString("moviemanager"));
 				}
+				btnAddToAlbum.setVisible(false);
 			}
 		});
 		panel_2.add(btnBack);
@@ -218,6 +240,33 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 		panel_2.add(btnBorrarAlbum);
+
+		btnAddToAlbum = new JButton(MovieManagerClient.getBundle().getString("addtoalbum"));
+		btnAddToAlbum.setVisible(false);
+		btnAddToAlbum.setForeground(Color.BLACK);
+		btnAddToAlbum.setBackground(new Color(255, 140, 0));
+		btnAddToAlbum.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("addtoalbum"))){
+					ArrayList<JCheckBox> cbg = new ArrayList<>();
+					UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("store"));
+					for (Album a : MovieManagerClient.getAlbums()){
+						cbg.add(new JCheckBox(a.getTitle()));
+					}
+					String message = MovieManagerClient.getBundle().getString("selectalbum");
+					Object[] params = {message, cbg.toArray()};
+					if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("addtoalbum"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+						for (JCheckBox cb : cbg)
+							if (cb.isSelected()) MovieManagerClient.addMovieToAlbumByTitle(cb.getText(), movieIDs.get((list.getSelectedValue().substring(1))));
+					}
+				}else if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("removefromalbum"))){
+					MovieManagerClient.deleteMovieFromAlbum(MovieManagerClient.getAlbumByTitle(shownAlbum).getAlbumID(), movieIDs.get((list.getSelectedValue().substring(1))));
+					showMovies(MovieManagerClient.getAlbumByTitle(shownAlbum).getMovies(), false);
+					if (list.getModel().getSize() == 0) btnAddToAlbum.setVisible(false);
+				}
+			}
+		});
+		panel_2.add(btnAddToAlbum);
 
 		panelMainOptions = new JPanel();
 		panelMainOptions.setBackground(Color.ORANGE);
@@ -265,8 +314,6 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainOptions.add(Box.createRigidArea(new Dimension(0, 10)));
 		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
 		panelMainOptions.add(btnMyAlbums);
-
-		showAlbums();
 	}
 
 	private void showMovies(ArrayList<Movie> moviesToShow, boolean watched){
@@ -279,6 +326,9 @@ public class UserAlbumsGUI extends JFrame {
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
 		btnBorrarAlbum.setVisible(!watched);
+		if (!watched){
+			lblMyAlbums.setText(shownAlbum + ":");
+		}
 		movies = true;
 	}
 
@@ -301,6 +351,7 @@ public class UserAlbumsGUI extends JFrame {
 	}
 
 	private void showMovieInAlbumOptions(boolean isWatched){
+		btnBorrarAlbum.setVisible(true);
 		if (isWatched) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
 		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
 	}

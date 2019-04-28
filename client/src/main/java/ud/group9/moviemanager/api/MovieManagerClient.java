@@ -28,6 +28,7 @@ public enum MovieManagerClient {
 
 	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_es");
 	private static String sessionToken = null;
+	private static ArrayList<String> watchedIDs = null;
 	
 	private MovieManagerClient(){
 	}
@@ -80,6 +81,7 @@ public enum MovieManagerClient {
 		if (response.getStatus() == 200){
 			JSONObject jo = new JSONObject(response.getEntity(String.class));
 			sessionToken = jo.get("token").toString();
+			watchedIDs = MovieManagerClient.getWatchedIDs();
 		}
 		response.close();
 		return (response.getStatus() == 200);
@@ -130,6 +132,18 @@ public enum MovieManagerClient {
 		return movies;
 	}
 	
+	public static ArrayList<String> getWatchedIDs() {
+		ArrayList<String> watched = new ArrayList<>();
+		try {
+			for (Movie m: MovieManagerClient.getWatched()){
+				watched.add(m.getMovieID());
+			}
+		} catch (SearchMovieException e) {
+			e.printStackTrace();
+		}
+		return watched;
+	}
+	
 	public static boolean addToWatched( String movieID ) throws SearchMovieException {
 
 		WebResource webResource = client.resource(addr()).path("watched/");
@@ -138,6 +152,7 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
+		watchedIDs.add(movieID);
 		return (response.getStatus() == 200);
 	}
 	
@@ -149,6 +164,7 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.delete(ClientResponse.class);
 		response.close();
+		watchedIDs.remove(movieID);
 		return (response.getStatus() == 200);
 	}
 	public static int createAlbum( String title ){
@@ -171,7 +187,7 @@ public enum MovieManagerClient {
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		JSONArray joa = jo.getJSONArray("albums");
 		for (int i = 0; i < joa.length(); i++){
-			albums.add(Album.fromJSON(joa.getJSONObject(i)));
+			albums.add(Album.fromJSONSimple(joa.getJSONObject(i)));
 		}
 		response.close();
 		return albums;
@@ -184,7 +200,18 @@ public enum MovieManagerClient {
 				.get(ClientResponse.class);
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
-		return Album.fromJSON(jo);
+		return Album.fromJSONComplete(jo);
+	}
+	
+	public static Album getAlbumByTitle(String albumTitle){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("title", albumTitle)
+				.get(ClientResponse.class);
+		JSONObject jo = new JSONObject(response.getEntity(String.class));
+		response.close();
+		return Album.fromJSONComplete(jo);
 	}
 
 	public static int deleteAlbum(String albumID){
@@ -196,6 +223,16 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 
+	public static int deleteAlbumByTitle(String albumTitle){
+		WebResource webResource = client.resource(addr()).path("album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("title", albumTitle)
+				.delete(ClientResponse.class);
+		response.close();
+		return response.getStatus();
+	}
+	
 	public static int addMovieToAlbum( String albumID, String movieID ){
 		WebResource webResource = client.resource(addr()).path("album/" + albumID + "/");
 		ClientResponse response = webResource
@@ -214,6 +251,10 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		return response.getStatus();
+	}
+	
+	public static boolean isWatched(String movieID){
+		return watchedIDs.contains(movieID);
 	}
 
 	public static void closeClient(){

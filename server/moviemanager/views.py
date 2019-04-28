@@ -15,22 +15,42 @@ logger = getLogger(__name__)
 
 
 @csrf_exempt
-@require_http_methods(["PUT"])
+@require_http_methods(["DELETE", "GET", "POST", "PUT"])
 def create_album(request):
+    """
+    create_album creates an album with the specified title associated to the
+    user
+    :param request: HTTP REST request with the title of the album and the user
+    token
+    :return: JSON containing album_id if all went well, error otherwise
+    """
     query = QueryDict(request.META.get("QUERY_STRING"))
-    params = ["token"]
+    params = ["token", "title"]
+    if request.method == "POST":
+        params.append("movie_id")
     error_response = check_params(query, params)
     if error_response:
         return error_response
 
     token = query.get("token")
+    title = query.get("title")
     if not validate(token):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
-
-    album = models.Album()
-    title = query.get("title")
     session = SESSION_HANDLER.get(token)
 
+    # GET, POST or DELETE
+
+    if request.method in {"DELETE", "GET", "POST"}:
+        try:
+            album = models.Album.objects.get(title=title, owner=session.user)
+            return handle_album(request, album.album_id)
+        except models.Album.DoesNotExist:
+            return HttpResponse(404, "No album '{}' for user '{}'"
+                                .format(title, session.user.username))
+
+    # PUT
+
+    album = models.Album()
     # if album with the same name already exists: error
     try:
         models.Album.objects.get(owner=session.user, title=title)
@@ -45,13 +65,23 @@ def create_album(request):
     album.album_id = uuid4().__str__()
     album.title = title
     album.save()
-    print("create album {}".format(album.json()))
+    logger.info("create album {}".format(album.json()))
     return JsonResponse({"album_id": album.album_id})
 
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 def handle_album(request, album_id):
+    """
+    handle_album is used to:
+        delete an album
+        delete a movie from an album
+        retrieve an album
+        add a movie to an album
+    :param request: DELETE, GET or POST request
+    :param album_id: ID of the album to be deleted
+    :return: HTTP response
+    """
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token", "movie_id"] if request.method == "POST" else ["token"]
     error_response = check_params(query, params)
@@ -234,6 +264,12 @@ def signup(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def user_albums(request):
+    """
+    user_albums retrieves a list of all the albums of a user
+    :param request: GET request with the user token as a REST param and
+    detailed=true as an optional parameter
+    :return: JSOn with the list of the user
+    """
     # check that are required parameters are present
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token"] if request.method == "GET" else ["token"]

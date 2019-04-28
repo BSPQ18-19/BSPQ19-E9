@@ -35,9 +35,7 @@ import java.util.HashMap;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 
 public class UserAlbumsGUI extends JFrame {
 
@@ -50,6 +48,10 @@ public class UserAlbumsGUI extends JFrame {
 	private String shownAlbum;
 	private JButton btnSearchForMovie;
 	private JButton btnMyAlbums;
+	private JPanel panelForMainOptions;
+	private JScrollPane albumsScrollPanel;
+	private JPanel panelMainOptions;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -81,10 +83,17 @@ public class UserAlbumsGUI extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		JScrollPane albumsScrollPanel = new JScrollPane();
-		albumsScrollPanel.setVisible(false);
+		panelForMainOptions = new JPanel();
+		panelForMainOptions.setBackground(Color.ORANGE);
+		contentPane.add(panelForMainOptions, BorderLayout.CENTER);
+		panelForMainOptions.setLayout(new GridBagLayout());
+		
+		albumsScrollPanel = new JScrollPane();
+		albumsScrollPanel.setVisible(true);
+		albumsScrollPanel.setMinimumSize(new Dimension(434, 199));
 		albumsScrollPanel.setBackground(Color.ORANGE);
-		contentPane.add(albumsScrollPanel, BorderLayout.CENTER);
+		albumsScrollPanel.setVisible(false);
+		panelForMainOptions.add(albumsScrollPanel);
 
 		JPanel panelUpperLabel = new JPanel();
 		panelUpperLabel.setBackground(Color.ORANGE);
@@ -170,12 +179,7 @@ public class UserAlbumsGUI extends JFrame {
 		});
 		panel_2.add(btnBorrarAlbum);
 		
-		JPanel panelForMainOptions = new JPanel();
-		panelForMainOptions.setBackground(Color.ORANGE);
-		contentPane.add(panelForMainOptions, BorderLayout.CENTER);
-		panelForMainOptions.setLayout(new GridBagLayout());
-		
-		JPanel panelMainOptions = new JPanel();
+		panelMainOptions = new JPanel();
 		panelMainOptions.setBackground(Color.ORANGE);
 		panelForMainOptions.add(panelMainOptions);
 		
@@ -184,6 +188,9 @@ public class UserAlbumsGUI extends JFrame {
 		btnMyAlbums.setBackground(new Color(255, 140, 0));
 		btnMyAlbums.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				hideMainOptions();
+				System.out.println(panelForMainOptions.getSize());
+				showAlbums();
 			}
 		});
 		
@@ -201,7 +208,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
 		panelMainOptions.add(btnMyAlbums);
 		
-//		showAlbums();
+		showAlbums();
 	}
 
 	private void showAlbumMovies(String albumTitle){
@@ -214,6 +221,11 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.setVisible(true);
 		shownAlbum = albumTitle;
 		movies = true;
+	}
+	
+	private void hideMainOptions(){
+		panelMainOptions.setVisible(false);
+		albumsScrollPanel.setVisible(true);
 	}
 	
 	private void showAlbums(){

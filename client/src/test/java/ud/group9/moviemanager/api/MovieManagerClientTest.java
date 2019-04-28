@@ -1,7 +1,7 @@
 package ud.group9.moviemanager.api;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.api.exceptions.SignupException;
@@ -12,34 +12,32 @@ import java.util.ArrayList;
 import static org.junit.Assert.fail;
 
 public class MovieManagerClientTest {
-    private static MovieManagerClient client = MovieManagerClient.INSTANCE;
-    private String username;
-    private String password;
+    private static String username;
+    private static String password;
 
-
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         // Generate random username and password
-        this.username = Long.toHexString(Double.doubleToLongBits(Math.random()));
-        this.password = Long.toHexString(Double.doubleToLongBits(Math.random()));
-        System.out.println("Generated username: " + this.username);
-        System.out.println("Generated password: " + this.password);
+        username = Long.toHexString(Double.doubleToLongBits(Math.random()));
+        password = Long.toHexString(Double.doubleToLongBits(Math.random()));
+        System.out.println("Generated username: " + username);
+        System.out.println("Generated password: " + password);
         System.out.print("Signing user up...");
         testSignUp();
         System.out.println(" done");
     }
 
-    public void testSignUp() {
+    public static void testSignUp() {
         try {
             // correct signup
-            String response = client.SignUp(username, password);
-            String expected = client.getBundle().getString("newuserstored");
-            Assert.assertTrue("Failed to sign up", response.equals(expected));
+            String response = MovieManagerClient.SignUp(username, password);
+            String expected = MovieManagerClient.getBundle().getString("newuserstored");
+            Assert.assertEquals("Failed to sign up", response, expected);
 
             // duplicated signup
-            response = client.SignUp(username, password);
-            expected = client.getBundle().getString("generalerror");
-            Assert.assertTrue("Unexpected successful signup", response.equals(expected));
+            response = MovieManagerClient.SignUp(username, password);
+            expected = MovieManagerClient.getBundle().getString("generalerror");
+            Assert.assertEquals("Unexpected successful signup", response, expected);
         } catch (SignupException e) {
             fail("Unexpected exception: " + e.toString());
         }
@@ -48,14 +46,13 @@ public class MovieManagerClientTest {
     @Test
     public void testLogIn() {
         try {
-            String previousToken = client.getSessionToken();
-            boolean logged = client.LogIn(username, password);
+            String previousToken = MovieManagerClient.getSessionToken();
+            boolean logged = MovieManagerClient.LogIn(username, password);
             Assert.assertTrue("Failed to log in", logged);
-            String currentToken = client.getSessionToken();
-            Assert.assertFalse("LogIn didn't update the token",
-                    currentToken.equals(previousToken));
+            String currentToken = MovieManagerClient.getSessionToken();
+            Assert.assertNotEquals("LogIn didn't update the token", currentToken, previousToken);
 
-            logged = client.LogIn(username, "");
+            logged = MovieManagerClient.LogIn(username, "");
             Assert.assertFalse("Unexpected login", logged);
         } catch (SignupException e) {
             fail("Unexpected exception: " + e.toString());
@@ -63,15 +60,37 @@ public class MovieManagerClientTest {
     }
 
     @Test
-    public void searchForMovie() {
+    public void testSearchForMovie() {
         try {
-            ArrayList<Movie> movies = client.searchForMovie("Scott", "2010");
-            Assert.assertFalse("Empty movie list", movies.size() == 0);
+            ArrayList<Movie> movies = MovieManagerClient.searchForMovie("Scott", "2010");
+            Assert.assertNotEquals("Empty movie list", 0, movies.size());
             for (Movie movie: movies) {
-                Assert.assertFalse("Null movie", movie == null);
+                Assert.assertNotNull("Null movie", movie);
             }
         } catch (SearchMovieException e) {
             fail("Unexpected exception: " + e.toString());
+        }
+    }
+
+    @Test
+    public void testGetMovie() {
+        String testMovieID = "tt0446029";
+        Movie movie = MovieManagerClient.getMovie(testMovieID);
+        Movie expectedMovie = new Movie(
+                testMovieID,
+                "Scott Pilgrim vs. the World",
+                2010,
+                "https://m.media-amazon.com/images/M/MV5BMTkwNTczNTMyOF5BMl5BanBnXkFtZTcwNzUxOTUyMw@@._V1_SX300.jpg"
+        );
+        // compare actual to expected attributes
+        Object[][] attributes = {
+                {movie.getTitle(), expectedMovie.getTitle()},
+                {movie.getYear(), expectedMovie.getYear()},
+                {movie.getMovieID(), expectedMovie.getMovieID()},
+                {movie.getPoster(), expectedMovie.getPoster()}
+        };
+        for (Object[] attr: attributes) {
+            Assert.assertEquals("Mismatched movies", attr[0], attr[1]);
         }
     }
 }

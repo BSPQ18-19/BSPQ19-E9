@@ -20,11 +20,14 @@ public class MovieManagerClientTest {
         // Generate random username and password
         username = Long.toHexString(Double.doubleToLongBits(Math.random()));
         password = Long.toHexString(Double.doubleToLongBits(Math.random()));
-        System.out.println("Generated username: " + username);
-        System.out.println("Generated password: " + password);
+        System.out.println("Generated username: " + username + ".");
+        System.out.println("Generated password: " + password + ".");
         System.out.print("Signing user up...");
         testSignUp();
-        System.out.println(" done");
+        System.out.println(" done.");
+        System.out.print("Logging user in...");
+        testLogIn();
+        System.out.println(" done with token: " + MovieManagerClient.getSessionToken() + ".");
     }
 
     public static void testSignUp() {
@@ -43,8 +46,7 @@ public class MovieManagerClientTest {
         }
     }
 
-    @Test
-    public void testLogIn() {
+    public static void testLogIn() {
         try {
             String previousToken = MovieManagerClient.getSessionToken();
             boolean logged = MovieManagerClient.LogIn(username, password);
@@ -92,5 +94,32 @@ public class MovieManagerClientTest {
         for (Object[] attr: attributes) {
             Assert.assertEquals("Mismatched movies", attr[0], attr[1]);
         }
+    }
+
+    @Test
+    public void testWatchList() {
+        String testMovieID = "tt0446029";
+        try {
+            // Add watched
+            boolean ok = MovieManagerClient.addToWatched(testMovieID);
+            Assert.assertTrue("Failed to add watched movie", ok);
+            // Get watched
+            ArrayList<Movie> movies = MovieManagerClient.getWatched();
+            Assert.assertEquals("Mismatched watched list length", 1, movies.size());
+            // Remove watched
+            ok = MovieManagerClient.deleteFromWatched(testMovieID);
+            Assert.assertTrue("Failed to add watched movie", ok);
+            // Get watched
+            movies = MovieManagerClient.getWatched();
+            Assert.assertEquals("Mismatched watched list length", 0, movies.size());
+        } catch (SearchMovieException e) {
+            fail("Unexpected exception: " + e.toString());
+        }
+    }
+
+    @Test
+    public void testAlbum() {
+        // Create album
+
     }
 }

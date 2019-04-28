@@ -127,48 +127,48 @@ public class MovieGUI extends JFrame {
 		lblAlbum.setHorizontalAlignment(SwingConstants.LEFT);
 		lblAlbum.setAlignmentY(1.0f);
 		int cont = 0;
-		for(final Album album: retrieveAlbumsLinked(movie)) {
-			JLabel lblAlbumField = new JLabel(album.getTitle());
-			lblAlbumField.addMouseListener(new MouseListener() {
-				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					viewAlbum(album);
-					
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-			lblAlbumField.setHorizontalAlignment(SwingConstants.RIGHT);
-			GridBagConstraints gbc_lblAlbumField = new GridBagConstraints();
-			gbc_lblAlbumField.anchor = GridBagConstraints.WEST;
-			gbc_lblAlbumField.insets = new Insets(0, 0, 5, 5);
-			gbc_lblAlbumField.gridx = 1 + cont;
-			gbc_lblAlbumField.gridy = 3;
-			panel_1.add(lblAlbumField, gbc_lblAlbumField);
-			cont++;
-		}
+//		for(final Album album: retrieveAlbumsLinked(movie)) {
+//			JLabel lblAlbumField = new JLabel(album.getTitle());
+//			lblAlbumField.addMouseListener(new MouseListener() {
+//				@Override
+//				public void mouseClicked(MouseEvent arg0) {
+//					viewAlbum(album);
+//					
+//				}
+//
+//				@Override
+//				public void mouseEntered(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mouseExited(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mousePressed(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mouseReleased(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//			lblAlbumField.setHorizontalAlignment(SwingConstants.RIGHT);
+//			GridBagConstraints gbc_lblAlbumField = new GridBagConstraints();
+//			gbc_lblAlbumField.anchor = GridBagConstraints.WEST;
+//			gbc_lblAlbumField.insets = new Insets(0, 0, 5, 5);
+//			gbc_lblAlbumField.gridx = 1 + cont;
+//			gbc_lblAlbumField.gridy = 3;
+//			panel_1.add(lblAlbumField, gbc_lblAlbumField);
+//			cont++;
+//		}
 		/*JLabel lblAlbumField = new JLabel(getAlbumsText(retrieveAlbumsLinked(movie)));
 		lblAlbumField.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_lblAlbumField = new GridBagConstraints();
@@ -219,7 +219,7 @@ public class MovieGUI extends JFrame {
 	
 	private void viewAlbum(Album album) {
 		setVisible(false);
-		new UserAlbumsGUI().showMovies(MovieManagerClient.getAlbumByTitle(album.getTitle()).getMovies(), false);
+//		new UserAlbumsGUI().showMovies(MovieManagerClient.getAlbumByTitle(album.getTitle()).getMovies(), false);
 		
 	}
 

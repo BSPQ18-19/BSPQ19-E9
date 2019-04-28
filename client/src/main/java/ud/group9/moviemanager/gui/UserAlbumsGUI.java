@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.JLabel;
 import java.awt.Color;
@@ -25,6 +26,7 @@ import ud.group9.moviemanager.data.Movie;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
@@ -34,12 +36,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 
 public class UserAlbumsGUI extends JFrame {
 
@@ -59,7 +68,16 @@ public class UserAlbumsGUI extends JFrame {
 	private JList<String> list;
 	private JLabel lblMyAlbums;
 	private boolean searching = false;
-
+	private JPanel panel;
+	private JLabel lblMovie;
+	private boolean moviedetails = false;
+	private JPanel panelMovieDetails;
+	private JLabel lblTitleField;
+	private JLabel lblYearField;
+	private ImageIcon image;
+	private JPanel panel_1;
+	private JLabel lblPoster;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -79,8 +97,10 @@ public class UserAlbumsGUI extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 */
-	public UserAlbumsGUI() {
+	public UserAlbumsGUI() throws MalformedURLException, IOException {
 		UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
 		UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("createalbum"));
 		setResizable(false);
@@ -137,9 +157,8 @@ public class UserAlbumsGUI extends JFrame {
 							showMovies(MovieManagerClient.getAlbumByTitle(((JList<String>)e.getComponent()).getSelectedValue()).getMovies(), false);
 						}
 					}else{
-						MovieGUI movieGUI = new MovieGUI(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1))));
-						movieGUI.setVisible(true);
-						setVisible(false);
+						showMovieDetails(MovieManagerClient.getMovie(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1)))));
+						moviedetails = true;
 					}
 				}else{
 					if (movies){
@@ -196,7 +215,11 @@ public class UserAlbumsGUI extends JFrame {
 		btnBack.setBackground(new Color(255, 140, 0));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (movies && !searching){
+				if (moviedetails){
+					hideMovieDetails();
+					moviedetails = false;
+				}
+				else if (movies && !searching){
 					showAlbums();
 				}else{
 					searching = false;
@@ -314,6 +337,131 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainOptions.add(Box.createRigidArea(new Dimension(0, 10)));
 		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
 		panelMainOptions.add(btnMyAlbums);
+		
+		panelMovieDetails = new JPanel();
+		panelMovieDetails.setBackground(Color.ORANGE);
+		panelMovieDetails.setLayout(new BoxLayout(panelMovieDetails, BoxLayout.Y_AXIS));
+		panelMovieDetails.setVisible(false);
+		panelForMainOptions.add(panelMovieDetails);
+		
+		lblMovie = new JLabel();
+		lblMovie.setVisible(false);
+		panelMovieDetails.add(lblMovie);
+		
+		panel = new JPanel();
+		panel.setBackground(Color.ORANGE);
+		panel.setAlignmentY(Component.TOP_ALIGNMENT);
+		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		panelMovieDetails.add(panel);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		
+		panel_1 = new JPanel();
+		panel_1.setBackground(Color.ORANGE);
+		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		panel_1.setMinimumSize(new Dimension(330, 199));
+		panel_1.setPreferredSize(new Dimension(330, 199));
+		panel_1.setMaximumSize(new Dimension(330, 199));
+		panel.add(panel_1);
+		GridBagLayout panelData = new GridBagLayout();
+		panelData.columnWidths = new int[]{57, 0, 0, 0, 0, 0, 0, 0, 0};
+		panelData.rowHeights = new int[]{0, 0, 0, 0, 0};
+		panelData.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panelData.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel_1.setLayout(panelData);
+		
+		JLabel lblTitle = new JLabel("Title:");
+		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
+		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTitle.gridx = 0;
+		gbc_lblTitle.gridy = 1;
+		panel_1.add(lblTitle, gbc_lblTitle);
+		lblTitle.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		lblTitleField = new JLabel();
+		GridBagConstraints gbc_lblTitleField = new GridBagConstraints();
+		gbc_lblTitleField.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTitleField.gridx = 1;
+		gbc_lblTitleField.gridy = 1;
+		panel_1.add(lblTitleField, gbc_lblTitleField);
+		
+		JLabel lblYear = new JLabel("Year:");
+		GridBagConstraints gbc_lblYear = new GridBagConstraints();
+		gbc_lblYear.insets = new Insets(0, 0, 5, 5);
+		gbc_lblYear.gridx = 0;
+		gbc_lblYear.gridy = 2;
+		panel_1.add(lblYear, gbc_lblYear);
+		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
+		lblYear.setAlignmentY(1.0f);
+		
+		lblYearField = new JLabel();
+		lblYearField.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblYearField = new GridBagConstraints();
+		gbc_lblYearField.anchor = GridBagConstraints.WEST;
+		gbc_lblYearField.insets = new Insets(0, 0, 5, 5);
+		gbc_lblYearField.gridx = 1;
+		gbc_lblYearField.gridy = 2;
+		panel_1.add(lblYearField, gbc_lblYearField);
+		
+		JLabel lblAlbum = new JLabel("Album:");
+		GridBagConstraints gbc_lblAlbum = new GridBagConstraints();
+		gbc_lblAlbum.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAlbum.gridx = 0;
+		gbc_lblAlbum.gridy = 3;
+		panel_1.add(lblAlbum, gbc_lblAlbum);
+		lblAlbum.setHorizontalAlignment(SwingConstants.LEFT);
+		lblAlbum.setAlignmentY(1.0f);
+		int cont = 0;
+//		for(final Album album: retrieveAlbumsLinked(movie)) {
+//			JLabel lblAlbumField = new JLabel(album.getTitle());
+//			lblAlbumField.addMouseListener(new MouseListener() {
+//				@Override
+//				public void mouseClicked(MouseEvent arg0) {
+//					viewAlbum(album);
+//					
+//				}
+//
+//				@Override
+//				public void mouseEntered(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mouseExited(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mousePressed(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void mouseReleased(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//			});
+//			lblAlbumField.setHorizontalAlignment(SwingConstants.RIGHT);
+//			GridBagConstraints gbc_lblAlbumField = new GridBagConstraints();
+//			gbc_lblAlbumField.anchor = GridBagConstraints.WEST;
+//			gbc_lblAlbumField.insets = new Insets(0, 0, 5, 5);
+//			gbc_lblAlbumField.gridx = 1 + cont;
+//			gbc_lblAlbumField.gridy = 3;
+//			panel_1.add(lblAlbumField, gbc_lblAlbumField);
+//			cont++;
+		
+			JPanel panelPoster = new JPanel();
+			panelPoster.setBackground(Color.ORANGE);
+			panelPoster.setPreferredSize(new Dimension(84, 199));
+			panel.add(panelPoster);
+			lblPoster = new JLabel("", SwingConstants.CENTER);
+//			image = new ImageIcon((ImageIO.read(new URL("https://m.media-amazon.com/images/M/MV5BMTkwNTczNTMyOF5BMl5BanBnXkFtZTcwNzUxOTUyMw@@._V1_SX300.jpg"))).getScaledInstance(84, 100, Image.SCALE_DEFAULT));
+//			lblPoster = new JLabel("", image, SwingConstants.CENTER);
+			panelPoster.add(lblPoster);
 	}
 
 	private void showMovies(ArrayList<Movie> moviesToShow, boolean watched){
@@ -354,5 +502,39 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.setVisible(true);
 		if (isWatched) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
 		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
+	}
+	
+	private void showMovieDetails(Movie m){
+		albumsScrollPanel.setVisible(false);
+		btnBorrarAlbum.setVisible(false);
+		btnAddToAlbum.setVisible(false);
+		lblMyAlbums.setText(list.getSelectedValue() + ":");
+		panelMovieDetails.setPreferredSize(panelForMainOptions.getSize());
+		lblTitleField.setText(m.getTitle());
+		lblYearField.setText(String.valueOf(m.getYear()));
+		try {
+			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(84, 100, Image.SCALE_DEFAULT));
+			lblPoster.setIcon(image);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		panelMovieDetails.setVisible(true);
+		lblMovie.setText(m.getTitle());
+		lblMovie.setVisible(true);
+	}
+	private void hideMovieDetails(){
+		if (!searching){
+			lblMyAlbums.setText(shownAlbum + ":");
+		}else{
+			lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
+		}
+		panelMovieDetails.setVisible(false);
+		albumsScrollPanel.setVisible(true);
+		btnBorrarAlbum.setVisible(true);
+		btnAddToAlbum.setVisible(true);
 	}
 }

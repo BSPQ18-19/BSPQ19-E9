@@ -1,14 +1,17 @@
 package ud.group9.moviemanager.api;
 
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.api.exceptions.SignupException;
+import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class MovieManagerClientTest {
@@ -30,6 +33,7 @@ public class MovieManagerClientTest {
         System.out.println(" done with token: " + MovieManagerClient.getSessionToken() + ".");
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static void testSignUp() {
         try {
             // correct signup
@@ -46,6 +50,7 @@ public class MovieManagerClientTest {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static void testLogIn() {
         try {
             String previousToken = MovieManagerClient.getSessionToken();
@@ -106,6 +111,11 @@ public class MovieManagerClientTest {
             // Get watched
             ArrayList<Movie> movies = MovieManagerClient.getWatched();
             Assert.assertEquals("Mismatched watched list length", 1, movies.size());
+            Assert.assertEquals("Mismatched movies", testMovieID, movies.get(0).getMovieID());
+            // Get watched IDs
+            ArrayList<String> movieIDs = MovieManagerClient.getWatchedIDs();
+            Assert.assertEquals("Mismatched watched list length", 1, movieIDs.size());
+            Assert.assertEquals("Mismatched movie IDs", testMovieID, movieIDs.get(0));
             // Remove watched
             ok = MovieManagerClient.deleteFromWatched(testMovieID);
             Assert.assertTrue("Failed to add watched movie", ok);
@@ -119,7 +129,64 @@ public class MovieManagerClientTest {
 
     @Test
     public void testAlbum() {
+        String testMovieID = "tt0446029";
+        String testAlbumTitle = "TestAlbum";
+        Album testAlbum = null;
+        
         // Create album
+        int status = MovieManagerClient.createAlbum(testAlbumTitle);
+        Assert.assertEquals("Failed to create album", 200, status);
 
+        // Get album for comparisons
+        try {
+            testAlbum = MovieManagerClient.getAlbumByTitle(testAlbumTitle);
+            assertEquals("Mismatched titles", testAlbumTitle, testAlbum.getTitle());
+        } catch (IndexOutOfBoundsException e) {
+            fail("Unexpected exception, failed to retrieve album: " + e.toString());
+        }
+        // Add movie to album
+        status = MovieManagerClient.addMovieToAlbum(testAlbum.getAlbumID(), testMovieID);
+        Assert.assertEquals("Failed to add movie to album", 200, status);
+
+        // Get album by:
+        //// id
+        Album albumByID = MovieManagerClient.getAlbum(testAlbum.getAlbumID());
+        //// title
+        Album albumByTitle = MovieManagerClient.getAlbumByTitle(testAlbum.getTitle());
+        // compare both
+        Assert.assertEquals("Wrong album", albumByID.getAlbumID(), testAlbum.getAlbumID());
+        Assert.assertEquals("Mismatched IDs", albumByID.getAlbumID(), albumByID.getAlbumID());
+        Assert.assertEquals("Mismatched titles", albumByID.getTitle(), albumByID.getTitle());
+        Assert.assertEquals("Mismatched movies",
+                albumByID.getMovies().size(), albumByTitle.getMovies().size());
+
+        // Compare with full list of albums
+        ArrayList<Album> albums = MovieManagerClient.getAlbums();
+        Assert.assertEquals("Unexpected amount of albums", 1, albums.size());
+        Assert.assertEquals("Mismatched IDs", testAlbum.getAlbumID(), albums.get(0).getAlbumID());
+
+        // Remove movie from album
+        status = MovieManagerClient.deleteMovieFromAlbum(testAlbum.getAlbumID(), testMovieID);
+        Assert.assertEquals("Failed to remove movie from album", 200, status);
+        Album emptyAlbum = MovieManagerClient.getAlbum(testAlbum.getAlbumID());
+        Assert.assertEquals("Unexpected amount of movies", 0, emptyAlbum.getMovies().size());
+
+        // Remove album by Id
+        status = MovieManagerClient.deleteAlbum(testAlbum.getAlbumID());
+        Assert.assertEquals("Failed to delete album", 200, status);
+        try {
+            MovieManagerClient.getAlbum(testAlbum.getAlbumID());
+            // TODO: catch this exception at .getAlbum()
+            fail("Expected JSONException not thrown");
+        } catch (JSONException e) {}
+
+        // Create album and delete it by title
+        MovieManagerClient.createAlbum(testAlbumTitle);
+        status = MovieManagerClient.deleteAlbumByTitle(testAlbumTitle);
+        Assert.assertEquals("Failed to delete album by title", 200, status);
+        try {
+            MovieManagerClient.getAlbumByTitle(testAlbumTitle);
+            fail("Expected JSONException not thrown");
+        } catch (JSONException | IllegalArgumentException e) {}
     }
 }

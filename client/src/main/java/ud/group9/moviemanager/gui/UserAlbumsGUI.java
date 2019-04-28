@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.JLabel;
 import java.awt.Color;
@@ -18,6 +19,7 @@ import java.awt.Dimension;
 import javax.swing.border.LineBorder;
 
 import ud.group9.moviemanager.api.MovieManagerClient;
+import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 
@@ -31,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.Box;
@@ -51,7 +54,7 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panelForMainOptions;
 	private JScrollPane albumsScrollPanel;
 	private JPanel panelMainOptions;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -87,7 +90,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelForMainOptions.setBackground(Color.ORANGE);
 		contentPane.add(panelForMainOptions, BorderLayout.CENTER);
 		panelForMainOptions.setLayout(new GridBagLayout());
-		
+
 		albumsScrollPanel = new JScrollPane();
 		albumsScrollPanel.setVisible(true);
 		albumsScrollPanel.setMinimumSize(new Dimension(434, 199));
@@ -103,7 +106,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelUpperLabel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
-		
+
 		JList<String> list = new JList<>(l1); 
 		list.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("unchecked")
@@ -111,9 +114,11 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (!movies){
-						if (((JList<String>)e.getComponent()).getSelectedIndex() != ((JList<String>)e.getComponent()).getLastVisibleIndex())
-							showAlbumMovies((((JList<String>)e.getComponent()).getSelectedValue()));
-						else{
+						if (((JList<String>)e.getComponent()).getSelectedIndex() != ((JList<String>)e.getComponent()).getLastVisibleIndex()){
+							showMovies(MovieManagerClient.getAlbumByTitle(((JList<String>)e.getComponent()).getSelectedValue()).getMovies());
+							shownAlbum = (((JList<String>)e.getComponent()).getSelectedValue());
+						}else{
+							UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("createalbum"));
 							String m = JOptionPane.showInputDialog(MovieManagerClient.getBundle().getString("albumtitle"));
 							if (m != null){
 								MovieManagerClient.createAlbum(m);
@@ -154,7 +159,7 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 3;
 		contentPane.add(panel_2, BorderLayout.SOUTH);
-		
+
 		JButton btnBack = new JButton(MovieManagerClient.getBundle().getString("back"));
 		btnBack.setForeground(Color.BLACK);
 		btnBack.setBackground(new Color(255, 140, 0));
@@ -166,7 +171,7 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 		panel_2.add(btnBack);
-		
+
 		btnBorrarAlbum = new JButton(MovieManagerClient.getBundle().getString("deletealbum"));
 		btnBorrarAlbum.setVisible(false);
 		btnBorrarAlbum.setForeground(Color.BLACK);
@@ -178,11 +183,11 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 		panel_2.add(btnBorrarAlbum);
-		
+
 		panelMainOptions = new JPanel();
 		panelMainOptions.setBackground(Color.ORANGE);
 		panelForMainOptions.add(panelMainOptions);
-		
+
 		btnMyAlbums = new JButton("My albums");
 		btnMyAlbums.setForeground(Color.BLACK);
 		btnMyAlbums.setBackground(new Color(255, 140, 0));
@@ -193,12 +198,29 @@ public class UserAlbumsGUI extends JFrame {
 				showAlbums();
 			}
 		});
-		
+
 		btnSearchForMovie = new JButton("Search for movie");
 		btnSearchForMovie.setForeground(Color.BLACK);
 		btnSearchForMovie.setBackground(new Color(255, 140, 0));
 		btnSearchForMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("search"));
+				JTextField moviename = new JTextField();
+				JTextField movieyear = new JTextField();
+				Object[] message = {
+						MovieManagerClient.getBundle().getString("moviename"), moviename,
+						MovieManagerClient.getBundle().getString("movieyear"), movieyear
+				};
+				if (JOptionPane.showConfirmDialog(null, message, "Search for movie", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+					if (!moviename.getText().isEmpty()) {
+						try {
+							hideMainOptions();
+							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()));
+						} catch (SearchMovieException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
 			}
 		});
 		panelMainOptions.setLayout(new BoxLayout(panelMainOptions, BoxLayout.Y_AXIS));
@@ -207,27 +229,26 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainOptions.add(Box.createRigidArea(new Dimension(0, 10)));
 		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
 		panelMainOptions.add(btnMyAlbums);
-		
+
 		showAlbums();
 	}
 
-	private void showAlbumMovies(String albumTitle){
+	private void showMovies(ArrayList<Movie> moviesToShow){
 		l1.clear();
 		movieIDs.clear();
-		for (Movie movie: MovieManagerClient.getAlbumByTitle(albumTitle).getMovies()){
+		for (Movie movie: moviesToShow){
 			l1.addElement(movie.getTitle());  
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
 		btnBorrarAlbum.setVisible(true);
-		shownAlbum = albumTitle;
 		movies = true;
 	}
-	
+
 	private void hideMainOptions(){
 		panelMainOptions.setVisible(false);
 		albumsScrollPanel.setVisible(true);
 	}
-	
+
 	private void showAlbums(){
 		l1.clear();
 		shownAlbum = null;

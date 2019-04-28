@@ -257,7 +257,7 @@ public class UserAlbumsGUI extends JFrame {
 					Object[] params = {message, cbg.toArray()};
 					if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("addtoalbum"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 						for (JCheckBox cb : cbg)
-							if (cb.isSelected()) MovieManagerClient.addMovieToAlbum(MovieManagerClient.getAlbumByTitle(cb.getText()).getAlbumID(), movieIDs.get((list.getSelectedValue().substring(1))));
+							if (cb.isSelected()) MovieManagerClient.addMovieToAlbumByTitle(cb.getText(), movieIDs.get((list.getSelectedValue().substring(1))));
 					}
 				}else if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("removefromalbum"))){
 					MovieManagerClient.deleteMovieFromAlbum(MovieManagerClient.getAlbumByTitle(shownAlbum).getAlbumID(), movieIDs.get((list.getSelectedValue().substring(1))));

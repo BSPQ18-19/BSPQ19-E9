@@ -13,6 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.border.LineBorder;
 
@@ -32,6 +33,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+
 public class UserAlbumsGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -41,7 +48,8 @@ public class UserAlbumsGUI extends JFrame {
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
 	private JButton btnBorrarAlbum;
 	private String shownAlbum;
-	
+	private JButton btnSearchForMovie;
+	private JButton btnMyAlbums;
 	/**
 	 * Launch the application.
 	 */
@@ -74,15 +82,16 @@ public class UserAlbumsGUI extends JFrame {
 		setContentPane(contentPane);
 
 		JScrollPane albumsScrollPanel = new JScrollPane();
+		albumsScrollPanel.setVisible(false);
 		albumsScrollPanel.setBackground(Color.ORANGE);
 		contentPane.add(albumsScrollPanel, BorderLayout.CENTER);
 
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.ORANGE);
-		contentPane.add(panel, BorderLayout.NORTH);
+		JPanel panelUpperLabel = new JPanel();
+		panelUpperLabel.setBackground(Color.ORANGE);
+		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
 		JLabel lblMyAlbums = new JLabel("My albums:");
-		panel.add(lblMyAlbums);
+		panelUpperLabel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
 		
@@ -161,7 +170,38 @@ public class UserAlbumsGUI extends JFrame {
 		});
 		panel_2.add(btnBorrarAlbum);
 		
-		showAlbums();
+		JPanel panelForMainOptions = new JPanel();
+		panelForMainOptions.setBackground(Color.ORANGE);
+		contentPane.add(panelForMainOptions, BorderLayout.CENTER);
+		panelForMainOptions.setLayout(new GridBagLayout());
+		
+		JPanel panelMainOptions = new JPanel();
+		panelMainOptions.setBackground(Color.ORANGE);
+		panelForMainOptions.add(panelMainOptions);
+		
+		btnMyAlbums = new JButton("My albums");
+		btnMyAlbums.setForeground(Color.BLACK);
+		btnMyAlbums.setBackground(new Color(255, 140, 0));
+		btnMyAlbums.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		
+		btnSearchForMovie = new JButton("Search for movie");
+		btnSearchForMovie.setForeground(Color.BLACK);
+		btnSearchForMovie.setBackground(new Color(255, 140, 0));
+		btnSearchForMovie.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panelMainOptions.setLayout(new BoxLayout(panelMainOptions, BoxLayout.Y_AXIS));
+		btnSearchForMovie.setAlignmentX(CENTER_ALIGNMENT);
+		panelMainOptions.add(btnSearchForMovie);
+		panelMainOptions.add(Box.createRigidArea(new Dimension(0, 10)));
+		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
+		panelMainOptions.add(btnMyAlbums);
+		
+//		showAlbums();
 	}
 
 	private void showAlbumMovies(String albumTitle){

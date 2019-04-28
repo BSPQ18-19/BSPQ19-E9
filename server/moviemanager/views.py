@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 
 
 @csrf_exempt
-@require_http_methods(["GET", "PUT"])
+@require_http_methods(["DELETE", "GET", "POST", "PUT"])
 def create_album(request):
     """
     create_album creates an album with the specified title associated to the
@@ -26,6 +26,8 @@ def create_album(request):
     """
     query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["token", "title"]
+    if request.method == "POST":
+        params.append("movie_id")
     error_response = check_params(query, params)
     if error_response:
         return error_response
@@ -36,9 +38,9 @@ def create_album(request):
         return HttpResponse("Invalid token '{}'".format(token), status=403)
     session = SESSION_HANDLER.get(token)
 
-    # GET
+    # GET, POST or DELETE
 
-    if request.method == "GET":
+    if request.method in {"DELETE", "GET", "POST"}:
         try:
             album = models.Album.objects.get(title=title, owner=session.user)
             return handle_album(request, album.album_id)
@@ -63,7 +65,7 @@ def create_album(request):
     album.album_id = uuid4().__str__()
     album.title = title
     album.save()
-    print("create album {}".format(album.json()))
+    logger.info("create album {}".format(album.json()))
     return JsonResponse({"album_id": album.album_id})
 
 

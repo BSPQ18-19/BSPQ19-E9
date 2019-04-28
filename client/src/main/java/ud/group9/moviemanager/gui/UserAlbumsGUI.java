@@ -55,6 +55,8 @@ public class UserAlbumsGUI extends JFrame {
 	private JScrollPane albumsScrollPanel;
 	private JPanel panelMainOptions;
 	private JList<String> list;
+	private JLabel lblMyAlbums;
+	private boolean searching = false;
 	
 	/**
 	 * Launch the application.
@@ -103,7 +105,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelUpperLabel.setBackground(Color.ORANGE);
 		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
-		JLabel lblMyAlbums = new JLabel("My albums:");
+		lblMyAlbums = new JLabel("My albums:");
 		panelUpperLabel.add(lblMyAlbums);
 
 		l1 = new DefaultListModel<>();  
@@ -115,16 +117,22 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (!movies){
-						if (((JList<String>)e.getComponent()).getSelectedIndex() != ((JList<String>)e.getComponent()).getLastVisibleIndex()){
-							shownAlbum = (((JList<String>)e.getComponent()).getSelectedValue());
-							showMovies(MovieManagerClient.getAlbumByTitle(((JList<String>)e.getComponent()).getSelectedValue()).getMovies());
-						}else{
+						if (((JList<String>)e.getComponent()).getSelectedIndex() == ((JList<String>)e.getComponent()).getModel().getSize()-1){
 							UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("createalbum"));
 							String m = JOptionPane.showInputDialog(MovieManagerClient.getBundle().getString("albumtitle"));
 							if (m != null){
 								MovieManagerClient.createAlbum(m);
 								showAlbums();
 							}
+						}else if(((JList<String>)e.getComponent()).getSelectedIndex() == 0){
+							try {
+								showMovies(MovieManagerClient.getWatched(), true);
+							} catch (SearchMovieException e1) {
+								e1.printStackTrace();
+							}
+						}else{
+							shownAlbum = (((JList<String>)e.getComponent()).getSelectedValue());
+							showMovies(MovieManagerClient.getAlbumByTitle(((JList<String>)e.getComponent()).getSelectedValue()).getMovies(), false);
 						}
 					}else{
 						MovieGUI movieGUI = new MovieGUI(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1))));
@@ -169,9 +177,10 @@ public class UserAlbumsGUI extends JFrame {
 		btnBack.setBackground(new Color(255, 140, 0));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (movies){
+				if (movies && !searching){
 					showAlbums();
 				}else{
+					searching = false;
 					hideMainOptions(false);
 				}
 			}
@@ -185,12 +194,11 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("deletealbum"))){
-				MovieManagerClient.deleteAlbumByTitle(shownAlbum);
-				showAlbums(); 
+					MovieManagerClient.deleteAlbumByTitle(shownAlbum);
+					showAlbums(); 
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("addwatched"))){
 					try {
 						MovieManagerClient.addToWatched(movieIDs.get((list.getSelectedValue().substring(1))));
-//						if (!searching) showMovies(MovieManagerClient.getAlbumByTitle(shownAlbum).getMovies());
 						l1.setElementAt("★" + l1.getElementAt(list.getSelectedIndex()).substring(1), list.getSelectedIndex());
 						showMovieInAlbumOptions(true);
 					} catch (SearchMovieException e1) {
@@ -240,8 +248,10 @@ public class UserAlbumsGUI extends JFrame {
 				if (JOptionPane.showConfirmDialog(null, message, "Search for movie", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 					if (!moviename.getText().isEmpty()) {
 						try {
+							searching = true;
 							hideMainOptions(true);
-							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()));
+							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()), true);
+							lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
 						} catch (SearchMovieException e1) {
 							e1.printStackTrace();
 						}
@@ -259,7 +269,7 @@ public class UserAlbumsGUI extends JFrame {
 		showAlbums();
 	}
 
-	private void showMovies(ArrayList<Movie> moviesToShow){
+	private void showMovies(ArrayList<Movie> moviesToShow, boolean watched){
 		l1.clear();
 		movieIDs.clear();
 		btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("deletealbum"));
@@ -268,7 +278,7 @@ public class UserAlbumsGUI extends JFrame {
 			else l1.addElement("☆" + movie.getTitle());
 			movieIDs.put(movie.getTitle(), movie.getMovieID());
 		}
-		btnBorrarAlbum.setVisible(true);
+		btnBorrarAlbum.setVisible(!watched);
 		movies = true;
 	}
 
@@ -278,8 +288,10 @@ public class UserAlbumsGUI extends JFrame {
 	}
 
 	private void showAlbums(){
+		lblMyAlbums.setText(MovieManagerClient.getBundle().getString("myalbums"));
 		l1.clear();
 		shownAlbum = null;
+		l1.addElement(MovieManagerClient.getBundle().getString("watched"));
 		for (Album album: MovieManagerClient.getAlbums()){
 			l1.addElement(album.getTitle());  
 		}
@@ -287,7 +299,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.setVisible(false);
 		movies = false;
 	}
-	
+
 	private void showMovieInAlbumOptions(boolean isWatched){
 		if (isWatched) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
 		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));

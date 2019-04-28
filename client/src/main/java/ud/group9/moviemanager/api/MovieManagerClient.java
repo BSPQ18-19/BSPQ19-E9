@@ -28,6 +28,7 @@ public enum MovieManagerClient {
 
 	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_es");
 	private static String sessionToken = null;
+	private static ArrayList<String> watchedIDs = null;
 	
 	private MovieManagerClient(){
 	}
@@ -80,6 +81,7 @@ public enum MovieManagerClient {
 		if (response.getStatus() == 200){
 			JSONObject jo = new JSONObject(response.getEntity(String.class));
 			sessionToken = jo.get("token").toString();
+			watchedIDs = MovieManagerClient.getWatchedIDs();
 		}
 		response.close();
 		return (response.getStatus() == 200);
@@ -130,6 +132,18 @@ public enum MovieManagerClient {
 		return movies;
 	}
 	
+	public static ArrayList<String> getWatchedIDs() {
+		ArrayList<String> watched = new ArrayList<>();
+		try {
+			for (Movie m: MovieManagerClient.getWatched()){
+				watched.add(m.getMovieID());
+			}
+		} catch (SearchMovieException e) {
+			e.printStackTrace();
+		}
+		return watched;
+	}
+	
 	public static boolean addToWatched( String movieID ) throws SearchMovieException {
 
 		WebResource webResource = client.resource(addr()).path("watched/");
@@ -138,6 +152,7 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
+		watchedIDs.add(movieID);
 		return (response.getStatus() == 200);
 	}
 	
@@ -149,6 +164,7 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.delete(ClientResponse.class);
 		response.close();
+		watchedIDs.remove(movieID);
 		return (response.getStatus() == 200);
 	}
 	public static int createAlbum( String title ){
@@ -235,6 +251,10 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		return response.getStatus();
+	}
+	
+	public static boolean isWatched(String movieID){
+		return watchedIDs.contains(movieID);
 	}
 
 	public static void closeClient(){

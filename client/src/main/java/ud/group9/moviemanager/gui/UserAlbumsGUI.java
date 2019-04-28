@@ -1,6 +1,8 @@
 package ud.group9.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -26,6 +28,7 @@ import ud.group9.moviemanager.data.Movie;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
@@ -34,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.Box;
@@ -48,6 +52,7 @@ public class UserAlbumsGUI extends JFrame {
 	private boolean movies = false;
 	private HashMap<String, String> movieIDs = new HashMap<>(); 
 	private JButton btnBorrarAlbum;
+	private JButton btnAddToAlbum;
 	private String shownAlbum;
 	private JButton btnSearchForMovie;
 	private JButton btnMyAlbums;
@@ -57,7 +62,7 @@ public class UserAlbumsGUI extends JFrame {
 	private JList<String> list;
 	private JLabel lblMyAlbums;
 	private boolean searching = false;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -140,8 +145,15 @@ public class UserAlbumsGUI extends JFrame {
 						setVisible(false);
 					}
 				}else{
-					if (movies)
+					if (movies){
 						showMovieInAlbumOptions(MovieManagerClient.isWatched(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1)))));
+						if (searching){
+							btnAddToAlbum.setVisible(true);
+						}
+					}else{
+						btnBorrarAlbum.setVisible(true);
+						btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("deletealbum"));
+					}
 				}
 			}
 		});
@@ -182,6 +194,8 @@ public class UserAlbumsGUI extends JFrame {
 				}else{
 					searching = false;
 					hideMainOptions(false);
+					btnAddToAlbum.setVisible(false);
+					btnBorrarAlbum.setVisible(false);
 				}
 			}
 		});
@@ -218,6 +232,27 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 		panel_2.add(btnBorrarAlbum);
+
+		btnAddToAlbum = new JButton(MovieManagerClient.getBundle().getString("addtoalbum"));
+		btnAddToAlbum.setVisible(false);
+		btnAddToAlbum.setForeground(Color.BLACK);
+		btnAddToAlbum.setBackground(new Color(255, 140, 0));
+		btnAddToAlbum.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<JCheckBox> cbg = new ArrayList<>();
+				UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("store"));
+				for (Album a : MovieManagerClient.getAlbums()){
+					cbg.add(new JCheckBox(a.getTitle()));
+				}
+				String message = MovieManagerClient.getBundle().getString("selectalbum");
+				Object[] params = {message, cbg.toArray()};
+				if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("addtoalbum"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+					for (JCheckBox cb : cbg)
+						if (cb.isSelected()) MovieManagerClient.addMovieToAlbum(MovieManagerClient.getAlbumByTitle(cb.getText()).getAlbumID(), movieIDs.get((list.getSelectedValue().substring(1))));
+				}
+			}
+		});
+		panel_2.add(btnAddToAlbum);
 
 		panelMainOptions = new JPanel();
 		panelMainOptions.setBackground(Color.ORANGE);
@@ -266,7 +301,15 @@ public class UserAlbumsGUI extends JFrame {
 		btnMyAlbums.setAlignmentX(CENTER_ALIGNMENT);
 		panelMainOptions.add(btnMyAlbums);
 
-		showAlbums();
+		//		JList list2 = new JList(new String[] {"foo", "bar", "gah"});
+		//		JOptionPane.showMessageDialog(
+		//		  null, list2, "Multi-Select Example", JOptionPane.PLAIN_MESSAGE);
+		//		System.out.println(Arrays.toString(list2.getSelectedIndices()));
+		//		JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+		//		String message = "Are you sure you want to disconnect the selected products?";
+		//		Object[] params = {message, checkbox};
+		//		int n = JOptionPane.showConfirmDialog(null, params, "Disconnect Products", JOptionPane.YES_NO_OPTION);
+		//		boolean dontShow = checkbox.isSelected();
 	}
 
 	private void showMovies(ArrayList<Movie> moviesToShow, boolean watched){
@@ -301,6 +344,7 @@ public class UserAlbumsGUI extends JFrame {
 	}
 
 	private void showMovieInAlbumOptions(boolean isWatched){
+		btnBorrarAlbum.setVisible(true);
 		if (isWatched) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
 		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
 	}

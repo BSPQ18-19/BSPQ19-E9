@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from silk.profiling.profiler import silk_profile
 
 import moviemanager.internals.album as libalbum
 from moviemanager.gateways import omdb_gw
@@ -16,7 +17,8 @@ logger = getLogger(__name__)
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST", "PUT"])
-def create_album(request):
+@silk_profile(name='Handle user albums by title')
+def handle_album_by_title(request):
     """
     create_album creates an album with the specified title associated to the
     user
@@ -71,6 +73,7 @@ def create_album(request):
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
+@silk_profile(name='Handle user albums by ID')
 def handle_album(request, album_id):
     """
     handle_album is used to:
@@ -133,6 +136,7 @@ def handle_album(request, album_id):
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@silk_profile(name='Log In')
 def login(request):
     """
     login assigns a token to a user if verification is correct
@@ -172,6 +176,7 @@ def login(request):
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@silk_profile(name='View details of a movie')
 def movie_details(request, movie_id):
     """        return HttpResponse(status=code, content=result)
 
@@ -200,6 +205,7 @@ def movie_details(request, movie_id):
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@silk_profile(name='Search for a movie')
 def search(request):
     """
     search sends a search request to IMDB and returns
@@ -225,6 +231,7 @@ def search(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+@silk_profile(name='Sign Up')
 def signup(request):
     """
     signup creates a new user and stores it in the database
@@ -263,6 +270,7 @@ def signup(request):
 
 @csrf_exempt
 @require_http_methods(["GET"])
+@silk_profile(name='List user albums')
 def user_albums(request):
     """
     user_albums retrieves a list of all the albums of a user
@@ -298,6 +306,7 @@ def user_albums(request):
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
+@silk_profile(name='Handle watched movies')
 def watched_movies(request):
     """
     watched_movies returns the list of watched movies of a user

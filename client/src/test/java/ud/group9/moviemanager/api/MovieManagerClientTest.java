@@ -129,10 +129,12 @@ public class MovieManagerClientTest {
 
     @Test
     public void testAlbum() {
-        String testMovieID = "tt0446029";
+        String testMovieID1 = "tt0446029";
+        String testMovieID2 = "tt0448134";
         String testAlbumTitle = "TestAlbum";
         Album testAlbum = null;
-        
+
+
         // Create album
         int status = MovieManagerClient.createAlbum(testAlbumTitle);
         Assert.assertEquals("Failed to create album", 200, status);
@@ -144,9 +146,13 @@ public class MovieManagerClientTest {
         } catch (IndexOutOfBoundsException e) {
             fail("Unexpected exception, failed to retrieve album: " + e.toString());
         }
+
         // Add movie to album
-        status = MovieManagerClient.addMovieToAlbum(testAlbum.getAlbumID(), testMovieID);
-        Assert.assertEquals("Failed to add movie to album", 200, status);
+        status = MovieManagerClient.addMovieToAlbum(testAlbum.getAlbumID(), testMovieID1);
+        Assert.assertEquals("Failed to add movie 1 to album", 200, status);
+        status = MovieManagerClient.addMovieToAlbumByTitle(testAlbum.getTitle(), testMovieID2);
+        Assert.assertEquals("Failed to add movie 2 to album", 200, status);
+
 
         // Get album by:
         //// id
@@ -166,8 +172,10 @@ public class MovieManagerClientTest {
         Assert.assertEquals("Mismatched IDs", testAlbum.getAlbumID(), albums.get(0).getAlbumID());
 
         // Remove movie from album
-        status = MovieManagerClient.deleteMovieFromAlbum(testAlbum.getAlbumID(), testMovieID);
-        Assert.assertEquals("Failed to remove movie from album", 200, status);
+        status = MovieManagerClient.deleteMovieFromAlbum(testAlbum.getAlbumID(), testMovieID1);
+        Assert.assertEquals("Failed to remove movie 1 from album", 200, status);
+        status = MovieManagerClient.deleteMovieFromAlbum(testAlbum.getAlbumID(), testMovieID2);
+        Assert.assertEquals("Failed to remove movie 2 from album", 200, status);
         Album emptyAlbum = MovieManagerClient.getAlbum(testAlbum.getAlbumID());
         Assert.assertEquals("Unexpected amount of movies", 0, emptyAlbum.getMovies().size());
 

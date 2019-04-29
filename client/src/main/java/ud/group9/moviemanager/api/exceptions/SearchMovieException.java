@@ -1,24 +1,17 @@
 package ud.group9.moviemanager.api.exceptions;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import ud.group9.moviemanager.api.LoggerMaster;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SearchMovieException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private final static Logger LOGGER = LogManager.getRootLogger();
 
 	public SearchMovieException(String s) {
         super(s);
-        try {
-            LoggerMaster.setup();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Problems with creating the log files");
-        }
-        LOGGER.log(Level.SEVERE, "Error while searching for a movie");
+       
+        LOGGER.warn(s.toString());
     }
 }

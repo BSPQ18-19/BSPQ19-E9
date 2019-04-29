@@ -14,12 +14,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,18 +39,12 @@ public enum MovieManagerClient {
 	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_es");
 	private static String sessionToken = null;
 	private static ArrayList<String> watchedIDs = null;
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private final static Logger LOGGER = LogManager.getRootLogger();
 	
 	/**
 	 * Empty contructor for MovieManagerClient
 	 */
 	private MovieManagerClient(){
-		try {
-            LoggerMaster.setup();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Problems with creating the log files");
-        }
 	}
 	
 	/**
@@ -73,11 +64,9 @@ public enum MovieManagerClient {
 		try {
 			new UserAlbumsGUI();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.info(e.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.info(e.toString());
 		}
 	}
 	
@@ -109,15 +98,15 @@ public enum MovieManagerClient {
 		switch(response.getStatus()){
 		case 200:
 			mensaje = MovieManagerClient.getBundle().getString("newuserstored");
-			LOGGER.log(Level.INFO, "New user Stored.");
+			LOGGER.info("New user Stored.");
 			break;
 		case 401:
 			mensaje = MovieManagerClient.getBundle().getString("usernametaken");
-			LOGGER.log(Level.INFO, "The Username is already taken.");
+			LOGGER.info("The Username is already taken.");
 			break;
 		default:
 			mensaje = MovieManagerClient.getBundle().getString("generalerror");
-			LOGGER.log(Level.INFO, "Error while SignUp.");
+			LOGGER.info("Error while SignUp.");
 			break;
 		}
 		response.close();
@@ -144,7 +133,7 @@ public enum MovieManagerClient {
 			JSONObject jo = new JSONObject(response.getEntity(String.class));
 			sessionToken = jo.get("token").toString();
 			watchedIDs = MovieManagerClient.getWatchedIDs();
-			LOGGER.log(Level.INFO, "LogIn Succesessful");
+			LOGGER.info("LogIn Succesessful");
 		}
 		response.close();
 		return (response.getStatus() == 200);
@@ -171,7 +160,7 @@ public enum MovieManagerClient {
 		for (int i = 0; i < joa.length(); i++){
 			moviesSearched.add(Movie.fromJSON(joa.getJSONObject(i)));
 		}
-		LOGGER.log(Level.INFO, "Search Movie Successful");
+		LOGGER.info("Search Movie Successful");
 		response.close();
 		return moviesSearched;
 	}
@@ -187,7 +176,7 @@ public enum MovieManagerClient {
 		ClientResponse response = webResource
 				.get(ClientResponse.class);
 		movie = Movie.fromJSON( new JSONObject(response.getEntity(String.class)));
-		LOGGER.log(Level.INFO, "Movie retrived successfully");
+		LOGGER.info("Movie retrived successfully");
 		response.close();
 		return movie;
 	}
@@ -211,7 +200,7 @@ public enum MovieManagerClient {
 			movies.add(Movie.fromJSON(joa.getJSONObject(i)));
 		}
 
-		LOGGER.log(Level.INFO, "Watched Movies retrieved successfully");
+		LOGGER.info("Watched Movies retrieved successfully");
 		response.close();
 		return movies;
 	}
@@ -226,9 +215,9 @@ public enum MovieManagerClient {
 			for (Movie m: MovieManagerClient.getWatched()){
 				watched.add(m.getMovieID());
 			}
-			LOGGER.log(Level.INFO, "Watched Movies Id retrieved successfully");
+			LOGGER.info("Watched Movies Id retrieved successfully");
 		} catch (SearchMovieException e) {
-			LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e));
+			LOGGER.warn(e.toString());
 		}
 		return watched;
 	}
@@ -249,7 +238,7 @@ public enum MovieManagerClient {
 		response.close();
 		watchedIDs.add(movieID);
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Movie successfully added to Watched list");
+			LOGGER.info("Movie successfully added to Watched list");
 		return (response.getStatus() == 200);
 	}
 	
@@ -269,7 +258,7 @@ public enum MovieManagerClient {
 		response.close();
 		watchedIDs.remove(movieID);
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Movie successfully deleted from Watched list");
+			LOGGER.info("Movie successfully deleted from Watched list");
 		return (response.getStatus() == 200);
 	}
 	
@@ -286,7 +275,7 @@ public enum MovieManagerClient {
 				.put(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Album created successfully");
+			LOGGER.info("Album created successfully");
 		return response.getStatus();
 	}
 
@@ -308,7 +297,7 @@ public enum MovieManagerClient {
 		}
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Albums retrieved Successfully");
+			LOGGER.info("Albums retrieved Successfully");
 		return albums;
 	}
 
@@ -325,7 +314,7 @@ public enum MovieManagerClient {
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Album retrieved Successfully");
+			LOGGER.info("Album retrieved Successfully");
 		return Album.fromJSONComplete(jo);
 	}
 	
@@ -343,7 +332,7 @@ public enum MovieManagerClient {
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Album by Title retrieved Successfully");
+			LOGGER.info("Album by Title retrieved Successfully");
 		return Album.fromJSONComplete(jo);
 	}
 
@@ -359,7 +348,7 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Album deleted Successfully");
+			LOGGER.info("Album deleted Successfully");
 		return response.getStatus();
 	}
 
@@ -376,7 +365,7 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Album deleted by Title Successfully");
+			LOGGER.info("Album deleted by Title Successfully");
 		return response.getStatus();
 	}
 	
@@ -394,7 +383,7 @@ public enum MovieManagerClient {
 				.post(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Movie added Successfully to the Album");
+			LOGGER.info("Movie added Successfully to the Album");
 		return response.getStatus();
 	}
 	
@@ -413,7 +402,7 @@ public enum MovieManagerClient {
 				.post(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Movie added Successfully to the Album by Title");
+			LOGGER.info("Movie added Successfully to the Album by Title");
 		return response.getStatus();
 	}
 	
@@ -431,7 +420,7 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		if(response.getStatus() == 200)
-			LOGGER.log(Level.INFO, "Movie deleted Successfully from the Album");
+			LOGGER.info("Movie deleted Successfully from the Album");
 		return response.getStatus();
 	}
 	
@@ -449,7 +438,7 @@ public enum MovieManagerClient {
 	 */
 	public static void closeClient(){
 		client.destroy();
-		LOGGER.log(Level.INFO, "Client closed");
+		LOGGER.info("Client closed");
 	}
 
 	/**

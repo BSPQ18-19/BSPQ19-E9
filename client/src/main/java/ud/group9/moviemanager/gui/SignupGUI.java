@@ -1,6 +1,5 @@
 package ud.group9.moviemanager.gui;
 
-import ud.group9.moviemanager.api.LoggerMaster;
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 
@@ -9,8 +8,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -20,7 +19,7 @@ import java.awt.FlowLayout;
 public class SignupGUI extends JFrame{
 
 	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private final static Logger LOGGER = LogManager.getRootLogger();
 
 	private boolean signin = false;
 	private JButton btnSignUp;
@@ -61,12 +60,6 @@ public class SignupGUI extends JFrame{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		try {
-            LoggerMaster.setup();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Problems with creating the log files");
-        }
 		this.setAlwaysOnTop(true);
 		this.setResizable(false);
 		this.getContentPane().setBackground(Color.ORANGE);
@@ -158,16 +151,16 @@ public class SignupGUI extends JFrame{
 				try {
 					if (MovieManagerClient.LogIn(usname, pswrd)){
 						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginsuccessful"));
-						LOGGER.log(Level.INFO, "Login successful.");
+						LOGGER.info("Login successful.");
 						setVisible(false);
 						new MovieManagerGUI();
 					}else{
 						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginunsuccessful"));
-						LOGGER.log(Level.WARNING, "Login unseccessful");
+						LOGGER.warn("Login unseccessful");
 					}
 				} catch (SignupException e1) {
 					JOptionPane.showMessageDialog(btnLogIn, e1);
-					LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
+					LOGGER.warn(e1.toString());
 				}
 			}
 		});
@@ -214,26 +207,26 @@ public class SignupGUI extends JFrame{
 
 								if (password.getPassword().length == 0) {
 									JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("emptypassword"));
-									LOGGER.log(Level.WARNING, "Empty password");
+									LOGGER.warn("Empty password");
 									return;
 								}
 								if(!(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConf.getPassword())))) {
 									JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("differentpasswords"));
-									LOGGER.log(Level.WARNING, "Different passwords");
+									LOGGER.warn("Different passwords");
 									return;
 								}
 								pswrd = String.valueOf(password.getPassword());
 								try {
 									MovieManagerClient.SignUp(usname, pswrd);
 									JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("signupsuccessful"));
-									LOGGER.log(Level.INFO, "SignUp successful.");
+									LOGGER.info("SignUp successful.");
 									MovieManagerClient.LogIn(usname, pswrd);
 									setVisible(false);
 									dispose();
 									new MovieManagerGUI();
 								} catch (SignupException e1) {
 									JOptionPane.showMessageDialog(btnSignUp, e1);
-									LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
+									LOGGER.warn(e1.toString());
 								}
 								}
 								else{

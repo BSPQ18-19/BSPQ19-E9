@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'silk.middleware.SilkyMiddleware',
 ]
 
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = True
 ROOT_URLCONF = 'spq_server.urls'
 
 TEMPLATES = [

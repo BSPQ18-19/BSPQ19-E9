@@ -39,6 +39,7 @@ hs_err_pid*
 server/videoclub/migrations/
 .idea/
 */db.sqlite3
+*.prof
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

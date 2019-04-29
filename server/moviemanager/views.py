@@ -15,6 +15,18 @@ from .utils import check_params, compare_password, hash_password, search_movie_b
 logger = getLogger(__name__)
 
 
+def get_query(request):
+    if request.GET:
+        query = request.GET
+    elif request.POST:
+        query = request.POST
+    elif request.PUT:
+        query = request.PUT
+    else:
+        query = QueryDict(request.META.get("QUERY_STRING"))
+    return query
+
+
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST", "PUT"])
 @silk_profile(name='Handle user albums by title')
@@ -26,7 +38,8 @@ def handle_album_by_title(request):
     token
     :return: JSON containing album_id if all went well, error otherwise
     """
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
+    # check that are required parameters are present
     params = ["token", "title"]
     if request.method == "POST":
         params.append("movie_id")
@@ -85,7 +98,7 @@ def handle_album(request, album_id):
     :param album_id: ID of the album to be deleted
     :return: HTTP response
     """
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
     params = ["token", "movie_id"] if request.method == "POST" else ["token"]
     error_response = check_params(query, params)
     if error_response:
@@ -144,7 +157,7 @@ def login(request):
     :return: JsonResponse with token if ok, HttpResponse otherwise
     """
     # check that are required parameters are present
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
     params = ["username", "password"]
     error_response = check_params(query, params)
     if error_response:
@@ -213,8 +226,8 @@ def search(request):
     :param request: GET request containing movie title and optionally year
     :return: JsonResponse with movies if ok, HttpResponse otherwise
     """
-
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
+    # check that are required parameters are present
     params = ["title"]
     error_response = check_params(query, params)
     if error_response:
@@ -238,8 +251,9 @@ def signup(request):
     :param request: POST request containing username and password
     :return: HttpResponse
     """
+
+    query = get_query(request)
     # check that are required parameters are present
-    query = QueryDict(request.META.get("QUERY_STRING"))
     params = ["username", "password"]
     error_response = check_params(query, params)
     if error_response:
@@ -279,7 +293,7 @@ def user_albums(request):
     :return: JSOn with the list of the user
     """
     # check that are required parameters are present
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
     params = ["token"] if request.method == "GET" else ["token"]
     error_response = check_params(query, params)
     if error_response:
@@ -314,7 +328,7 @@ def watched_movies(request):
     :return: list of movies if token was valid
     """
     # check that are required parameters are present
-    query = QueryDict(request.META.get("QUERY_STRING"))
+    query = get_query(request)
     params = ["token"] if request.method == "GET" else ["token", "movie_id"]
     error_response = check_params(query, params)
     if error_response:

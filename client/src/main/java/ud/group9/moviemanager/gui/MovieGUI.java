@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import ud.group9.moviemanager.api.LoggerMaster;
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
@@ -31,10 +32,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MovieGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private JPanel contentPane;
 
 	/**
@@ -57,6 +61,12 @@ public class MovieGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public MovieGUI(String movieID) {
+		try {
+            LoggerMaster.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Problems with creating the log files");
+        }
 		Movie movie = MovieManagerClient.getMovie(movieID);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 500);
@@ -185,12 +195,11 @@ public class MovieGUI extends JFrame {
 			panel.add(panelPoster);
 			JLabel lblPoster = new JLabel("", image, SwingConstants.CENTER);
 			panelPoster.add(lblPoster);
+			LOGGER.log(Level.INFO, "Poster retrieved successfully");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e));
 		}
 	}
 	

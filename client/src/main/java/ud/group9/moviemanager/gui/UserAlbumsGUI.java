@@ -19,6 +19,7 @@ import java.awt.Dimension;
 
 import javax.swing.border.LineBorder;
 
+import ud.group9.moviemanager.api.LoggerMaster;
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.data.Album;
@@ -42,6 +43,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -53,6 +56,7 @@ import java.awt.Image;
 public class UserAlbumsGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private JPanel contentPane;
 	private DefaultListModel<String> l1;
 	private boolean movies = false;
@@ -101,6 +105,12 @@ public class UserAlbumsGUI extends JFrame {
 	 * @throws MalformedURLException 
 	 */
 	public UserAlbumsGUI() throws MalformedURLException, IOException {
+		try {
+            LoggerMaster.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Problems with creating the log files");
+        }
 		UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
 		UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("createalbum"));
 		setResizable(false);
@@ -144,13 +154,14 @@ public class UserAlbumsGUI extends JFrame {
 							String m = JOptionPane.showInputDialog(MovieManagerClient.getBundle().getString("albumtitle"));
 							if (m != null){
 								MovieManagerClient.createAlbum(m);
+								LOGGER.log(Level.INFO, "Album successfully created.");
 								showAlbums();
 							}
 						}else if(((JList<String>)e.getComponent()).getSelectedIndex() == 0){
 							try {
 								showMovies(MovieManagerClient.getWatched(), true);
 							} catch (SearchMovieException e1) {
-								e1.printStackTrace();
+								LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
 							}
 						}else{
 							shownAlbum = (((JList<String>)e.getComponent()).getSelectedValue());
@@ -247,8 +258,7 @@ public class UserAlbumsGUI extends JFrame {
 						l1.setElementAt("★" + l1.getElementAt(list.getSelectedIndex()).substring(1), list.getSelectedIndex());
 						showMovieInAlbumOptions(true);
 					} catch (SearchMovieException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
 					}
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("removewatched"))){
 					try {
@@ -256,8 +266,7 @@ public class UserAlbumsGUI extends JFrame {
 						l1.setElementAt("☆" + l1.getElementAt(list.getSelectedIndex()).substring(1), list.getSelectedIndex());
 						showMovieInAlbumOptions(false);
 					} catch (SearchMovieException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
 					}
 				}
 			}
@@ -325,7 +334,7 @@ public class UserAlbumsGUI extends JFrame {
 							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()), true);
 							lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
 						} catch (SearchMovieException e1) {
-							e1.printStackTrace();
+							LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e1));
 						}
 					}
 				}
@@ -478,6 +487,7 @@ public class UserAlbumsGUI extends JFrame {
 			lblMyAlbums.setText(shownAlbum + ":");
 		}
 		movies = true;
+		LOGGER.log(Level.INFO, "Show Movies successfully loaded.");
 	}
 
 	private void hideMainOptions(boolean hide){
@@ -496,6 +506,7 @@ public class UserAlbumsGUI extends JFrame {
 		l1.addElement(MovieManagerClient.getBundle().getString("newalbum"));
 		btnBorrarAlbum.setVisible(false);
 		movies = false;
+		LOGGER.log(Level.INFO, "ShowAlbums successfully loaded.");
 	}
 
 	private void showMovieInAlbumOptions(boolean isWatched){
@@ -516,15 +527,14 @@ public class UserAlbumsGUI extends JFrame {
 			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(84, 100, Image.SCALE_DEFAULT));
 			lblPoster.setIcon(image);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, LoggerMaster.getStackTrace(e));
 		}
 		panelMovieDetails.setVisible(true);
 		lblMovie.setText(m.getTitle());
 		lblMovie.setVisible(true);
+		LOGGER.log(Level.INFO, "Show Movie details successfully loaded.");
 	}
 	private void hideMovieDetails(){
 		if (!searching){

@@ -5,11 +5,13 @@ import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 import ud.group9.moviemanager.gui.SignupGUI;
+import ud.group9.moviemanager.gui.UserAlbumsGUI;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.ConsoleHandler;
@@ -68,7 +70,15 @@ public enum MovieManagerClient {
 	 * Opens the interface for the Initial connection where the user will need to LogIn or SignUp
 	 */
 	public static void start(){
-		new SignupGUI();
+		try {
+			new UserAlbumsGUI();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

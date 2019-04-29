@@ -40,15 +40,15 @@ public class Movie {
 	}
 	
 	/**
-     * Gets the MovieID of an Movie object
-     * @return String Returns the MovieID of an Movie object
+     * Gets the MovieID of a Movie object
+     * @return String Returns the MovieID of a Movie object
      */
 	public String getMovieID() {
 		return movieID;
 	}
 	 
     /**
-     * Sets the MovieID to an Movie object
+     * Sets the MovieID to a Movie object
      * @param movieID New unique identifier for the Movie
      */
 	public void setMovieID(String movieID) {
@@ -56,15 +56,15 @@ public class Movie {
 	}
 
 	/**
-     * Gets the Title of an Movie object
-     * @return String Returns the Title of an Movie object
+     * Gets the Title of a Movie object
+     * @return String Returns the Title of a Movie object
      */
 	public String getTitle() {
 		return title;
 	}
 	 
     /**
-     * Sets the Title to an Movie object
+     * Sets the Title to a Movie object
      * @param title New Title for the Movie
      */
 	public void setTitle(String title) {
@@ -72,15 +72,15 @@ public class Movie {
 	}
 
 	/**
-     * Gets the Year of an Movie object
-     * @return String Returns the Year of an Movie object
+     * Gets the Year of a Movie object
+     * @return String Returns the Year of a Movie object
      */
 	public int getYear() {
 		return year;
 	}
 	 
     /**
-     * Sets the Year to an Movie object
+     * Sets the Year to a Movie object
      * @param year New Year for the Movie
      */
 	public void setYear(int year) {
@@ -88,15 +88,15 @@ public class Movie {
 	}
 
 	/**
-     * Gets the Poster of an Movie object
-     * @return String Returns the Poster of an Movie object
+     * Gets the Poster of a Movie object
+     * @return String Returns the Poster of a Movie object
      */
 	public String getPoster() {
 		return poster;
 	}
 	 
     /**
-     * Sets the Poster to an Movie object
+     * Sets the Poster to a Movie object
      * @param poster New Poster for the Movie
      */
 	public void setPoster(String poster) {

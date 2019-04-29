@@ -3,7 +3,7 @@ package ud.group9.moviemanager.data;
 import org.json.JSONObject;
 
 /**
- * The Movie class represents how an Movie object is going to be
+ * The Movie class represents how a Movie object is going to be
  */
 public class Movie {
 	private String movieID;
@@ -14,7 +14,7 @@ public class Movie {
 	/**
 	 * Constructor for Movie type object
 	 * @param movieID Unique identifier for the Movie
-	 * @param title The name of the Album
+	 * @param title The name of the Movie
 	 * @param year The year in which the movie was published
 	 * @param poster The url where the movie poster is located
 	 */

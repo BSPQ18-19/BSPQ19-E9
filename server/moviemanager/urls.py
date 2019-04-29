@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('album/', views.create_album, name="create album or album by title"),  # create album or manage album by title
+    path('album/', views.handle_album_by_title, name="create album or album by title"),  # create album or manage album by title
     path('album/<str:album_id>/', views.handle_album, name="handle album"), # manage album by ID
     path('login/', views.login, name='login'),  # log user in
     path('movie/<str:movie_id>/', views.movie_details, name='movie'),  # signup user

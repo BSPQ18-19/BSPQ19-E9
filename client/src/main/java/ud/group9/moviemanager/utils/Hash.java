@@ -6,9 +6,18 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Class that helps with the Hasing process
+ *
+ */
 public class Hash {
     private static String method = "SHA-256";
 
+    /**
+     * Tranasform a plain text to Hash
+     * @param hash Plain text
+     * @return String Hashed text
+     */
     public static String encodeHash(byte []hash) {
         Base32 encoder = new Base32();
         String encoded = encoder.encodeAsString(hash);

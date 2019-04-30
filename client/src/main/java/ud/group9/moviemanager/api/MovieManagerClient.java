@@ -5,12 +5,18 @@ import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
 import ud.group9.moviemanager.gui.SignupGUI;
+import ud.group9.moviemanager.gui.UserAlbumsGUI;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +39,7 @@ public enum MovieManagerClient {
 	private static ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_es");
 	private static String sessionToken = null;
 	private static ArrayList<String> watchedIDs = null;
+	private final static Logger LOGGER = LogManager.getRootLogger();
 	
 	/**
 	 * Empty contructor for MovieManagerClient
@@ -54,7 +61,13 @@ public enum MovieManagerClient {
 	 * Opens the interface for the Initial connection where the user will need to LogIn or SignUp
 	 */
 	public static void start(){
-		new SignupGUI();
+		try {
+			new UserAlbumsGUI();
+		} catch (MalformedURLException e) {
+			LOGGER.info(e.toString());
+		} catch (IOException e) {
+			LOGGER.info(e.toString());
+		}
 	}
 	
 	/**
@@ -85,12 +98,15 @@ public enum MovieManagerClient {
 		switch(response.getStatus()){
 		case 200:
 			mensaje = MovieManagerClient.getBundle().getString("newuserstored");
+			LOGGER.info("New user Stored.");
 			break;
 		case 401:
 			mensaje = MovieManagerClient.getBundle().getString("usernametaken");
+			LOGGER.info("The Username is already taken.");
 			break;
 		default:
 			mensaje = MovieManagerClient.getBundle().getString("generalerror");
+			LOGGER.info("Error while SignUp.");
 			break;
 		}
 		response.close();
@@ -117,6 +133,7 @@ public enum MovieManagerClient {
 			JSONObject jo = new JSONObject(response.getEntity(String.class));
 			sessionToken = jo.get("token").toString();
 			watchedIDs = MovieManagerClient.getWatchedIDs();
+			LOGGER.info("LogIn Succesessful");
 		}
 		response.close();
 		return (response.getStatus() == 200);
@@ -143,6 +160,7 @@ public enum MovieManagerClient {
 		for (int i = 0; i < joa.length(); i++){
 			moviesSearched.add(Movie.fromJSON(joa.getJSONObject(i)));
 		}
+		LOGGER.info("Search Movie Successful");
 		response.close();
 		return moviesSearched;
 	}
@@ -158,6 +176,7 @@ public enum MovieManagerClient {
 		ClientResponse response = webResource
 				.get(ClientResponse.class);
 		movie = Movie.fromJSON( new JSONObject(response.getEntity(String.class)));
+		LOGGER.info("Movie retrived successfully");
 		response.close();
 		return movie;
 	}
@@ -180,6 +199,8 @@ public enum MovieManagerClient {
 		for (int i = 0; i < joa.length(); i++){
 			movies.add(Movie.fromJSON(joa.getJSONObject(i)));
 		}
+
+		LOGGER.info("Watched Movies retrieved successfully");
 		response.close();
 		return movies;
 	}
@@ -194,8 +215,9 @@ public enum MovieManagerClient {
 			for (Movie m: MovieManagerClient.getWatched()){
 				watched.add(m.getMovieID());
 			}
+			LOGGER.info("Watched Movies Id retrieved successfully");
 		} catch (SearchMovieException e) {
-			e.printStackTrace();
+			LOGGER.warn(e.toString());
 		}
 		return watched;
 	}
@@ -215,6 +237,8 @@ public enum MovieManagerClient {
 				.post(ClientResponse.class);
 		response.close();
 		watchedIDs.add(movieID);
+		if(response.getStatus() == 200)
+			LOGGER.info("Movie successfully added to Watched list");
 		return (response.getStatus() == 200);
 	}
 	
@@ -233,6 +257,8 @@ public enum MovieManagerClient {
 				.delete(ClientResponse.class);
 		response.close();
 		watchedIDs.remove(movieID);
+		if(response.getStatus() == 200)
+			LOGGER.info("Movie successfully deleted from Watched list");
 		return (response.getStatus() == 200);
 	}
 	
@@ -248,6 +274,8 @@ public enum MovieManagerClient {
 				.queryParam("title", title)
 				.put(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Album created successfully");
 		return response.getStatus();
 	}
 
@@ -268,6 +296,8 @@ public enum MovieManagerClient {
 			albums.add(Album.fromJSONSimple(joa.getJSONObject(i)));
 		}
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Albums retrieved Successfully");
 		return albums;
 	}
 
@@ -283,6 +313,8 @@ public enum MovieManagerClient {
 				.get(ClientResponse.class);
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Album retrieved Successfully");
 		return Album.fromJSONComplete(jo);
 	}
 	
@@ -299,6 +331,8 @@ public enum MovieManagerClient {
 				.get(ClientResponse.class);
 		JSONObject jo = new JSONObject(response.getEntity(String.class));
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Album by Title retrieved Successfully");
 		return Album.fromJSONComplete(jo);
 	}
 
@@ -313,6 +347,8 @@ public enum MovieManagerClient {
 				.queryParam("token", sessionToken)
 				.delete(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Album deleted Successfully");
 		return response.getStatus();
 	}
 
@@ -328,6 +364,8 @@ public enum MovieManagerClient {
 				.queryParam("title", albumTitle)
 				.delete(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Album deleted by Title Successfully");
 		return response.getStatus();
 	}
 	
@@ -344,6 +382,8 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Movie added Successfully to the Album");
 		return response.getStatus();
 	}
 	
@@ -361,6 +401,8 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.post(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Movie added Successfully to the Album by Title");
 		return response.getStatus();
 	}
 	
@@ -377,6 +419,8 @@ public enum MovieManagerClient {
 				.queryParam("movie_id", movieID)
 				.delete(ClientResponse.class);
 		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Movie deleted Successfully from the Album");
 		return response.getStatus();
 	}
 	
@@ -394,6 +438,7 @@ public enum MovieManagerClient {
 	 */
 	public static void closeClient(){
 		client.destroy();
+		LOGGER.info("Client closed");
 	}
 
 	/**

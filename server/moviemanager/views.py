@@ -378,3 +378,77 @@ def watched_movies(request):
         ))
 
     return HttpResponse("OK")
+
+
+@csrf_exempt
+@require_http_methods(["DELETE", "GET", "POST", "PUT"])
+def handle_rating(request):
+    # check that are required parameters are present
+    query = get_query(request)
+    params = ["token", "movie_id"] if request.method in {
+        "GET", "DELETE"} else ["token", "movie_id", "score"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # check that the token is valid
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    user = SESSION_HANDLER.get(token).user
+    movie_id = query.get("movie_id")
+
+    try:
+        movie = models.Movie.objects.get(movie_id=movie_id)
+    except models.Movie.DoesNotExist:
+        return HttpResponse("Movie '{}' not found".format(movie_id), status=404)
+
+    try:
+        rating = models.Rating.objects.get(user_id=user, movie_id=movie)
+    except models.Rating.DoesNotExist:
+        #
+        # PUT
+        #
+        if request.method == "PUT":
+            rating = models.Rating()
+            score = query.get("score")
+            rating.user_id = SESSION_HANDLER.get(token).user
+            rating.movie_id = movie
+            try:
+                rating.score = int(score)
+            except ValueError:
+                return HttpResponse("Invalid score '{}'".format(score), status=400)
+            rating.save()
+            logger.log(INFO, "create rating {}".format(rating.json()))
+            return HttpResponse("OK")
+        else:
+            return HttpResponse("No rating found for user '{}' movie '{}'".format(
+                user.username, movie_id
+            ), status=404)
+
+    #
+    # GET
+    #
+    if request.method == "GET":
+        return JsonResponse(rating.json())
+
+    #
+    # POST
+    #
+    elif request.method == "POST":
+        score = query.get("score")
+        try:
+            rating.score = int(score)
+        except ValueError:
+            return HttpResponse("Invalid score '{}'".format(score), status=400)
+        models.Rating.objects.update(user_id=rating.user_id,
+                                     movie_id=rating.movie_id, score=score)
+
+    #
+    # DELETE
+    #
+    elif request.method == "DELETE":
+        rating.delete()
+
+    return HttpResponse("OK")

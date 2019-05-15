@@ -4,7 +4,6 @@ import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
-import ud.group9.moviemanager.gui.SignupGUI;
 import ud.group9.moviemanager.gui.UserAlbumsGUI;
 
 import com.sun.jersey.api.client.ClientResponse;

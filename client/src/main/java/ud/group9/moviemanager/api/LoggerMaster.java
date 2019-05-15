@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +25,8 @@ public class LoggerMaster {
         logger.setLevel(Level.ALL);
         fileTxt = new FileHandler("log/Logging.txt", true);
         consoleHandler = new ConsoleHandler();
-
+        logger.addHandler(consoleHandler);
+        
         // create a TXT formatter
         formatterTxt = new SimpleFormatter();
         fileTxt.setFormatter(formatterTxt);

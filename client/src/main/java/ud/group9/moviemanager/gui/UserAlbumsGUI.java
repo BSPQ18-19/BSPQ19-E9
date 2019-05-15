@@ -39,6 +39,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +51,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
@@ -141,12 +145,21 @@ public class UserAlbumsGUI extends JFrame {
 		panelForMainOptions.add(albumsScrollPanel);
 
 		JPanel panelUpperLabel = new JPanel();
+		panelUpperLabel.setLayout(new BorderLayout());
 		panelUpperLabel.setBackground(Color.ORANGE);
 		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
-		lblMyAlbums = new JLabel(MovieManagerClient.getBundle().getString("moviemanager"));
-		panelUpperLabel.add(lblMyAlbums);
-
+		lblMyAlbums = new JLabel(MovieManagerClient.getBundle().getString("moviemanager"), SwingConstants.CENTER);
+		panelUpperLabel.add(lblMyAlbums, BorderLayout.CENTER);
+		
+		JLabel lblLanguage = new JLabel("en es");
+		panelUpperLabel.add(lblLanguage, BorderLayout.EAST);
+		
+		JLabel lblLanguageCompensator = new JLabel("");
+		Rectangle2D text = lblLanguage.getFont().getStringBounds(lblLanguage.getText(), new FontRenderContext(new AffineTransform(),true,true));
+		lblLanguageCompensator.setPreferredSize(new Dimension((int) text.getWidth(), (int) text.getHeight()));
+		panelUpperLabel.add(lblLanguageCompensator, BorderLayout.WEST);
+		
 		l1 = new DefaultListModel<>();  
 
 		list = new JList<>(l1); 

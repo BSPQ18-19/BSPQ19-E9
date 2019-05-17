@@ -423,6 +423,12 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 	
+	/**
+	 * Create rating for movie with given score
+	 * @param movieID Unique identifier of the movie that the user has requested to give a rating to
+	 * @param score Number from 0 to 100 to score the movie with
+	 * @return int Return a status code of the process
+	 */
 	public static int createRating( String movieID, int score ){
 		WebResource webResource = client.resource(addr()).path("rating/");
 		ClientResponse response = webResource
@@ -436,6 +442,12 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 	
+	/**
+	 * Update rating for movie with given score
+	 * @param movieID Unique identifier of the movie that the user has requested to update rating
+	 * @param score Number from 0 to 100 to score the movie with
+	 * @return int Return a status code of the process
+	 */
 	public static int updateRating( String movieID, int score ){
 		WebResource webResource = client.resource(addr()).path("rating/");
 		ClientResponse response = webResource

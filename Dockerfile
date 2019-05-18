@@ -1,20 +1,16 @@
 FROM python:3
 
-WORKDIR /usr/src/app
+WORKDIR /spq_server
 
 # copy server files
 COPY server/ ./
 
 # install dependencies
-RUN apt-get install sed && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # configure connection to database
-RUN echo $(ls .)
-RUN sed -i -e 's/"HOST": "127.0.0.1",/"HOST": "192.168.0.1",/g' ./spq_server/settings.py
-
-# prepare database
-#RUN python manage.py makemigrations && \
-#    python manage.py migrate
+# REPLACE 172.18.0.1 with address of MySQL
+RUN sed -i -e 's/"HOST": "127.0.0.1",/"HOST": "172.18.0.1",/g' ./spq_server/settings.py
 
 # entrypoint
 CMD [ "python", "manage.py", "runserver" ]

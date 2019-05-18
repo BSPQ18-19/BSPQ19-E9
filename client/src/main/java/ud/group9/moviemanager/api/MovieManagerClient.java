@@ -424,6 +424,68 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * Create rating for movie with given score
+	 * @param movieID Unique identifier of the movie that the user has requested to give a rating to
+	 * @param score Number from 0 to 100 to score the movie with
+	 * @return int Return a status code of the process
+	 */
+	public static int createRating( String movieID, int score ){
+		WebResource webResource = client.resource(addr()).path("rating/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.queryParam("score", Integer.toString(score))
+				.put(ClientResponse.class);
+		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Rating created successfully");
+		return response.getStatus();
+	}
+	
+	/**
+	 * Update rating for movie with given score
+	 * @param movieID Unique identifier of the movie that the user has requested to update rating
+	 * @param score Number from 0 to 100 to score the movie with
+	 * @return int Return a status code of the process
+	 */
+	public static int updateRating( String movieID, int score ){
+		WebResource webResource = client.resource(addr()).path("rating/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.queryParam("score", Integer.toString(score))
+				.post(ClientResponse.class);
+		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Rating updated successfully");
+		return response.getStatus();
+	}
+	
+	public static int getRating( String movieID ){
+		WebResource webResource = client.resource(addr()).path("rating/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.post(ClientResponse.class);
+		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Rating obtained from server");
+		return response.getStatus();
+	}
+	
+	public static int deleteRating( String movieID ){
+		WebResource webResource = client.resource(addr()).path("rating/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.delete(ClientResponse.class);
+		response.close();
+		if(response.getStatus() == 200)
+			LOGGER.info("Rating deleted from server");
+		return response.getStatus();
+	}
+	
+	/**
 	 * Check if a movie has been watched by the User
 	 * @param movieID Unique identifier of the movie that has requested to check
 	 * @return Boolean Returns a Boolean depending on whether the Movie is watched or not 
@@ -468,26 +530,7 @@ public enum MovieManagerClient {
 		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		try {
 			MovieManagerClient.start();
-			//			System.out.println(mmc.SignUp("user", "test_password"));
-//			MovieManagerClient.LogIn("user", "test_password");
-			//			mmc.createAlbum("albumToDelete");
-			//			mmc.deleteAlbum(mmc.getAlbums().get(0).getAlbumID());
-//			System.out.println(mmc.getAlbums());
-//			System.out.println(mmc.searchForMovie("Scott Pilgrim", "2010").toString());
-//			System.out.println(MovieManagerClient.getWatched());
-//			System.out.println(MovieManagerClient.getMovie(MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
-//			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
-//			System.out.println(MovieManagerClient.addToWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
-//			System.out.println(MovieManagerClient.getWatched());
-//			System.out.println(MovieManagerClient.deleteFromWatched( MovieManagerClient.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
-//			System.out.println(MovieManagerClient.getWatched());
-//			System.out.println(mmc.addMovieToAlbum(mmc.getAlbums().get(0).getAlbumID(), mmc.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
-//			System.out.println(mmc.getAlbums());
-//			System.out.println(mmc.deleteMovieFromAlbum(mmc.getAlbums().get(0).getAlbumID(), mmc.searchForMovie("Scott Pilgrim", "2010").get(1).getMovieID()));
-//			System.out.println(mmc.getAlbums());
-			//			System.out.println(mmc.addToWatched(mmc.searchForMovie("Scott Pilgrim", "2010").get(0).getMovieID()));
 			Thread.sleep(10000);
-			// mmc.closeClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

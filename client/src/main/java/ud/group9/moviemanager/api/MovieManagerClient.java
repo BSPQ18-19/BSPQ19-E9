@@ -466,14 +466,20 @@ public enum MovieManagerClient {
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)
 				.queryParam("movie_id", movieID)
-				.post(ClientResponse.class);
-		response.close();
-		if(response.getStatus() == 200)
+				.get(ClientResponse.class);
+		if(response.getStatus() == 200){
 			LOGGER.info("Rating obtained from server");
-		return response.getStatus();
+			JSONObject jo = new JSONObject(response.getEntity(String.class));
+			response.close();
+			return jo.getInt("score");
+		}
+		else
+			response.close();
+			return -1;
 	}
 	
 	public static int deleteRating( String movieID ){
+		System.out.println(movieID);
 		WebResource webResource = client.resource(addr()).path("rating/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)

@@ -426,6 +426,13 @@ def handle_rating(request):
             return HttpResponse("No rating found for user '{}' movie '{}'".format(
                 user.username, movie_id
             ), status=404)
+    except models.Rating.MultipleObjectsReturned:
+        ratings = models.Rating.objects.filter(user_id=user)
+        for rating in ratings:
+            rating.delete()
+        return HttpResponse(
+            "Found multiple albums. Deleted them because testing is enabled.",
+            status=500)
 
     #
     # GET

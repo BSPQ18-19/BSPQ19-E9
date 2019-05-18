@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.border.LineBorder;
+import javax.swing.text.JTextComponent;
 
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SearchMovieException;
@@ -32,6 +33,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
@@ -99,7 +101,7 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panelUserData;
 	private JPanel panel_2;
 	private JButton btnBack;
-
+	private HashMap<JComponent, String> texts = new HashMap<>();
 	/**
 	 * Launch the application.
 	 */
@@ -150,14 +152,53 @@ public class UserAlbumsGUI extends JFrame {
 		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
 		lblMyAlbums = new JLabel(MovieManagerClient.getBundle().getString("moviemanager"), SwingConstants.CENTER);
+		texts.put(lblMyAlbums, "moviemanager");
 		panelUpperLabel.add(lblMyAlbums, BorderLayout.CENTER);
 
-		JLabel lblLanguage = new JLabel("en es");
-		panelUpperLabel.add(lblLanguage, BorderLayout.EAST);
-
+		JPanel panelLanguages = new JPanel();
+		panelLanguages.setBackground(Color.ORANGE);
+		JLabel lblLanguage = new JLabel("en ");
+		lblLanguage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				MovieManagerClient.setBundle("en");
+				for (JComponent c: texts.keySet()){
+					if ((c instanceof JLabel) && (c == lblMyAlbums && !moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+				}
+				if (!movies && !searching){
+					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
+					l1.set(l1.getSize()-1, (MovieManagerClient.getBundle().getString("newalbum")));
+				}
+				revalidate();
+				repaint();
+			}
+		});
+		panelLanguages.add(lblLanguage);
+		JLabel lblLanguage2 = new JLabel("es");
+		lblLanguage2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				MovieManagerClient.setBundle("es");
+				for (JComponent c: texts.keySet()){
+					if ((c instanceof JLabel) && (c == lblMyAlbums && !moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+				}
+				if (!movies && !searching){
+					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
+					l1.set(l1.getSize()-1, (MovieManagerClient.getBundle().getString("newalbum")));
+				}
+				revalidate();
+				repaint();
+			}
+		});
+		panelLanguages.add(lblLanguage2);
+		panelUpperLabel.add(panelLanguages, BorderLayout.EAST);
+		
 		JLabel lblLanguageCompensator = new JLabel("");
-		Rectangle2D text = lblLanguage.getFont().getStringBounds(lblLanguage.getText(), new FontRenderContext(new AffineTransform(),true,true));
-		lblLanguageCompensator.setPreferredSize(new Dimension((int) text.getWidth(), (int) text.getHeight()));
+		Rectangle2D text1 = lblLanguage.getFont().getStringBounds(lblLanguage.getText(), new FontRenderContext(new AffineTransform(),true,true));
+		Rectangle2D text2 = lblLanguage2.getFont().getStringBounds(lblLanguage2.getText(), new FontRenderContext(new AffineTransform(),true,true));
+		lblLanguageCompensator.setPreferredSize(new Dimension((int) (text1.getWidth() + text2.getWidth()), (int) (text1.getHeight() + text2.getHeight())));
 		panelUpperLabel.add(lblLanguageCompensator, BorderLayout.WEST);
 
 		l1 = new DefaultListModel<>();  
@@ -196,9 +237,11 @@ public class UserAlbumsGUI extends JFrame {
 						showMovieInAlbumOptions(MovieManagerClient.isWatched(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1)))));
 						if (searching){
 							btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("addtoalbum"));
+							texts.put(btnAddToAlbum, "addtoalbum");
 							btnAddToAlbum.setVisible(true);
 						}else if (movies){
 							btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("removefromalbum"));
+							texts.put(btnAddToAlbum, "removefromalbum");
 							btnAddToAlbum.setVisible(true);
 						}
 					}else{
@@ -208,7 +251,7 @@ public class UserAlbumsGUI extends JFrame {
 						}else{
 							btnBorrarAlbum.setVisible(true);
 							btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("deletealbum"));
-
+							texts.put(btnBorrarAlbum, "deletealbum");
 						}
 					}
 				}
@@ -245,6 +288,7 @@ public class UserAlbumsGUI extends JFrame {
 		contentPane.add(pBotonera, BorderLayout.SOUTH);
 
 		btnBack = new JButton(MovieManagerClient.getBundle().getString("back"));
+		texts.put(btnBack, "back");
 		btnBack.setForeground(Color.BLACK);
 		btnBack.setBackground(new Color(255, 140, 0));
 		btnBack.addActionListener(new ActionListener() {
@@ -262,6 +306,7 @@ public class UserAlbumsGUI extends JFrame {
 						btnBorrarAlbum.setVisible(false);
 						btnAddToAlbum.setVisible(false);
 						lblMyAlbums.setText(MovieManagerClient.getBundle().getString("moviemanager"));
+						texts.put(lblMyAlbums, "moviemanager");
 					}
 				}else if (btnBack.getText().equals(MovieManagerClient.getBundle().getString("logout"))){
 					login(false);
@@ -272,6 +317,7 @@ public class UserAlbumsGUI extends JFrame {
 		panel_2.add(btnBack);
 
 		btnBorrarAlbum = new JButton(MovieManagerClient.getBundle().getString("deletealbum"));
+		texts.put(btnBorrarAlbum, "deletealbum");
 		btnBorrarAlbum.setVisible(false);
 		btnBorrarAlbum.setForeground(Color.BLACK);
 		btnBorrarAlbum.setBackground(new Color(255, 140, 0));
@@ -299,7 +345,9 @@ public class UserAlbumsGUI extends JFrame {
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("rate"))){
 					MovieManagerClient.createRating(movieIDs.get((list.getSelectedValue().substring(1))), 80);
 					btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("updaterating"));
+					texts.put(btnBorrarAlbum, "updaterating");
 					btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("deleterating"));
+					texts.put(btnAddToAlbum, "deleterating");
 					btnAddToAlbum.setVisible(true);
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("updaterating"))){
 					MovieManagerClient.updateRating(movieIDs.get((list.getSelectedValue().substring(1))), 50);
@@ -309,6 +357,7 @@ public class UserAlbumsGUI extends JFrame {
 		panel_2.add(btnBorrarAlbum);
 
 		btnAddToAlbum = new JButton(MovieManagerClient.getBundle().getString("addtoalbum"));
+		texts.put(btnAddToAlbum, "addtoalbum");
 		btnAddToAlbum.setVisible(false);
 		btnAddToAlbum.setForeground(Color.BLACK);
 		btnAddToAlbum.setBackground(new Color(255, 140, 0));
@@ -334,6 +383,7 @@ public class UserAlbumsGUI extends JFrame {
 					MovieManagerClient.deleteRating(movieIDs.get((list.getSelectedValue().substring(1))));
 					btnAddToAlbum.setVisible(false);
 					btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("rate"));
+					texts.put(btnBorrarAlbum, "rate");
 				}
 			}
 		});
@@ -355,7 +405,8 @@ public class UserAlbumsGUI extends JFrame {
 		gbl_panelUserData.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		panelUserData.setLayout(gbl_panelUserData);
 
-		JLabel lblUsername = new JLabel(MovieManagerClient.getBundle().getString("username") + ":");
+		JLabel lblUsername = new JLabel(MovieManagerClient.getBundle().getString("username"));
+		texts.put(lblUsername, "username");
 		lblUsername.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblUsername = new GridBagConstraints();
 		gbc_lblUsername.insets = new Insets(0, 0, 5, 5);
@@ -372,7 +423,8 @@ public class UserAlbumsGUI extends JFrame {
 		username.setBackground(new Color(255, 222, 173));
 		username.setColumns(10);
 
-		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password") + ":");
+		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password"));
+		texts.put(lblPassword, "password");
 		GridBagConstraints gbc_lblPassword = new GridBagConstraints();
 		gbc_lblPassword.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPassword.gridx = 0;
@@ -388,7 +440,8 @@ public class UserAlbumsGUI extends JFrame {
 		password.setBackground(new Color(255, 222, 173));
 		password.setColumns(10);
 
-		lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword") + ":");
+		lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword"));
+		texts.put(lblConfirm, "confirmpassword");
 		lblConfirm.setVisible(false);
 		GridBagConstraints gbc_lblConfirm = new GridBagConstraints();
 		gbc_lblConfirm.insets = new Insets(0, 0, 5, 5);
@@ -417,6 +470,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelUserData.add(panel_3, gbc_panel_3);
 
 		btnLogIn = new JButton(MovieManagerClient.getBundle().getString("login"));
+		texts.put(btnLogIn, "login");
 		btnLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -455,6 +509,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainButtonSignUp.setLayout(new BoxLayout(panelMainButtonSignUp, BoxLayout.Y_AXIS));
 
 		lblNewLabel = new JLabel(MovieManagerClient.getBundle().getString("newuserquestion"));
+		texts.put(lblNewLabel, "newuserquestion");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panelMainButtonSignUp.add(lblNewLabel);
 		JPanel panelButtonSignUp = new JPanel();
@@ -465,6 +520,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelButtonSignUp.setBackground(Color.ORANGE);
 
 		btnSignUp = new JButton(MovieManagerClient.getBundle().getString("signup"));
+		texts.put(btnSignUp, "signup");
 		panelButtonSignUp.add(btnSignUp);
 		btnSignUp.addActionListener(new ActionListener() {
 			@Override
@@ -505,7 +561,8 @@ public class UserAlbumsGUI extends JFrame {
 		btnSignUp.setBackground(new Color(255, 140, 0));
 		btnSignUp.setForeground(Color.BLACK);
 
-		btnMyAlbums = new JButton("My albums");
+		btnMyAlbums = new JButton(MovieManagerClient.getBundle().getString("myalbums"));
+		texts.put(btnMyAlbums, "myalbums");
 		btnMyAlbums.setForeground(Color.BLACK);
 		btnMyAlbums.setBackground(new Color(255, 140, 0));
 		btnMyAlbums.addActionListener(new ActionListener() {
@@ -515,7 +572,8 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 
-		btnSearchForMovie = new JButton("Search for movie");
+		btnSearchForMovie = new JButton(MovieManagerClient.getBundle().getString("searchmovie"));
+		texts.put(btnSearchForMovie, "searchmovie");
 		btnSearchForMovie.setForeground(Color.BLACK);
 		btnSearchForMovie.setBackground(new Color(255, 140, 0));
 		btnSearchForMovie.addActionListener(new ActionListener() {
@@ -534,6 +592,7 @@ public class UserAlbumsGUI extends JFrame {
 							hideMainOptions(true);
 							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()), true);
 							lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
+							texts.put(lblMyAlbums, "searchresults");
 						} catch (SearchMovieException e1) {
 							LOGGER.warn(e1.toString());
 						}
@@ -679,6 +738,7 @@ public class UserAlbumsGUI extends JFrame {
 		l1.clear();
 		movieIDs.clear();
 		btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("deletealbum"));
+		texts.put(btnBorrarAlbum, "deletealbum");
 		for (Movie movie: moviesToShow){
 			if(MovieManagerClient.isWatched(movie.getMovieID())) l1.addElement("★" + movie.getTitle());  
 			else l1.addElement("☆" + movie.getTitle());
@@ -693,14 +753,21 @@ public class UserAlbumsGUI extends JFrame {
 	}
 
 	private void hideMainOptions(boolean hide){
-		if(hide) btnBack.setText(MovieManagerClient.getBundle().getString("back"));
-		else btnBack.setText(MovieManagerClient.getBundle().getString("logout"));
+		if(hide){
+			btnBack.setText(MovieManagerClient.getBundle().getString("back"));
+			texts.put(btnBack, "back");
+		}
+		else{
+			btnBack.setText(MovieManagerClient.getBundle().getString("logout"));
+			texts.put(btnBack, "logout");
+		}
 		panelMainOptions.setVisible(!hide);
 		albumsScrollPanel.setVisible(hide);
 	}
 
 	private void showAlbums(){
 		lblMyAlbums.setText(MovieManagerClient.getBundle().getString("myalbums"));
+		texts.put(lblMyAlbums, "myalbums");
 		l1.clear();
 		shownAlbum = null;
 		l1.addElement(MovieManagerClient.getBundle().getString("watched"));
@@ -715,19 +782,28 @@ public class UserAlbumsGUI extends JFrame {
 
 	private void showMovieInAlbumOptions(boolean isWatched){
 		btnBorrarAlbum.setVisible(true);
-		if (isWatched) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
-		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
+		if (isWatched){
+			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
+			texts.put(btnBorrarAlbum, "removewatched");
+		}
+		else{
+			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
+			texts.put(btnBorrarAlbum, "addwatched");
+		}
 	}
 
 	private void showMovieDetails(Movie m){
 		albumsScrollPanel.setVisible(false);
 		if (MovieManagerClient.getRating(movieIDs.get((list.getSelectedValue().substring(1)))) == -1){
 			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("rate"));
+			texts.put(btnBorrarAlbum, "rate");
 			btnAddToAlbum.setVisible(false);
 		}
 		else{
 			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("updaterating"));
+			texts.put(btnBorrarAlbum, "updaterating");
 			btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("deleterating"));
+			texts.put(btnBorrarAlbum, "deleterating");
 		}
 		lblMyAlbums.setText(list.getSelectedValue() + ":");
 		panelMovieDetails.setPreferredSize(panelForMainOptions.getSize());
@@ -751,15 +827,24 @@ public class UserAlbumsGUI extends JFrame {
 			lblMyAlbums.setText(shownAlbum + ":");
 		}else{
 			lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
+			texts.put(lblMyAlbums, "searchresults");
 		}
 		panelMovieDetails.setVisible(false);
 		//		btnBorrarAlbum.setVisible(true);
-		if (MovieManagerClient.isWatched(movieIDs.get((list.getSelectedValue().substring(1))))) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
-		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
+		if (MovieManagerClient.isWatched(movieIDs.get((list.getSelectedValue().substring(1))))){
+			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
+			texts.put(btnBorrarAlbum, "removewatched");
+		}
+		else{
+			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
+			texts.put(btnBorrarAlbum, "addwatched");
+		}
 		if (searching){
 			btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("addtoalbum"));
+			texts.put(btnAddToAlbum, "addtoalbum");
 		}else if (movies){
 			btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("removefromalbum"));
+			texts.put(btnAddToAlbum, "removefromalbum");
 		}
 		btnAddToAlbum.setVisible(true);
 		albumsScrollPanel.setVisible(true);
@@ -767,6 +852,7 @@ public class UserAlbumsGUI extends JFrame {
 	private void signin(boolean signin){
 		btnLogIn.setVisible(!signin);
 		lblMyAlbums.setText(MovieManagerClient.getBundle().getString("welcome"));
+		texts.put(lblMyAlbums, "welcome");
 		lblConfirm.setVisible(signin);
 		passwordConf.setVisible(signin);
 		lblNewLabel.setVisible(!signin);

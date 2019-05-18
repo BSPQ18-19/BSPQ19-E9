@@ -520,7 +520,8 @@ public enum MovieManagerClient {
 	 * Set the Bundle for the Client
 	 * @param bundle The ResourceBundle object to set
 	 */
-	public static void setBundle(ResourceBundle bundle) {
+	public static void setBundle( String language ) {
+		ResourceBundle bundle = ResourceBundle.getBundle("SystemMessages_" + language);
 		MovieManagerClient.bundle = bundle;
 	}
 

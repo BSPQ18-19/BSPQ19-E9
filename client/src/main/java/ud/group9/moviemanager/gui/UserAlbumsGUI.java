@@ -260,9 +260,9 @@ public class UserAlbumsGUI extends JFrame {
 					searching = false;
 					hideMainOptions(false);
 					btnBorrarAlbum.setVisible(false);
+					btnAddToAlbum.setVisible(false);
 					lblMyAlbums.setText(MovieManagerClient.getBundle().getString("moviemanager"));
 				}
-				btnAddToAlbum.setVisible(false);
 				}else if (btnBack.getText().equals(MovieManagerClient.getBundle().getString("logout"))){
 					login(false);
 				}
@@ -710,7 +710,7 @@ public class UserAlbumsGUI extends JFrame {
 
 	private void showMovieDetails(Movie m){
 		albumsScrollPanel.setVisible(false);
-		btnBorrarAlbum.setVisible(false);
+		btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("rate"));
 		btnAddToAlbum.setVisible(false);
 		lblMyAlbums.setText(list.getSelectedValue() + ":");
 		panelMovieDetails.setPreferredSize(panelForMainOptions.getSize());
@@ -736,9 +736,11 @@ public class UserAlbumsGUI extends JFrame {
 			lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
 		}
 		panelMovieDetails.setVisible(false);
-		albumsScrollPanel.setVisible(true);
-		btnBorrarAlbum.setVisible(true);
+//		btnBorrarAlbum.setVisible(true);
+		if (MovieManagerClient.isWatched(movieIDs.get((list.getSelectedValue().substring(1))))) btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("removewatched"));
+		else btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("addwatched"));
 		btnAddToAlbum.setVisible(true);
+		albumsScrollPanel.setVisible(true);
 	}
 	private void signin(boolean signin){
 		btnLogIn.setVisible(!signin);

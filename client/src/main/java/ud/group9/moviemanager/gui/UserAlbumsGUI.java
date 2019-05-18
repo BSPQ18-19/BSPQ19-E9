@@ -53,7 +53,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
@@ -163,10 +162,10 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				MovieManagerClient.setBundle("en");
 				for (JComponent c: texts.keySet()){
-					if ((c instanceof JLabel) && (c == lblMyAlbums && !moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					if ((c instanceof JLabel) && (!moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 				}
-				if (!movies && !searching){
+				if (lblMyAlbums.getText().equals(MovieManagerClient.getBundle().getString("myalbums"))){
 					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
 					l1.set(l1.getSize()-1, (MovieManagerClient.getBundle().getString("newalbum")));
 				}
@@ -181,10 +180,10 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				MovieManagerClient.setBundle("es");
 				for (JComponent c: texts.keySet()){
-					if ((c instanceof JLabel) && (c == lblMyAlbums && !moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					if ((c instanceof JLabel) && (!moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 				}
-				if (!movies && !searching){
+				if (lblMyAlbums.getText().equals(MovieManagerClient.getBundle().getString("myalbums"))){
 					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
 					l1.set(l1.getSize()-1, (MovieManagerClient.getBundle().getString("newalbum")));
 				}

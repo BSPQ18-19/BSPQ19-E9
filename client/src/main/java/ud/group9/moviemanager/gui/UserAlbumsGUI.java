@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.border.LineBorder;
-import javax.swing.text.JTextComponent;
 
 import ud.group9.moviemanager.api.MovieManagerClient;
 import ud.group9.moviemanager.api.exceptions.SearchMovieException;
@@ -92,7 +91,6 @@ public class UserAlbumsGUI extends JFrame {
 	private JPasswordField password;
 	private JLabel lblConfirm;
 	private JPasswordField passwordConf;
-	private JLabel lblAreYouNew;
 	private JButton btnLogIn;
 	private JPanel panel_3;
 	private JLabel lblNewLabel;
@@ -101,6 +99,11 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panel_2;
 	private JButton btnBack;
 	private HashMap<JComponent, String> texts = new HashMap<>();
+	private Color mainPanelBackgroundColor = Color.WHITE;
+	private Color titleBackgroundColor = Color.WHITE;
+	private Color buttonBackgroundColor = Color.GRAY;
+	private Color listSeparatorColor = Color.GRAY;
+	private Color textFieldBackgroundColor = Color.GRAY;
 	/**
 	 * Launch the application.
 	 */
@@ -134,20 +137,20 @@ public class UserAlbumsGUI extends JFrame {
 		setContentPane(contentPane);
 
 		panelForMainOptions = new JPanel();
-		panelForMainOptions.setBackground(Color.ORANGE);
+		panelForMainOptions.setBackground(mainPanelBackgroundColor);
 		contentPane.add(panelForMainOptions, BorderLayout.CENTER);
 		panelForMainOptions.setLayout(new GridBagLayout());
 
 		albumsScrollPanel = new JScrollPane();
 		albumsScrollPanel.setVisible(true);
 		albumsScrollPanel.setMinimumSize(new Dimension(434, 199));
-		albumsScrollPanel.setBackground(Color.ORANGE);
+		albumsScrollPanel.setBackground(mainPanelBackgroundColor);
 		albumsScrollPanel.setVisible(false);
 		panelForMainOptions.add(albumsScrollPanel);
 
 		JPanel panelUpperLabel = new JPanel();
 		panelUpperLabel.setLayout(new BorderLayout());
-		panelUpperLabel.setBackground(Color.ORANGE);
+		panelUpperLabel.setBackground(titleBackgroundColor);
 		contentPane.add(panelUpperLabel, BorderLayout.NORTH);
 
 		lblMyAlbums = new JLabel(MovieManagerClient.getBundle().getString("moviemanager"), SwingConstants.CENTER);
@@ -155,7 +158,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelUpperLabel.add(lblMyAlbums, BorderLayout.CENTER);
 
 		JPanel panelLanguages = new JPanel();
-		panelLanguages.setBackground(Color.ORANGE);
+		panelLanguages.setBackground(titleBackgroundColor);
 		JLabel lblLanguage = new JLabel("en ");
 		lblLanguage.addMouseListener(new MouseAdapter() {
 			@Override
@@ -256,7 +259,7 @@ public class UserAlbumsGUI extends JFrame {
 				}
 			}
 		});
-		list.setBackground(Color.ORANGE);
+		list.setBackground(mainPanelBackgroundColor);
 		list.setFixedCellHeight(50);
 		list.setCellRenderer(new DefaultListCellRenderer(){
 			private static final long serialVersionUID = 1L;
@@ -266,7 +269,7 @@ public class UserAlbumsGUI extends JFrame {
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				JLabel listCellRendererComponent = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
-				listCellRendererComponent.setBorder(new LineBorder(new Color(240, 230, 140), 4));
+				listCellRendererComponent.setBorder(new LineBorder(listSeparatorColor, 4));
 				return listCellRendererComponent;
 			};
 		}
@@ -274,7 +277,7 @@ public class UserAlbumsGUI extends JFrame {
 
 		albumsScrollPanel.setViewportView(list);
 		panel_2 = new JPanel();
-		panel_2.setBackground(Color.ORANGE);
+		panel_2.setBackground(mainPanelBackgroundColor);
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
 		gbc_panel_2.gridwidth = 2;
 		gbc_panel_2.insets = new Insets(0, 0, 0, 5);
@@ -289,7 +292,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnBack = new JButton(MovieManagerClient.getBundle().getString("back"));
 		texts.put(btnBack, "back");
 		btnBack.setForeground(Color.BLACK);
-		btnBack.setBackground(new Color(255, 140, 0));
+		btnBack.setBackground(buttonBackgroundColor);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBack.getText().equals(MovieManagerClient.getBundle().getString("back"))){
@@ -319,7 +322,7 @@ public class UserAlbumsGUI extends JFrame {
 		texts.put(btnBorrarAlbum, "deletealbum");
 		btnBorrarAlbum.setVisible(false);
 		btnBorrarAlbum.setForeground(Color.BLACK);
-		btnBorrarAlbum.setBackground(new Color(255, 140, 0));
+		btnBorrarAlbum.setBackground(buttonBackgroundColor);
 		btnBorrarAlbum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("deletealbum"))){
@@ -359,7 +362,7 @@ public class UserAlbumsGUI extends JFrame {
 		texts.put(btnAddToAlbum, "addtoalbum");
 		btnAddToAlbum.setVisible(false);
 		btnAddToAlbum.setForeground(Color.BLACK);
-		btnAddToAlbum.setBackground(new Color(255, 140, 0));
+		btnAddToAlbum.setBackground(buttonBackgroundColor);
 		btnAddToAlbum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("addtoalbum"))){
@@ -389,13 +392,13 @@ public class UserAlbumsGUI extends JFrame {
 		panel_2.add(btnAddToAlbum);
 
 		panelMainOptions = new JPanel();
-		panelMainOptions.setBackground(Color.ORANGE);
+		panelMainOptions.setBackground(mainPanelBackgroundColor);
 		panelForMainOptions.add(panelMainOptions);
 		panelMainOptions.setVisible(false);
 
 		panelUserData = new JPanel();
 		panelForMainOptions.add(panelUserData);
-		panelUserData.setBackground(Color.ORANGE);
+		panelUserData.setBackground(mainPanelBackgroundColor);
 
 		GridBagLayout gbl_panelUserData = new GridBagLayout();
 		gbl_panelUserData.columnWidths = new int[]{0, 0, 0, 0};
@@ -419,7 +422,7 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_username.gridx = 1;
 		gbc_username.gridy = 0;
 		panelUserData.add(username, gbc_username);
-		username.setBackground(new Color(255, 222, 173));
+		username.setBackground(textFieldBackgroundColor);
 		username.setColumns(10);
 
 		JLabel lblPassword = new JLabel(MovieManagerClient.getBundle().getString("password"));
@@ -436,7 +439,7 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_password.gridx = 1;
 		gbc_password.gridy = 1;
 		panelUserData.add(password, gbc_password);
-		password.setBackground(new Color(255, 222, 173));
+		password.setBackground(textFieldBackgroundColor);
 		password.setColumns(10);
 
 		lblConfirm = new JLabel(MovieManagerClient.getBundle().getString("confirmpassword"));
@@ -455,11 +458,11 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_passwordConf.gridx = 1;
 		gbc_passwordConf.gridy = 2;
 		panelUserData.add(passwordConf, gbc_passwordConf);
-		passwordConf.setBackground(new Color(255, 222, 173));
+		passwordConf.setBackground(textFieldBackgroundColor);
 		passwordConf.setColumns(10);
 
 		panel_3 = new JPanel();
-		panel_3.setBackground(Color.ORANGE);
+		panel_3.setBackground(mainPanelBackgroundColor);
 		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
 		gbc_panel_3.gridwidth = 2;
 		gbc_panel_3.insets = new Insets(0, 0, 0, 5);
@@ -493,17 +496,17 @@ public class UserAlbumsGUI extends JFrame {
 		});
 		panel_3.add(btnLogIn);
 		btnLogIn.setForeground(Color.BLACK);
-		btnLogIn.setBackground(new Color(255, 140, 0));
+		btnLogIn.setBackground(buttonBackgroundColor);
 
 		JPanel panel1 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel1.getLayout();
 		flowLayout.setVgap(10);
 		flowLayout.setHgap(10);
-		panel1.setBackground(Color.ORANGE);
+		panel1.setBackground(mainPanelBackgroundColor);
 		pBotonera.add(panel1);
 
 		panelMainButtonSignUp = new JPanel();
-		panelMainButtonSignUp.setBackground(Color.ORANGE);
+		panelMainButtonSignUp.setBackground(mainPanelBackgroundColor);
 		getContentPane().add(panelMainButtonSignUp, BorderLayout.SOUTH);
 		panelMainButtonSignUp.setLayout(new BoxLayout(panelMainButtonSignUp, BoxLayout.Y_AXIS));
 
@@ -516,7 +519,7 @@ public class UserAlbumsGUI extends JFrame {
 		FlowLayout flowLayout_1 = (FlowLayout) panelButtonSignUp.getLayout();
 		flowLayout_1.setVgap(10);
 		flowLayout_1.setHgap(10);
-		panelButtonSignUp.setBackground(Color.ORANGE);
+		panelButtonSignUp.setBackground(mainPanelBackgroundColor);
 
 		btnSignUp = new JButton(MovieManagerClient.getBundle().getString("signup"));
 		texts.put(btnSignUp, "signup");
@@ -557,13 +560,13 @@ public class UserAlbumsGUI extends JFrame {
 				}
 			}
 		});
-		btnSignUp.setBackground(new Color(255, 140, 0));
+		btnSignUp.setBackground(buttonBackgroundColor);
 		btnSignUp.setForeground(Color.BLACK);
 
 		btnMyAlbums = new JButton(MovieManagerClient.getBundle().getString("myalbums"));
 		texts.put(btnMyAlbums, "myalbums");
 		btnMyAlbums.setForeground(Color.BLACK);
-		btnMyAlbums.setBackground(new Color(255, 140, 0));
+		btnMyAlbums.setBackground(buttonBackgroundColor);
 		btnMyAlbums.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				hideMainOptions(true);
@@ -574,7 +577,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnSearchForMovie = new JButton(MovieManagerClient.getBundle().getString("searchmovie"));
 		texts.put(btnSearchForMovie, "searchmovie");
 		btnSearchForMovie.setForeground(Color.BLACK);
-		btnSearchForMovie.setBackground(new Color(255, 140, 0));
+		btnSearchForMovie.setBackground(buttonBackgroundColor);
 		btnSearchForMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("search"));
@@ -607,7 +610,7 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainOptions.add(btnMyAlbums);
 
 		panelMovieDetails = new JPanel();
-		panelMovieDetails.setBackground(Color.ORANGE);
+		panelMovieDetails.setBackground(mainPanelBackgroundColor);
 		panelMovieDetails.setLayout(new BoxLayout(panelMovieDetails, BoxLayout.Y_AXIS));
 		panelMovieDetails.setVisible(false);
 		panelForMainOptions.add(panelMovieDetails);
@@ -617,14 +620,14 @@ public class UserAlbumsGUI extends JFrame {
 		panelMovieDetails.add(lblMovie);
 
 		panel = new JPanel();
-		panel.setBackground(Color.ORANGE);
+		panel.setBackground(mainPanelBackgroundColor);
 		panel.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		panelMovieDetails.add(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
 		panel_1 = new JPanel();
-		panel_1.setBackground(Color.ORANGE);
+		panel_1.setBackground(mainPanelBackgroundColor);
 		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		panel_1.setMinimumSize(new Dimension(330, 199));
 		panel_1.setPreferredSize(new Dimension(330, 199));
@@ -723,7 +726,7 @@ public class UserAlbumsGUI extends JFrame {
 		//			cont++;
 
 		JPanel panelPoster = new JPanel();
-		panelPoster.setBackground(Color.ORANGE);
+		panelPoster.setBackground(mainPanelBackgroundColor);
 		panelPoster.setPreferredSize(new Dimension(84, 199));
 		panel.add(panelPoster);
 		lblPoster = new JLabel("", SwingConstants.CENTER);

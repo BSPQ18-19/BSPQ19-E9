@@ -664,9 +664,10 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblPlot.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPlot.gridx = 0;
 		gbc_lblPlot.gridy = 3;
+		gbc_lblPlot.anchor = GridBagConstraints.NORTH;
 		panel_1.add(lblPlot, gbc_lblPlot);
-		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
-		lblYear.setAlignmentY(1.0f);
+		lblPlot.setHorizontalAlignment(SwingConstants.LEFT);
+		lblPlot.setAlignmentY(1.0f);
 
 		areaPlot = new JTextArea();
 
@@ -676,8 +677,10 @@ public class UserAlbumsGUI extends JFrame {
 		areaPlot.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		GridBagConstraints gbc_lblPlotField = new GridBagConstraints();
 		gbc_lblPlotField.anchor = GridBagConstraints.WEST;
-		gbc_lblPlotField.insets = new Insets(0, 0, 100, 100);
+		gbc_lblPlotField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblPlotField.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPlotField.gridx = 1;
+		gbc_lblPlotField.gridwidth = 5;
 		gbc_lblPlotField.gridy = 3;
 		panel_1.add(areaPlot, gbc_lblPlotField);
 

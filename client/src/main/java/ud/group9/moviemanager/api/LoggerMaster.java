@@ -15,7 +15,13 @@ public class LoggerMaster {
     static private SimpleFormatter formatterTxt;
     static private Handler consoleHandler;
 
-
+    /**
+     * @brief Logger class setup
+     * 
+     * This class create and configure the global logger, specifying the output file
+     * and logger level
+     * @throws IOException A exception if something goes wrong with the input/output
+     */
     static public void setup() throws IOException {
 
         // get the global logger to configure it
@@ -35,12 +41,14 @@ public class LoggerMaster {
     }
     
     /**
-     * Esta funcion nos permite convertir el stackTrace en un String, necesario
-     * para poder imprimirlos al log debido a cambios en como Java los maneja
-     * internamente
+     * @brief Convert a StackTrace to String
+     * 
+     * This function allows us to convert the stackTrace into a String, 
+     * necessary to be able to print them to the log due to changes in how Java handles 
+     * them internally.
      *
-     * @param e Excepcion de la que queremos el StackTrace
-     * @return StackTrace de la excepcion en forma de String
+     * @param e Exception of which we want the StackTrace
+     * @return StackTrace of the exception in the form of String
      */
     public static String getStackTrace(Exception e) {
         StringWriter sWriter = new StringWriter();

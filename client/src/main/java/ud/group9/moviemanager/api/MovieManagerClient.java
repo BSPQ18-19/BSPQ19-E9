@@ -24,6 +24,8 @@ import com.sun.jersey.api.client.Client;
 import ud.group9.moviemanager.utils.Hash;
 
 /**
+ * @brief MovieManagerClient class
+ * 
  * The MovieManagerClient class manage all the client side connection with the server side
  *
  */
@@ -41,12 +43,14 @@ public enum MovieManagerClient {
 	private final static Logger LOGGER = LogManager.getRootLogger();
 	
 	/**
-	 * Empty contructor for MovieManagerClient
+	 * @brief Empty contructor for MovieManagerClient
 	 */
 	private MovieManagerClient(){
 	}
 	
 	/**
+	 * @brief Set connection parameters 
+	 * 
 	 * Sets the parameters for the connection to the server
 	 * @param host The IP direction where the server is hosted
 	 * @param port The Port where the server is waiting for connections
@@ -57,6 +61,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Start initial interface
+	 * 
 	 * Opens the interface for the Initial connection where the user will need to LogIn or SignUp
 	 */
 	public static void start(){
@@ -78,6 +84,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief SignUp process
+	 * 
 	 * The user registers with the values that he has provided
 	 * @param username The name by which the user will be recognized
 	 * @param password The password that the user will use to access
@@ -113,6 +121,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief LogIn process 
+	 * 
 	 * The user LogIn with the values that he has provided
 	 * @param username The username with which the user SignUp
 	 * @param password The password with which the user SignUp
@@ -139,6 +149,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Search movie by title and year
+	 * 
 	 * Search for a movie based on the parameters entered by the user
 	 * @param title Title of the movie that the user wants to search
 	 * @param year Year of the premiere of the movie that the user wants to search
@@ -165,6 +177,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Get a movie by Id
+	 * 
 	 * Get a Specific Movie based on the provided parameter
 	 * @param movieID Unique identifier for a Movie
 	 * @return Movie Returns the Movie object with the identifier passed as a parameter
@@ -181,6 +195,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Watched movies by user
+	 * 
 	 * Get a list of movies that the user has seen
 	 * @return ArrayList<Movie> Returns a List of Movies that the user has seen
 	 * @throws SearchMovieException A exception if something goes wrong
@@ -205,6 +221,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Id of all watched movies
+	 * 
 	 * Get a list of movieID of the Movies that the user has seen
 	 * @return ArrayList<String> Returns a List of MovieID of Movies that the user has seen
 	 */
@@ -222,6 +240,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Add movie to Watched list
+	 * 
 	 * Add a Movie to Watched list
 	 * @param movieID Unique identifier of the Movie to add
 	 * @return boolean Returns a Boolean depending on whether everything went well or not 
@@ -242,7 +262,9 @@ public enum MovieManagerClient {
 	}
 	
 	/**
-	 * Remove a Movie to Watched list
+	 * @brief Remove a movie from watched list
+	 *  
+	 * Remove a Movie from Watched list
 	 * @param movieID
 	 * @return boolean Returns a Boolean depending on whether everything went well or not 
 	 * @throws SearchMovieException A exception if something goes wrong
@@ -262,6 +284,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Create an Album
+	 * 
 	 * Create a new Album
 	 * @param title The name that the user wants to put on the album
 	 * @return int Return a status code of the process
@@ -279,6 +303,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Get all ALbums
+	 * 
 	 * Get all User Albums
 	 * @return ArrayList<Album> Returns a list of User Albums
 	 */
@@ -301,6 +327,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Get album by ID
+	 * 
 	 * Get a specific album by ID
 	 * @param albumID Unique identifier of the album that the user has requested
 	 * @return Album Returns a complete Album object
@@ -318,6 +346,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Get album by Title
+	 * 
 	 * Get a specific album by Title
 	 * @param albumTitle Title of the album that the user has requested
 	 * @return Album Returns a complete Album object
@@ -336,6 +366,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Remove Album by id
+	 * 
 	 * Remove a User Album by ID
 	 * @param albumID Unique identifier of the album that the user has requested to remove
 	 * @return int Return a status code of the process
@@ -352,6 +384,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Remove Album by Title
+	 * 
 	 * Remove a User Album by Title
 	 * @param albumTitle Title of the album that the user has requested
 	 * @return int Return a status code of the process
@@ -369,6 +403,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Add movie to album by Id
+	 * 
 	 * Add a Movie to a User Album by ID
 	 * @param albumID Unique identifier of the album that the user has requested to add
 	 * @param movieID Unique identifier of the movie that the user has requested to add
@@ -387,6 +423,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Add movie to an Album by title
+	 * 
 	 * Add a Movie to a User Album by Title
 	 * @param albumTitle Unique identifier of the album that the user has requested to add
 	 * @param movieID Unique identifier of the movie that the user has requested to add
@@ -406,6 +444,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Remove Movie from album
+	 * 
 	 * Remove a Movie from a User Album
 	 * @param albumID Unique identifier of the album that the user has requested to remove
 	 * @param movieID Unique identifier of the movie that the user has requested to remove
@@ -424,6 +464,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Create Rating for a movie
+	 *  
 	 * Create rating for movie with given score
 	 * @param movieID Unique identifier of the movie that the user has requested to give a rating to
 	 * @param score Number from 0 to 100 to score the movie with
@@ -443,6 +485,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Update rating of a movie
+	 * 
 	 * Update rating for movie with given score
 	 * @param movieID Unique identifier of the movie that the user has requested to update rating
 	 * @param score Number from 0 to 100 to score the movie with
@@ -461,6 +505,13 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 	
+	/**
+	 * @brief Get rating of a Movie
+	 * 
+	 * Get a rating for a movie of passed id 
+	 * @param movieID Unique identifier of the movie that the user has requested to update rating
+	 * @return int Return the Movie Rating
+	 */
 	public static int getRating( String movieID ){
 		WebResource webResource = client.resource(addr()).path("rating/");
 		ClientResponse response = webResource
@@ -478,6 +529,13 @@ public enum MovieManagerClient {
 			return -1;
 	}
 	
+	/**
+	 * @brief Delete rating of a Movie
+	 * 
+	 * Delete rating of a movie of passed id
+	 * @param movieID Unique identifier of the movie that the user has requested to update rating
+	 * @return int Return a status code of the process
+	 */
 	public static int deleteRating( String movieID ){
 		System.out.println(movieID);
 		WebResource webResource = client.resource(addr()).path("rating/");
@@ -492,6 +550,8 @@ public enum MovieManagerClient {
 	}
 	
 	/**
+	 * @brief Check if a movie Has been watched
+	 * 
 	 * Check if a movie has been watched by the User
 	 * @param movieID Unique identifier of the movie that has requested to check
 	 * @return Boolean Returns a Boolean depending on whether the Movie is watched or not 
@@ -501,7 +561,9 @@ public enum MovieManagerClient {
 	}
 
 	/**
-	 * Close the Client
+	 * @brief Close the client
+	 * 
+	 * Close the Client interface
 	 */
 	public static void closeClient(){
 		client.destroy();
@@ -509,6 +571,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Get the Client Bundle
+	 * 
 	 * Get the Client Bundle
 	 * @return ResourceBundle Returns the Client Bundle
 	 */
@@ -517,6 +581,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Set the Bundle
+	 * 
 	 * Set the Bundle for the Client
 	 * @param bundle The ResourceBundle object to set
 	 */
@@ -526,6 +592,8 @@ public enum MovieManagerClient {
 	}
 
 	/**
+	 * @brief Get session Token
+	 * 
 	 * Get actual session Token
 	 * @return String Returns the actual session token
 	 */

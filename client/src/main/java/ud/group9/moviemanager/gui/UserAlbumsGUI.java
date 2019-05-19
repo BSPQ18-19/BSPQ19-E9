@@ -105,9 +105,11 @@ public class UserAlbumsGUI extends JFrame {
 	}
 
 	/**
+	 * @brief Frame creation
+	 * 
 	 * Create the frame.
-	 * @throws IOException 
-	 * @throws MalformedURLException 
+	 * @throws IOException A exception if something goes wrong with the input/output
+	 * @throws MalformedURLException A exception if something goes wrong with the url
 	 */
 	public UserAlbumsGUI() throws MalformedURLException, IOException {
 		UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
@@ -748,6 +750,12 @@ public class UserAlbumsGUI extends JFrame {
 		this.setVisible(true);
 	}
 
+	/**
+	 * @brief Shows User albums in the main GUI
+	 * 
+	 * @param moviesToShow List of movies to show in the GUI
+	 * @param watched Specifies if a movie is watched or not
+	 */
 	private void showMovies(ArrayList<Movie> moviesToShow, boolean watched){
 		l1.clear();
 		movieIDs.clear();
@@ -766,6 +774,11 @@ public class UserAlbumsGUI extends JFrame {
 		LOGGER.info("Show Movies successfully loaded.");
 	}
 
+	/**
+	 * @brief Hide main options from GUI
+	 * 
+	 * @param hide Specifies if options are hidden or not
+	 */
 	private void hideMainOptions(boolean hide){
 		if(hide){
 			btnBack.setText(MovieManagerClient.getBundle().getString("back"));
@@ -779,6 +792,10 @@ public class UserAlbumsGUI extends JFrame {
 		albumsScrollPanel.setVisible(hide);
 	}
 
+	/**
+	 * @brief Show Albums in the main GUI
+	 * 
+	 */
 	private void showAlbums(){
 		lblMyAlbums.setText(MovieManagerClient.getBundle().getString("myalbums"));
 		texts.put(lblMyAlbums, "myalbums");
@@ -794,6 +811,11 @@ public class UserAlbumsGUI extends JFrame {
 		LOGGER.info("ShowAlbums successfully loaded.");
 	}
 
+	/**
+	 * @brief Show Movie options in GUI
+	 * 
+	 * @param isWatched Specifies if the movie is watched or not
+	 */
 	private void showMovieInAlbumOptions(boolean isWatched){
 		btnBorrarAlbum.setVisible(true);
 		if (isWatched){
@@ -806,6 +828,13 @@ public class UserAlbumsGUI extends JFrame {
 		}
 	}
 
+	/**
+	 * @brief Shows movie details in GUI
+	 * 
+	 * Shows all the details of the passed film in the GUI
+	 * 
+	 * @param m Movie object
+	 */
 	private void showMovieDetails(Movie m){
 		albumsScrollPanel.setVisible(false);
 		if (MovieManagerClient.getRating(movieIDs.get((list.getSelectedValue().substring(1)))) == -1){
@@ -837,6 +866,12 @@ public class UserAlbumsGUI extends JFrame {
 		lblMovie.setVisible(true);
 		LOGGER.info("Show Movie details successfully loaded.");
 	}
+	
+	/**
+	 * @brief Hide all the Movie details
+	 * 
+	 * Removes all the movie details from the main GUI
+	 */
 	private void hideMovieDetails(){
 		if (!searching){
 			lblMyAlbums.setText(shownAlbum + ":");
@@ -864,6 +899,12 @@ public class UserAlbumsGUI extends JFrame {
 		btnAddToAlbum.setVisible(true);
 		albumsScrollPanel.setVisible(true);
 	}
+	
+	/**
+	 * @brief Load SignIn objects in GUI
+	 * 
+	 * @param signin Specifies if we want to SignIn or not
+	 */
 	private void signin(boolean signin){
 		btnLogIn.setVisible(!signin);
 		lblMyAlbums.setText(MovieManagerClient.getBundle().getString("welcome"));
@@ -873,6 +914,11 @@ public class UserAlbumsGUI extends JFrame {
 		lblNewLabel.setVisible(!signin);
 	}
 
+	/**
+	 * @brief Load login objects in GUI
+	 * 
+	 * @param login Specifies if we want to Login or not
+	 */
 	private void login(boolean login){
 		hideMainOptions(!login);
 		panelMainButtonSignUp.setVisible(!login);

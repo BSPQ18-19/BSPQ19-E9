@@ -99,11 +99,11 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panel_2;
 	private JButton btnBack;
 	private HashMap<JComponent, String> texts = new HashMap<>();
-	private Color mainPanelBackgroundColor = Color.WHITE;
-	private Color titleBackgroundColor = Color.WHITE;
-	private Color buttonBackgroundColor = Color.GRAY;
-	private Color listSeparatorColor = Color.GRAY;
-	private Color textFieldBackgroundColor = Color.GRAY;
+	private Color mainPanelBackgroundColor = Color.decode("#F5EDEC");
+	private Color titleBackgroundColor = Color.decode("#BBBBC0");
+	private Color buttonBackgroundColor = Color.decode("#D0CFD1");
+	private Color listSeparatorColor = Color.decode("#E7E0E4");
+	private Color textFieldBackgroundColor = Color.decode("#E7E0E4");
 	/**
 	 * Launch the application.
 	 */

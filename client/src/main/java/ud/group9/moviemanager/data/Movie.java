@@ -3,6 +3,8 @@ package ud.group9.moviemanager.data;
 import org.json.JSONObject;
 
 /**
+ * @brief Movie class
+ * 
  * The Movie class represents how a Movie object is going to be
  */
 public class Movie {
@@ -13,6 +15,8 @@ public class Movie {
 	private String plot;
 
 	/**
+	 * @brief Movie constructor
+	 * 
 	 * Constructor for Movie type object
 	 * @param movieID Unique identifier for the Movie
 	 * @param title The name of the Movie
@@ -28,6 +32,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Movie contructor
+	 * 
 	 * Constructor for Movie type object
 	 * @param movieID Unique identifier for the Movie
 	 * @param title The name of the Movie
@@ -45,6 +51,8 @@ public class Movie {
 	}
 	
 	/**
+	 * @brief Create new Movie
+	 * 
 	 * Creates a new Movie with the values  passed from a JSONObject
 	 * @param movie A JSONObject with all the necessary information
 	 * @return Movie This returns a Movie object
@@ -59,6 +67,8 @@ public class Movie {
 	}
 	
 	/**
+	 * @brief Get the id of a Movie
+	 * 
      * Gets the MovieID of a Movie object
      * @return String Returns the MovieID of a Movie object
      */
@@ -67,6 +77,8 @@ public class Movie {
 	}
 	 
     /**
+     * @brief Set the id of a Movie
+     * 
      * Sets the MovieID to a Movie object
      * @param movieID New unique identifier for the Movie
      */
@@ -75,6 +87,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Get the title of a Movie
+	 * 
      * Gets the Title of a Movie object
      * @return String Returns the Title of a Movie object
      */
@@ -83,6 +97,8 @@ public class Movie {
 	}
 	 
     /**
+     * @brief Set the title of a Movie
+     * 
      * Sets the Title to a Movie object
      * @param title New Title for the Movie
      */
@@ -91,6 +107,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Get the year of a Movie
+	 * 
      * Gets the Year of a Movie object
      * @return String Returns the Year of a Movie object
      */
@@ -99,6 +117,8 @@ public class Movie {
 	}
 	 
     /**
+     * @brief Set the year of a Movie
+     * 
      * Sets the Year to a Movie object
      * @param year New Year for the Movie
      */
@@ -107,6 +127,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Get the poster of a Movie
+	 * 
      * Gets the Poster of a Movie object
      * @return String Returns the Poster of a Movie object
      */
@@ -115,6 +137,8 @@ public class Movie {
 	}
 	 
     /**
+     * @brief Set the poster of a Movie
+     * 
      * Sets the Poster to a Movie object
      * @param poster New Poster for the Movie
      */
@@ -123,6 +147,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Get the plot of a Movie
+	 * 
 	 * Gets the Plot of a Movie object
 	 * @return String Returns the Plot of a Movie object
 	 */
@@ -131,6 +157,8 @@ public class Movie {
 	}
 
 	/**
+	 * @brief Set the plot of a Movie
+	 * 
 	 * Sets the Plot of a Movie object
 	 * @param plot New Plot for the Movie
 	 */

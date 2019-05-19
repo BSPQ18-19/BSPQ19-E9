@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType (XmlAccessType.FIELD)
 
 /**
+ * @brief User class
+ * 
  * The User class represents how a User object is going to be
  */
 public class User {
@@ -18,6 +20,8 @@ public class User {
     private ArrayList<Movie> watched;
 
     /**
+     * @brief User Constructor
+     * 
      * Constructor for User type object
      * @param username The name of the User
      * @param watched A list of movies that the user has seen
@@ -28,6 +32,8 @@ public class User {
     }
 
     /**
+     * @brief Create a new User
+     * 
      * Creates a new User with the values  passed from a JSONObject
      * @param user A JSONObject with all the necessary information
      * @return Returns a new User object
@@ -44,6 +50,8 @@ public class User {
     }
 
     /**
+     * @brief Get the User Username
+     * 
      * Gets the Username of a User object
      * @return String Returns the Username of a User object
      */
@@ -52,6 +60,8 @@ public class User {
     }
 
     /**
+     * @brief Set the User Username
+     * 
      * Sets the Username to a User object
      * @param username New Username for the User
      */
@@ -60,6 +70,8 @@ public class User {
     }
 
     /**
+     * @brief Get the list of watched movies
+     * 
      * Gets the list of watched Movies of a User object
      * @return ArrayList<Movie> Returns the list of watched Movies of a User object
      */
@@ -68,6 +80,8 @@ public class User {
     }
 
     /**
+     * @brief Set the list of watched Movies
+     * 
      * Sets the list of watched Movies of a User object
      * @param watched New list of watched Movies of a User object
      */

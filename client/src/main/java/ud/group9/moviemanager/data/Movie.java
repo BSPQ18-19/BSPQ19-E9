@@ -10,6 +10,7 @@ public class Movie {
 	private String title;
 	private int    year;
 	private String poster;
+	private String plot;
 
 	/**
 	 * Constructor for Movie type object
@@ -25,6 +26,23 @@ public class Movie {
 		this.year      = year;
 		this.poster    = poster;
 	}
+
+	/**
+	 * Constructor for Movie type object
+	 * @param movieID Unique identifier for the Movie
+	 * @param title The name of the Movie
+	 * @param year The year in which the movie was published
+	 * @param poster The url where the movie poster is located
+	 * @param plot Short plot of the movie
+	 */
+	public Movie(String movieID, String title, int year,
+				 String poster, String plot) {
+		this.movieID   = movieID;
+		this.title     = title;
+		this.year      = year;
+		this.poster    = poster;
+		this.plot      = plot;
+	}
 	
 	/**
 	 * Creates a new Movie with the values  passed from a JSONObject
@@ -36,7 +54,8 @@ public class Movie {
 		String title = movie.getString("title");
 		int year = movie.getInt("year");
 		String poster = movie.getString("poster_url");
-		return new Movie(movieID, title, year, poster);
+		String plot = movie.getString("plot");
+		return new Movie(movieID, title, year, poster, plot);
 	}
 	
 	/**
@@ -101,6 +120,22 @@ public class Movie {
      */
 	public void setPoster(String poster) {
 		this.poster = poster;
+	}
+
+	/**
+	 * Gets the Plot of a Movie object
+	 * @return String Returns the Plot of a Movie object
+	 */
+	public String getPlot() {
+		return plot;
+	}
+
+	/**
+	 * Sets the Plot of a Movie object
+	 * @param plot New Plot for the Movie
+	 */
+	public void setPlot(String plot) {
+		this.plot = plot;
 	}
 
 	@Override

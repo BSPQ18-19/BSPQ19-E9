@@ -6,15 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -26,15 +19,6 @@ import ud.group9.moviemanager.api.exceptions.SearchMovieException;
 import ud.group9.moviemanager.api.exceptions.SignupException;
 import ud.group9.moviemanager.data.Album;
 import ud.group9.moviemanager.data.Movie;
-
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,8 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 
@@ -99,11 +81,12 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panel_2;
 	private JButton btnBack;
 	private HashMap<JComponent, String> texts = new HashMap<>();
-	private Color mainPanelBackgroundColor = Color.decode("#F5EDEC");
-	private Color titleBackgroundColor = Color.decode("#BBBBC0");
-	private Color buttonBackgroundColor = Color.decode("#D0CFD1");
-	private Color listSeparatorColor = Color.decode("#E7E0E4");
-	private Color textFieldBackgroundColor = Color.decode("#E7E0E4");
+	private Color mainPanelBackgroundColor = Color.decode("#ffffff");
+	private Color titleBackgroundColor = Color.decode("#a5ffd6");
+	private Color buttonBackgroundColor = Color.decode("#ffffff");
+	private Color listSeparatorColor = Color.decode("#ffa69e");
+	private Color textFieldBackgroundColor = Color.decode("#ffffff");
+	private JTextArea areaPlot;
 	/**
 	 * Launch the application.
 	 */
@@ -130,7 +113,7 @@ public class UserAlbumsGUI extends JFrame {
 		UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 700, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -269,7 +252,7 @@ public class UserAlbumsGUI extends JFrame {
 					Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				JLabel listCellRendererComponent = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
-				listCellRendererComponent.setBorder(new LineBorder(listSeparatorColor, 4));
+				listCellRendererComponent.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, listSeparatorColor));
 				return listCellRendererComponent;
 			};
 		}
@@ -629,10 +612,12 @@ public class UserAlbumsGUI extends JFrame {
 		panel_1 = new JPanel();
 		panel_1.setBackground(mainPanelBackgroundColor);
 		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-		panel_1.setMinimumSize(new Dimension(330, 199));
-		panel_1.setPreferredSize(new Dimension(330, 199));
-		panel_1.setMaximumSize(new Dimension(330, 199));
+		panel_1.setMinimumSize(new Dimension(400, 400));
+		panel_1.setPreferredSize(new Dimension(400, 400));
+		panel_1.setMaximumSize(new Dimension(400, 400));
 		panel.add(panel_1);
+
+
 		GridBagLayout panelData = new GridBagLayout();
 		panelData.columnWidths = new int[]{57, 0, 0, 0, 0, 0, 0, 0, 0};
 		panelData.rowHeights = new int[]{0, 0, 0, 0, 0};
@@ -674,15 +659,38 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblYearField.gridy = 2;
 		panel_1.add(lblYearField, gbc_lblYearField);
 
-		JLabel lblAlbum = new JLabel("Album:");
-		GridBagConstraints gbc_lblAlbum = new GridBagConstraints();
-		gbc_lblAlbum.insets = new Insets(0, 0, 5, 5);
-		gbc_lblAlbum.gridx = 0;
-		gbc_lblAlbum.gridy = 3;
-		panel_1.add(lblAlbum, gbc_lblAlbum);
-		lblAlbum.setHorizontalAlignment(SwingConstants.LEFT);
-		lblAlbum.setAlignmentY(1.0f);
-		int cont = 0;
+		JLabel lblPlot = new JLabel("Plot:");
+		GridBagConstraints gbc_lblPlot = new GridBagConstraints();
+		gbc_lblPlot.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPlot.gridx = 0;
+		gbc_lblPlot.gridy = 3;
+		panel_1.add(lblPlot, gbc_lblPlot);
+		lblYear.setHorizontalAlignment(SwingConstants.LEFT);
+		lblYear.setAlignmentY(1.0f);
+
+		areaPlot = new JTextArea();
+
+		areaPlot.setColumns(100);
+		areaPlot.setLineWrap(true);
+		areaPlot.setWrapStyleWord(true);
+		areaPlot.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		GridBagConstraints gbc_lblPlotField = new GridBagConstraints();
+		gbc_lblPlotField.anchor = GridBagConstraints.WEST;
+		gbc_lblPlotField.insets = new Insets(0, 0, 100, 100);
+		gbc_lblPlotField.gridx = 1;
+		gbc_lblPlotField.gridy = 3;
+		panel_1.add(areaPlot, gbc_lblPlotField);
+
+
+		//		JLabel lblAlbum = new JLabel("Album:");
+		//		GridBagConstraints gbc_lblAlbum = new GridBagConstraints();
+		//		gbc_lblAlbum.insets = new Insets(0, 0, 5, 5);
+		//		gbc_lblAlbum.gridx = 0;
+		//		gbc_lblAlbum.gridy = 3;
+		//		panel_1.add(lblAlbum, gbc_lblAlbum);
+		//		lblAlbum.setHorizontalAlignment(SwingConstants.LEFT);
+		//		lblAlbum.setAlignmentY(1.0f);
+		//		int cont = 0;
 		//		for(final Album album: retrieveAlbumsLinked(movie)) {
 		//			JLabel lblAlbumField = new JLabel(album.getTitle());
 		//			lblAlbumField.addMouseListener(new MouseListener() {
@@ -725,9 +733,10 @@ public class UserAlbumsGUI extends JFrame {
 		//			panel_1.add(lblAlbumField, gbc_lblAlbumField);
 		//			cont++;
 
+
 		JPanel panelPoster = new JPanel();
 		panelPoster.setBackground(mainPanelBackgroundColor);
-		panelPoster.setPreferredSize(new Dimension(84, 199));
+		panelPoster.setPreferredSize(new Dimension(300, 444));
 		panel.add(panelPoster);
 		lblPoster = new JLabel("", SwingConstants.CENTER);
 		//			image = new ImageIcon((ImageIO.read(new URL("https://m.media-amazon.com/images/M/MV5BMTkwNTczNTMyOF5BMl5BanBnXkFtZTcwNzUxOTUyMw@@._V1_SX300.jpg"))).getScaledInstance(84, 100, Image.SCALE_DEFAULT));
@@ -811,8 +820,9 @@ public class UserAlbumsGUI extends JFrame {
 		panelMovieDetails.setPreferredSize(panelForMainOptions.getSize());
 		lblTitleField.setText(m.getTitle());
 		lblYearField.setText(String.valueOf(m.getYear()));
+		areaPlot.setText(m.getPlot());
 		try {
-			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(84, 100, Image.SCALE_DEFAULT));
+			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(300, 444, Image.SCALE_DEFAULT));
 			lblPoster.setIcon(image);
 		} catch (MalformedURLException e) {
 			LOGGER.warn(e.toString());

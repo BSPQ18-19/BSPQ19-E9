@@ -129,7 +129,8 @@ public class UserAlbumsGUI extends JFrame {
 
 		albumsScrollPanel = new JScrollPane();
 		albumsScrollPanel.setVisible(true);
-		albumsScrollPanel.setMinimumSize(new Dimension(434, 199));
+		albumsScrollPanel.setMinimumSize(new Dimension(684, 494));
+		albumsScrollPanel.setPreferredSize(new Dimension(684, 494));
 		albumsScrollPanel.setBackground(mainPanelBackgroundColor);
 		albumsScrollPanel.setVisible(false);
 		panelForMainOptions.add(albumsScrollPanel);
@@ -330,6 +331,9 @@ public class UserAlbumsGUI extends JFrame {
 						MovieManagerClient.deleteFromWatched(movieIDs.get((list.getSelectedValue().substring(1))));
 						l1.setElementAt("☆" + l1.getElementAt(list.getSelectedIndex()).substring(1), list.getSelectedIndex());
 						showMovieInAlbumOptions(false);
+						if (lblMyAlbums.getText().equals(MovieManagerClient.getBundle().getString("mywatchedmovies"))){
+							showMovies(MovieManagerClient.getWatched(), true);
+						}
 					} catch (SearchMovieException e1) {
 						LOGGER.warn(e1.toString());
 					}
@@ -787,6 +791,9 @@ public class UserAlbumsGUI extends JFrame {
 		btnBorrarAlbum.setVisible(!watched);
 		if (!watched){
 			lblMyAlbums.setText(shownAlbum + ":");
+		}else{
+			lblMyAlbums.setText(MovieManagerClient.getBundle().getString("mywatchedmovies"));
+			//TODO btnAddToAlbum.setVisible(false);
 		}
 		movies = true;
 		LOGGER.info("Show Movies successfully loaded.");

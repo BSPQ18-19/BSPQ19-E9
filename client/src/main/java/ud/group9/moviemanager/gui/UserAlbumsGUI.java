@@ -351,7 +351,8 @@ public class UserAlbumsGUI extends JFrame {
 						btnAddToAlbum.setVisible(true);
 					}
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("updaterating"))){
-					MovieManagerClient.updateRating(movieIDs.get((list.getSelectedValue().substring(1))), 50);
+					Integer rating = getScore();
+					if (rating != null) MovieManagerClient.updateRating(movieIDs.get((list.getSelectedValue().substring(1))), rating);
 				}
 			}
 		});

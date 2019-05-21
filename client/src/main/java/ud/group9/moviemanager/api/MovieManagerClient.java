@@ -166,14 +166,18 @@ public enum MovieManagerClient {
 				.queryParam("title", title)
 				.queryParam("year", year)
 				.get(ClientResponse.class);
-		JSONObject jo = new JSONObject(response.getEntity(String.class));
-		JSONArray joa = jo.getJSONArray("movies");
-		for (int i = 0; i < joa.length(); i++){
-			moviesSearched.add(Movie.fromJSON(joa.getJSONObject(i)));
+		if (response.getStatus()==200){
+			JSONObject jo = new JSONObject(response.getEntity(String.class));
+			JSONArray joa = jo.getJSONArray("movies");
+			for (int i = 0; i < joa.length(); i++){
+				moviesSearched.add(Movie.fromJSON(joa.getJSONObject(i)));
+			}
+			LOGGER.info("Search Movie Successful");
+			response.close();
+			return moviesSearched;
+		}else{
+			return null;
 		}
-		LOGGER.info("Search Movie Successful");
-		response.close();
-		return moviesSearched;
 	}
 
 	/**

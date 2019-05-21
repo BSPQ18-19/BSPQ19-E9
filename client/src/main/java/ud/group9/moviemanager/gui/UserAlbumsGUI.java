@@ -644,11 +644,17 @@ public class UserAlbumsGUI extends JFrame {
 				if (JOptionPane.showConfirmDialog(null, message, "Search for movie", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 					if (!moviename.getText().isEmpty()) {
 						try {
-							searching = true;
-							hideMainOptions(true);
-							showMovies(MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText()), true);
-							lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
-							texts.put(lblMyAlbums, "searchresults");
+							ArrayList<Movie> searchedMovies = MovieManagerClient.searchForMovie(moviename.getText(), movieyear.getText());
+							if (searchedMovies != null){
+								searching = true;
+								hideMainOptions(true);
+								showMovies(searchedMovies, true);
+								lblMyAlbums.setText(MovieManagerClient.getBundle().getString("searchresults"));
+								texts.put(lblMyAlbums, "searchresults");
+							}else{
+								UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+								JOptionPane.showMessageDialog(null, MovieManagerClient.getBundle().getString("nosearch"), MovieManagerClient.getBundle().getString("problem"), JOptionPane.OK_OPTION);
+							}
 						} catch (SearchMovieException e1) {
 							LOGGER.warn(e1.toString());
 						}

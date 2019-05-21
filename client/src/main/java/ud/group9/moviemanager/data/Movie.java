@@ -11,6 +11,7 @@ public class Movie {
 	private int    year;
 	private String poster;
 	private String plot;
+	private String avgRating;
 
 	/**
 	 * Constructor for Movie type object
@@ -36,12 +37,13 @@ public class Movie {
 	 * @param plot Short plot of the movie
 	 */
 	public Movie(String movieID, String title, int year,
-				 String poster, String plot) {
+				 String poster, String plot, String avgRating) {
 		this.movieID   = movieID;
 		this.title     = title;
 		this.year      = year;
 		this.poster    = poster;
 		this.plot      = plot;
+		this.avgRating = avgRating;
 	}
 	
 	/**
@@ -53,9 +55,14 @@ public class Movie {
 		String movieID = movie.getString("movie_id");
 		String title = movie.getString("title");
 		int year = movie.getInt("year");
+		String plot = "N/A";
+		String avgRating = "N/A";
 		String poster = movie.getString("poster_url");
-		String plot = movie.getString("plot");
-		return new Movie(movieID, title, year, poster, plot);
+		try {
+			plot = movie.getString("plot");
+			avgRating = String.valueOf(((float)movie.getInt("avg_rating"))/10.0);
+		} catch (Exception e) {}
+		return new Movie(movieID, title, year, poster, plot, avgRating);
 	}
 	
 	/**
@@ -136,6 +143,22 @@ public class Movie {
 	 */
 	public void setPlot(String plot) {
 		this.plot = plot;
+	}
+
+	/**
+	 * Gets the Average Rating of a Movie object
+	 * @return String Returns the Average Rating of a Movie object
+	 */
+	public String getavgRating() {
+		return avgRating;
+	}
+
+	/**
+	 * Sets the Average Rating of a Movie object
+	 * @param avgRating New Average Rating for the Movie
+	 */
+	public void setavgRating(String avgRating) {
+		this.avgRating = avgRating;
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class UserAlbumsGUI extends JFrame {
 	private Color listSeparatorColor = Color.decode("#ffa69e");
 	private Color textFieldBackgroundColor = Color.decode("#ffffff");
 	private JTextArea areaPlot;
+	private JLabel lblAvgRatingField;
 	/**
 	 * Launch the application.
 	 */
@@ -659,12 +660,30 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblYearField.gridy = 2;
 		panel_1.add(lblYearField, gbc_lblYearField);
 
+		JLabel lblAvgRating = new JLabel("Score:");
+		GridBagConstraints gbc_lblAvgRating = new GridBagConstraints();
+		gbc_lblAvgRating.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAvgRating.gridx = 0;
+		gbc_lblAvgRating.gridy = 3;
+		panel_1.add(lblAvgRating, gbc_lblAvgRating);
+		lblAvgRating.setHorizontalAlignment(SwingConstants.LEFT);
+		lblAvgRating.setAlignmentY(1.0f);
+
+		lblAvgRatingField = new JLabel();
+		lblAvgRatingField.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblAvgRatingField = new GridBagConstraints();
+		gbc_lblAvgRatingField.anchor = GridBagConstraints.WEST;
+		gbc_lblAvgRatingField.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAvgRatingField.gridx = 1;
+		gbc_lblAvgRatingField.gridy = 3;
+		panel_1.add(lblAvgRatingField, gbc_lblAvgRatingField);
+
 		JLabel lblPlot = new JLabel("Plot:");
 		GridBagConstraints gbc_lblPlot = new GridBagConstraints();
 		gbc_lblPlot.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPlot.gridx = 0;
-		gbc_lblPlot.gridy = 3;
-		gbc_lblPlot.anchor = GridBagConstraints.NORTH;
+		gbc_lblPlot.gridy = 4;
+//		gbc_lblPlot.anchor = GridBagConstraints.NORTH;
 		panel_1.add(lblPlot, gbc_lblPlot);
 		lblPlot.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPlot.setAlignmentY(1.0f);
@@ -674,14 +693,14 @@ public class UserAlbumsGUI extends JFrame {
 		areaPlot.setColumns(100);
 		areaPlot.setLineWrap(true);
 		areaPlot.setWrapStyleWord(true);
-		areaPlot.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+//		areaPlot.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		GridBagConstraints gbc_lblPlotField = new GridBagConstraints();
 		gbc_lblPlotField.anchor = GridBagConstraints.WEST;
 		gbc_lblPlotField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblPlotField.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPlotField.gridx = 1;
 		gbc_lblPlotField.gridwidth = 5;
-		gbc_lblPlotField.gridy = 3;
+		gbc_lblPlotField.gridy = 4;
 		panel_1.add(areaPlot, gbc_lblPlotField);
 
 
@@ -824,6 +843,7 @@ public class UserAlbumsGUI extends JFrame {
 		lblTitleField.setText(m.getTitle());
 		lblYearField.setText(String.valueOf(m.getYear()));
 		areaPlot.setText(m.getPlot());
+		lblAvgRatingField.setText(m.getavgRating());
 		try {
 			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(300, 444, Image.SCALE_DEFAULT));
 			lblPoster.setIcon(image);

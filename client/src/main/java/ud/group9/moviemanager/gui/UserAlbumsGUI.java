@@ -32,6 +32,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -183,7 +185,7 @@ public class UserAlbumsGUI extends JFrame {
 		});
 		panelLanguages.add(lblLanguage2);
 		panelUpperLabel.add(panelLanguages, BorderLayout.EAST);
-		
+
 		JLabel lblLanguageCompensator = new JLabel("");
 		Rectangle2D text1 = lblLanguage.getFont().getStringBounds(lblLanguage.getText(), new FontRenderContext(new AffineTransform(),true,true));
 		Rectangle2D text2 = lblLanguage2.getFont().getStringBounds(lblLanguage2.getText(), new FontRenderContext(new AffineTransform(),true,true));
@@ -338,12 +340,16 @@ public class UserAlbumsGUI extends JFrame {
 						LOGGER.warn(e1.toString());
 					}
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("rate"))){
-					MovieManagerClient.createRating(movieIDs.get((list.getSelectedValue().substring(1))), 80);
-					btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("updaterating"));
-					texts.put(btnBorrarAlbum, "updaterating");
-					btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("deleterating"));
-					texts.put(btnAddToAlbum, "deleterating");
-					btnAddToAlbum.setVisible(true);
+					//TODO Handle rating request
+					Integer rating = getScore();
+					if (rating != null){
+						MovieManagerClient.createRating(movieIDs.get((list.getSelectedValue().substring(1))), rating);
+						btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("updaterating"));
+						texts.put(btnBorrarAlbum, "updaterating");
+						btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("deleterating"));
+						texts.put(btnAddToAlbum, "deleterating");
+						btnAddToAlbum.setVisible(true);
+					}
 				}else if(btnBorrarAlbum.getText().equals(MovieManagerClient.getBundle().getString("updaterating"))){
 					MovieManagerClient.updateRating(movieIDs.get((list.getSelectedValue().substring(1))), 50);
 				}
@@ -891,7 +897,7 @@ public class UserAlbumsGUI extends JFrame {
 		lblMovie.setVisible(true);
 		LOGGER.info("Show Movie details successfully loaded.");
 	}
-	
+
 	/**
 	 * @brief Hide all the Movie details
 	 * 
@@ -924,7 +930,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnAddToAlbum.setVisible(true);
 		albumsScrollPanel.setVisible(true);
 	}
-	
+
 	/**
 	 * @brief Load SignIn objects in GUI
 	 * 
@@ -959,5 +965,24 @@ public class UserAlbumsGUI extends JFrame {
 		panelMainButtonSignUp.setVisible(!login);
 		if (login) contentPane.add(panel_2, BorderLayout.SOUTH);
 		panel_2.setVisible(login);
+	}
+
+	private Integer getScore(){
+		UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("store"));
+		String message = MovieManagerClient.getBundle().getString("introducescore");
+		JTextField jtf = new JTextField();
+		Object[] params = {message, jtf};
+		if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("ratingmovie"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+			try{
+				Integer score = Integer.parseInt(jtf.getText());
+				if (score < 0 || score > 100) throw new NumberFormatException();
+				else return score;
+			}catch (Exception e){
+				UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+				JOptionPane.showMessageDialog(null, MovieManagerClient.getBundle().getString("errorinscore"));
+				return null;
+			}
+		}
+		return null;
 	}
 }

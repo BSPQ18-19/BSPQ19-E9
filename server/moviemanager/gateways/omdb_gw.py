@@ -43,13 +43,12 @@ def movie_details(movie_id, raw=False):
 
     if raw:
         return 200, info
-
     return 200, {
         "movie_id": info["imdbID"],
         "title": info["Title"],
         "year": info["Year"],
         "genre": info["Genre"],
-        "avg_rating": int(float(info["imdbRating"]) * 10),
+        "avg_rating": int(float(info["Ratings"][0]["Value"]) * 10),
         "plot": info["Plot"],
         "poster_url": info["Poster"]
     }
@@ -81,7 +80,9 @@ def search_movies(**kwargs):
     # incorrect serach
     if "Response" in res.keys() and "Error" in res.keys():
         return 404, res["Error"]
-
+    from json import dumps
+    for m in res["Search"]:
+        print(dumps(m))
     # adapt response to the format expected by the client
     movies = {
         "movies": [
@@ -89,7 +90,7 @@ def search_movies(**kwargs):
                 "movie_id": m["imdbID"],
                 "title": m["Title"],
                 "year": m["Year"],
-                "poster_url": m["Poster"]
+                "poster_url": m["Poster"],
             } for m in res["Search"]
         ]
     }

@@ -201,6 +201,8 @@ def movie_details(request, movie_id):
     # if movie is stored locally in the DB, return it to the user
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
+        if not movie.plot:
+            raise models.Movie.DoesNotExist
         return JsonResponse(movie.json())
     # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:

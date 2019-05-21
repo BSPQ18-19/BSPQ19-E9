@@ -80,6 +80,7 @@ public class UserAlbumsGUI extends JFrame {
 	private JPanel panelUserData;
 	private JPanel panel_2;
 	private JButton btnBack;
+	private JButton btnBackFromSignUp;
 	private HashMap<JComponent, String> texts = new HashMap<>();
 	private Color mainPanelBackgroundColor = Color.decode("#ffffff");
 	private Color titleBackgroundColor = Color.decode("#a5ffd6");
@@ -281,7 +282,10 @@ public class UserAlbumsGUI extends JFrame {
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBack.getText().equals(MovieManagerClient.getBundle().getString("back"))){
-					if (moviedetails){
+					if (lblConfirm.isVisible()){
+						signin(false);
+					}
+					else if (moviedetails){
 						hideMovieDetails();
 						moviedetails = false;
 					}
@@ -509,6 +513,9 @@ public class UserAlbumsGUI extends JFrame {
 		btnSignUp = new JButton(MovieManagerClient.getBundle().getString("signup"));
 		texts.put(btnSignUp, "signup");
 		panelButtonSignUp.add(btnSignUp);
+		btnBackFromSignUp = new JButton(MovieManagerClient.getBundle().getString("back"));
+		texts.put(btnBackFromSignUp, "back");
+		panelButtonSignUp.add(btnBackFromSignUp);
 		btnSignUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -533,6 +540,8 @@ public class UserAlbumsGUI extends JFrame {
 						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("signupsuccessful"));
 						LOGGER.info("SignUp successful.");
 						MovieManagerClient.LogIn(usname, pswrd);
+						passwordConf.setText("");
+						signin = false;
 						login(true);
 					} catch (SignupException e1) {
 						JOptionPane.showMessageDialog(btnSignUp, e1);
@@ -547,7 +556,16 @@ public class UserAlbumsGUI extends JFrame {
 		});
 		btnSignUp.setBackground(buttonBackgroundColor);
 		btnSignUp.setForeground(Color.BLACK);
-
+		btnBackFromSignUp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				signin = false;
+				signin(false);
+			}
+		});
+		btnBackFromSignUp.setBackground(buttonBackgroundColor);
+		btnBackFromSignUp.setForeground(Color.BLACK);
+		btnBackFromSignUp.setVisible(false);
 		btnMyAlbums = new JButton(MovieManagerClient.getBundle().getString("myalbums"));
 		texts.put(btnMyAlbums, "myalbums");
 		btnMyAlbums.setForeground(Color.BLACK);
@@ -912,6 +930,7 @@ public class UserAlbumsGUI extends JFrame {
 		lblConfirm.setVisible(signin);
 		passwordConf.setVisible(signin);
 		lblNewLabel.setVisible(!signin);
+		btnBackFromSignUp.setVisible(signin);
 	}
 
 	/**

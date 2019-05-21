@@ -537,7 +537,6 @@ public enum MovieManagerClient {
 	 * @return int Return a status code of the process
 	 */
 	public static int deleteRating( String movieID ){
-		System.out.println(movieID);
 		WebResource webResource = client.resource(addr()).path("rating/");
 		ClientResponse response = webResource
 				.queryParam("token", sessionToken)

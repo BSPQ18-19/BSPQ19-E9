@@ -973,7 +973,8 @@ public class UserAlbumsGUI extends JFrame {
 		String message = MovieManagerClient.getBundle().getString("introducescore");
 		JTextField jtf = new JTextField();
 		Object[] params = {message, jtf};
-		if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("ratingmovie"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+		int status = JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("ratingmovie"), JOptionPane.OK_CANCEL_OPTION);
+		if( status == JOptionPane.OK_OPTION){
 			try{
 				Integer score = Integer.parseInt(jtf.getText());
 				if (score < 0 || score > 100) throw new NumberFormatException();
@@ -983,7 +984,6 @@ public class UserAlbumsGUI extends JFrame {
 				JOptionPane.showMessageDialog(null, MovieManagerClient.getBundle().getString("errorinscore"));
 				return null;
 			}
-		}
-		return null;
+		}else return null;
 	}
 }

@@ -95,6 +95,7 @@ public class UserAlbumsGUI extends JFrame {
 	private Color buttonBackgroundColor = Color.decode("#ffffff");
 	private Color listSeparatorColor = Color.decode("#ffa69e");
 	private Color textFieldBackgroundColor = Color.decode("#ffffff");
+	private Color hyperlinkColor = Color.decode("#33cccc");
 	private JTextArea areaPlot;
 	private JLabel lblAvgRatingField;
 	private JLabel lblMyAlbums_1;
@@ -802,15 +803,8 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblMyAlbums_1.gridy = 5;
 		panel_1.add(lblMyAlbums_1, gbc_lblMyAlbums_1);
 
-//		lblMyalbumsfield = new JLabel("myalbumsfieldddddddddddddd");
-//		GridBagConstraints gbc_lblMyalbumsfield = new GridBagConstraints();
-//		gbc_lblMyalbumsfield.anchor = GridBagConstraints.WEST;
-//		gbc_lblMyalbumsfield.insets = new Insets(0, 0, 5, 5);
-//		gbc_lblMyalbumsfield.gridx = 1;
-//		gbc_lblMyalbumsfield.gridy = 5;
-//		panel_1.add(lblMyalbumsfield, gbc_lblMyalbumsfield);
-
 		areaMyAlbums = new JTextArea();
+		areaMyAlbums.setForeground(hyperlinkColor);
 		areaMyAlbums.setLineWrap(true);
 		areaMyAlbums.setWrapStyleWord(true);
 		GridBagConstraints gbc_lblAlbumsField = new GridBagConstraints();
@@ -825,7 +819,7 @@ public class UserAlbumsGUI extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2 && !areaMyAlbums.getSelectedText().equals("-")) {
+				if (e.getClickCount() == 2 && !areaMyAlbums.getSelectedText().equals("-") && !areaMyAlbums.getSelectedText().contains(" ")&& !areaMyAlbums.getSelectedText().contains(",")) {
 					backToMovieDetails = true;
 					hideMovieDetails();
 					moviedetails = false;

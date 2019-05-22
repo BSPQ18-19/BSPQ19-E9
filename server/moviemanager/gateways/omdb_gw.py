@@ -27,6 +27,12 @@ def build_movie(movie_model, omdb_json):
     movie.poster_url = omdb_json["Poster"]
     return movie
 
+## @brief Details of a movie
+# movie_details requests information about a movie to IMDB
+# given the imdbID of the movie
+# @param movie_id imdbID of the movie
+# @return (status_code, response)
+#
 
 def movie_details(movie_id, raw=False):
     """
@@ -53,6 +59,12 @@ def movie_details(movie_id, raw=False):
         "poster_url": info["Poster"]
     }
 
+## @brief Search for movirs
+# search_movies sends a search request to IMDB and returns
+# the processes result
+# @param kwargs title=<movie title>, year(optional)=<release year>
+# @return {"movies":[<list of movies>]}
+#
 
 def search_movies(**kwargs):
     """

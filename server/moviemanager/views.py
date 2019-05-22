@@ -15,6 +15,10 @@ from .utils import check_params, compare_password, hash_password, search_movie_b
 logger = getLogger(__name__)
 
 
+## @brief Parse a REST query
+# Extract REST query parameters from a request
+# @param request REST request to extract params from
+# @return dictionary of parameters
 def get_query(request):
     if request.GET:
         query = request.GET
@@ -25,6 +29,15 @@ def get_query(request):
     else:
         query = QueryDict(request.META.get("QUERY_STRING"))
     return query
+
+
+## @brief Manage an album
+# Get an album, create it, add movies to it, remove movies from it or delete it
+# @param token token of the current session
+# @param title title of the album
+# @param movie_id ID of the movie to add to or remove from the album
+# @return album if the request method is GET
+#
 
 
 @csrf_exempt
@@ -83,6 +96,14 @@ def handle_album_by_title(request):
     logger.info("create album {}".format(album.json()))
     return JsonResponse({"album_id": album.album_id})
 
+
+## @brief Manage an album
+# Get an album, create it, add movies to it, remove movies from it or delete it
+# @param token token of the current session
+# @param album_id ID of the album
+# @param movie_id ID of the movie to add to or remove from the album
+# @return album if the request method is GET
+#
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
@@ -147,6 +168,13 @@ def handle_album(request, album_id):
     return HttpResponse("OK")
 
 
+## @brief Log in an existing user
+# Validate a user and create a new session for a them
+# @param username user name of the user
+# @param password password of the user
+# @return token of the new session
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='Log In')
@@ -187,6 +215,12 @@ def login(request):
     return JsonResponse({"token": token})
 
 
+## @brief Details of a movie
+# Get title, year, plot and rating of a movie
+# @param movie_id ID of the movie to get details of
+# @return details of the movie
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='View details of a movie')
@@ -218,6 +252,13 @@ def movie_details(request, movie_id):
         return HttpResponse(status=code, content=result)
 
 
+## @brief Search for movies
+# Search for movies first locally at the server DB, then at OMDB
+# @param title title of the movie
+# @param year release year of the movie
+# @return list of movies matching the criteria
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='Search for a movie')
@@ -243,6 +284,12 @@ def search(request):
     # movies not found
     return HttpResponse(status=code, content=result)
 
+
+## @brief Create a new user
+# Sign up a new user
+# @param username user name of the new user
+# @param password password of the new user
+#
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -284,6 +331,12 @@ def signup(request):
     return HttpResponse("created user {}".format(username))
 
 
+## @brief Get your albums
+# Retrieve the full list of albums of a user
+# @param token token of the current session
+# @return list of albums of the user
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='List user albums')
@@ -320,13 +373,21 @@ def user_albums(request):
     })
 
 
+## @brief Manage your watched movies
+# watched_movies returns the list of watched movies of a user
+# @param token token of the current session
+# @param ID of the movie to manage
+# @return list of movies if token was valid
+#
+
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 @silk_profile(name='Handle watched movies')
 def watched_movies(request):
     """
     watched_movies returns the list of watched movies of a user
-    :param request: token to identify the user with
+    :param request: request containing token to identify the user with and
+    the movie_id
     :return: list of movies if token was valid
     """
     # check that are required parameters are present
@@ -381,6 +442,15 @@ def watched_movies(request):
 
     return HttpResponse("OK")
 
+
+## @brief Manage the ratings of a movie
+# handle_rating creates, modifies, retrieves or deletes a rating from a user to
+# a movie
+# @param token token of the current session
+# @param movie_id the id of the movie to be rated
+# @param score the score given to the movie
+# @return current rating if the request method is GET
+#
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST", "PUT"])
@@ -462,6 +532,14 @@ def handle_rating(request):
 
     return HttpResponse("OK")
 
+
+## @brief List user albums containing movies
+# in_album returns all the album of a user containing a movie
+# @param token token of the current session
+# @param movie_id ID of the movie to search for
+# @return list of names of all the user albums containing the movie except
+# for the watched list
+#
 
 @csrf_exempt
 @require_http_methods(["GET"])

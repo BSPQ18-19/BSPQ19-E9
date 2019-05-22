@@ -29,9 +29,9 @@ var NAVTREE =
     [ "internals", "md_server_moviemanager_internals__r_e_a_d_m_e.html", null ],
     [ "moviemanager", "md_server_moviemanager__r_e_a_d_m_e.html", null ],
     [ "MovieManager", "md_server__r_e_a_d_m_e.html", null ],
-    [ "Namespaces", "namespaces.html", [
-      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
-      [ "Namespace Members", "namespacemembers.html", [
+    [ "Packages", "namespaces.html", [
+      [ "Packages", "namespaces.html", "namespaces_dup" ],
+      [ "Package Functions", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ]

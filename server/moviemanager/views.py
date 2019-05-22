@@ -33,6 +33,7 @@ def get_query(request):
     except AttributeError:
         return QueryDict()
 
+
 ## @brief Manage an album
 # Get an album, create it, add movies to it, remove movies from it or delete it
 # @param token token of the current session

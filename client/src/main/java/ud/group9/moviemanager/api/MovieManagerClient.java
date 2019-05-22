@@ -528,9 +528,10 @@ public enum MovieManagerClient {
 			response.close();
 			return jo.getInt("score");
 		}
-		else
+		else{
 			response.close();
 			return -1;
+		}
 	}
 	
 	/**
@@ -552,6 +553,25 @@ public enum MovieManagerClient {
 		return response.getStatus();
 	}
 	
+	public static ArrayList<String> getAlbumsForMovie ( String movieID ){
+		ArrayList<String> albums = new ArrayList<>();
+		WebResource webResource = client.resource(addr()).path("in_album/");
+		ClientResponse response = webResource
+				.queryParam("token", sessionToken)
+				.queryParam("movie_id", movieID)
+				.get(ClientResponse.class);
+		if(response.getStatus() == 200){
+			JSONObject jo = new JSONObject(response.getEntity(String.class));
+			JSONArray joa = jo.getJSONArray("albums");
+			for (int i = 0; i < joa.length(); i++){
+				albums.add(joa.getString(i));
+			}
+			response.close();
+		}
+		else
+			response.close();
+		return albums;
+	}
 	/**
 	 * @brief Check if a movie Has been watched
 	 * 
@@ -605,12 +625,10 @@ public enum MovieManagerClient {
 	}
 
 	public static void main(String[] args) {
-		//		new MovieManagerClient(args[0], Integer.parseInt(args[1]));
 		try {
 			MovieManagerClient.start();
 			Thread.sleep(10000);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

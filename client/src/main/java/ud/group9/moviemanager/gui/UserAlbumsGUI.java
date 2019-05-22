@@ -3,6 +3,7 @@ package ud.group9.moviemanager.gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
@@ -316,12 +317,11 @@ public class UserAlbumsGUI extends JFrame {
 					else if (moviedetails){
 						hideMovieDetails();
 						moviedetails = false;
-					}
-					else if (movies && !searching){
-						showAlbums();
 					}else if (backToMovieDetails){
 						showMovieDetails(displayedMovie);
 						moviedetails = true;
+					}else if (movies && !searching){
+						showAlbums();
 					}else{
 						searching = false;
 						hideMainOptions(false);
@@ -379,7 +379,6 @@ public class UserAlbumsGUI extends JFrame {
 		btnAddToAlbum.setForeground(Color.BLACK);
 		btnAddToAlbum.setBackground(buttonBackgroundColor);
 		btnAddToAlbum.addActionListener(new ActionListener() {
-			//TODO If movies update areaAlbums
 			public void actionPerformed(ActionEvent e) {
 				if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("addtoalbum"))){
 					ArrayList<JCheckBox> cbg = new ArrayList<>();
@@ -391,7 +390,11 @@ public class UserAlbumsGUI extends JFrame {
 					Object[] params = {message, cbg.toArray()};
 					if(JOptionPane.showConfirmDialog(null, params, MovieManagerClient.getBundle().getString("addtoalbum"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 						for (JCheckBox cb : cbg)
-							if (cb.isSelected()) MovieManagerClient.addMovieToAlbumByTitle(cb.getText(), movieIDs.get((list.getSelectedValue().substring(1))));
+							if (cb.isSelected()){
+								MovieManagerClient.addMovieToAlbumByTitle(cb.getText(), displayedMovie.getMovieID());
+								if (areaMyAlbums.getText().equals("-")) areaMyAlbums.setText(cb.getText());
+								else areaMyAlbums.setText(areaMyAlbums.getText() + ", " + cb.getText());
+							}
 					}
 				}else if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("removefromalbum"))){
 					MovieManagerClient.deleteMovieFromAlbum(MovieManagerClient.getAlbumByTitle(shownAlbum).getAlbumID(), movieIDs.get((list.getSelectedValue().substring(1))));
@@ -808,11 +811,8 @@ public class UserAlbumsGUI extends JFrame {
 //		panel_1.add(lblMyalbumsfield, gbc_lblMyalbumsfield);
 
 		areaMyAlbums = new JTextArea();
-
-		// areaPlot. setColumns(300);
 		areaMyAlbums.setLineWrap(true);
 		areaMyAlbums.setWrapStyleWord(true);
-		//		areaPlot.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		GridBagConstraints gbc_lblAlbumsField = new GridBagConstraints();
 		gbc_lblAlbumsField.fill = GridBagConstraints.BOTH;
 		gbc_lblAlbumsField.anchor = GridBagConstraints.WEST;
@@ -825,7 +825,7 @@ public class UserAlbumsGUI extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
+				if (e.getClickCount() == 2 && !areaMyAlbums.getSelectedText().equals("-")) {
 					backToMovieDetails = true;
 					hideMovieDetails();
 					moviedetails = false;
@@ -977,6 +977,9 @@ public class UserAlbumsGUI extends JFrame {
 		if (score != -1) lblScorefield.setText(String.valueOf(score));
 		else lblScorefield.setText("-");
 //		lblAvgRatingField.setText(m.getavgRating());
+		ArrayList<String> albums = MovieManagerClient.getAlbumsForMovie(m.getMovieID());
+		if (!albums.isEmpty()) areaMyAlbums.setText(albums.toString().substring(1, albums.toString().length()-1));
+		else areaMyAlbums.setText("-");
 		try {
 			image = new ImageIcon((ImageIO.read(new URL(m.getPoster()))).getScaledInstance(300, 444, Image.SCALE_DEFAULT));
 			lblPoster.setIcon(image);

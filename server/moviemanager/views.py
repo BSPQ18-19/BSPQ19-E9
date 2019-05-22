@@ -461,3 +461,36 @@ def handle_rating(request):
         rating.delete()
 
     return HttpResponse("OK")
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def in_album(request):
+    query = get_query(request)
+    # check that are required parameters are present
+    params = ["token", "movie_id"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # check that the token is valid
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    user = SESSION_HANDLER.get(token).user
+    movie_id = query.get("movie_id")
+
+    try:
+        movie = models.Movie.objects.get(movie_id=movie_id)
+    except models.Movie.DoesNotExist:
+        return JsonResponse({"albums": []})
+
+    albums = models.Album.objects.filter(owner=user,
+                                         movies=movie)
+
+    return JsonResponse({
+        "albums": [
+            a.json() for a in albums
+        ]
+    })

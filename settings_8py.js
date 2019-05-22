@@ -1,0 +1,26 @@
+var settings_8py =
+[
+    [ "ALLOWED_HOSTS", "settings_8py.html#a4678bd960b236ab0a895b2be7325dea7", null ],
+    [ "AUTH_PASSWORD_VALIDATORS", "settings_8py.html#a044637149ea382350918b6aaa6d4e486", null ],
+    [ "BASE_DIR", "settings_8py.html#ac060087277ccfe6c20439e7b54f02f2b", null ],
+    [ "DATABASES", "settings_8py.html#a202763ec2aa50c398d4d6f28792a873b", null ],
+    [ "DEBUG", "settings_8py.html#a32398fb82f2a881555f0a0b3007c2de8", null ],
+    [ "INSTALLED_APPS", "settings_8py.html#abeb19bcc4e709bd8525b2123789b6ee8", null ],
+    [ "LANGUAGE_CODE", "settings_8py.html#a675f374da918e7b126fbee36c5030147", null ],
+    [ "LOGGING", "settings_8py.html#a414540ea92680559caa4e28287970026", null ],
+    [ "MIDDLEWARE", "settings_8py.html#aabca4c7db29893313d682226a17eae54", null ],
+    [ "PROJECT_ROOT", "settings_8py.html#a91abfbdc0ca3d308ee11424dfd370404", null ],
+    [ "ROOT_URLCONF", "settings_8py.html#aa707d5a9b360b9a045b2cb55f231e1e4", null ],
+    [ "SECRET_KEY", "settings_8py.html#ab128a954a2fd3402eb7e41c5a941307a", null ],
+    [ "SILKY_PYTHON_PROFILER", "settings_8py.html#a59d784c058ad2ff30c6659a8ca0f5492", null ],
+    [ "SILKY_PYTHON_PROFILER_BINARY", "settings_8py.html#aa7a19e4b9b546cf996b75651e8e052e1", null ],
+    [ "SILKY_PYTHON_PROFILER_RESULT_PATH", "settings_8py.html#a2f186ad10bf21596fdb6c037091767c3", null ],
+    [ "STATIC_ROOT", "settings_8py.html#a22d8a895619f98986427e3f2bd516e2c", null ],
+    [ "STATIC_URL", "settings_8py.html#a8ad692fc04eb06e2debb8da5142ec512", null ],
+    [ "TEMPLATES", "settings_8py.html#a6bbaada48633abc53845c1d1fd13b073", null ],
+    [ "TIME_ZONE", "settings_8py.html#a722ba02d09c935a2f7df5ca090d514d8", null ],
+    [ "USE_I18N", "settings_8py.html#a0e1d601f854631c0a8d4da47aea7023f", null ],
+    [ "USE_L10N", "settings_8py.html#abb14764437a6c8ecd0c8ef74377132d3", null ],
+    [ "USE_TZ", "settings_8py.html#a0af3e6a93e3889440594a4b8a51537b3", null ],
+    [ "WSGI_APPLICATION", "settings_8py.html#a14b264d6a3bde5e3d85762a59f14cff2", null ]
+];

@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['main',['main',['../enumud_1_1group9_1_1moviemanager_1_1api_1_1_movie_manager_client.html#ab52e16f7315aaa87d72aece87974269a',1,'ud.group9.moviemanager.api.MovieManagerClient.main()'],['../classud_1_1group9_1_1moviemanager_1_1_app.html#aac93fb62ebe49acc1ed4b14ba23a7f15',1,'ud.group9.moviemanager.App.main()'],['../classud_1_1group9_1_1moviemanager_1_1gui_1_1_user_albums_g_u_i.html#ad1068c1418382306c01d347c49ae6b45',1,'ud.group9.moviemanager.gui.UserAlbumsGUI.main()']]],
+  ['movie',['Movie',['../classud_1_1group9_1_1moviemanager_1_1data_1_1_movie.html#ac675d602bd760f79a6a4c1cc079bb73a',1,'ud.group9.moviemanager.data.Movie.Movie(String movieID, String title, int year, String poster)'],['../classud_1_1group9_1_1moviemanager_1_1data_1_1_movie.html#a048df381e62d34bb68269a3bf4b14d70',1,'ud.group9.moviemanager.data.Movie.Movie(String movieID, String title, int year, String poster, String plot, String avgRating)']]],
+  ['movie_5fdetails',['movie_details',['../namespacemoviemanager_1_1gateways_1_1omdb__gw.html#a4b013abaef2a38a1333e671182882843',1,'moviemanager.gateways.omdb_gw.movie_details()'],['../namespacemoviemanager_1_1views.html#a36c23066255d687edb987f7c6ce345cd',1,'moviemanager.views.movie_details()']]]
+];

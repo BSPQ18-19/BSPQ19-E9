@@ -3,7 +3,6 @@ package ud.group9.moviemanager.gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
@@ -13,7 +12,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -27,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -37,7 +34,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -167,8 +163,9 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				MovieManagerClient.setBundle("en");
 				for (JComponent c: texts.keySet()){
-					if ((c instanceof JLabel) && (!moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					if ((c instanceof JLabel) && (!moviedetails) && !(movies && !searching))((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					else if (moviedetails && c.getParent() == panel_1) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 				}
 				if (lblMyAlbums.getText().equals(MovieManagerClient.getBundle().getString("myalbums"))){
 					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
@@ -185,8 +182,9 @@ public class UserAlbumsGUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				MovieManagerClient.setBundle("es");
 				for (JComponent c: texts.keySet()){
-					if ((c instanceof JLabel) && (!moviedetails)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					if ((c instanceof JLabel) && (!moviedetails) && !(movies && !searching)) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 					else if (c instanceof JButton) ((JButton)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
+					else if (moviedetails && c.getParent() == panel_1) ((JLabel)c).setText(MovieManagerClient.getBundle().getString(texts.get(c)));
 				}
 				if (lblMyAlbums.getText().equals(MovieManagerClient.getBundle().getString("myalbums"))){
 					l1.set(0, (MovieManagerClient.getBundle().getString("watched")));
@@ -238,6 +236,7 @@ public class UserAlbumsGUI extends JFrame {
 					}
 				}else{
 					if (movies){
+						displayedMovie = MovieManagerClient.getMovie(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1))));
 						showMovieInAlbumOptions(MovieManagerClient.isWatched(movieIDs.get((((JList<String>)e.getComponent()).getSelectedValue().substring(1)))));
 						if (searching){
 							btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("addtoalbum"));
@@ -383,9 +382,10 @@ public class UserAlbumsGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnAddToAlbum.getText().equals(MovieManagerClient.getBundle().getString("addtoalbum"))){
 					ArrayList<JCheckBox> cbg = new ArrayList<>();
+					ArrayList<String> alreadyinalbums = MovieManagerClient.getAlbumsForMovie(displayedMovie.getMovieID());
 					UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("store"));
 					for (Album a : MovieManagerClient.getAlbums()){
-						cbg.add(new JCheckBox(a.getTitle()));
+						if (!alreadyinalbums.contains(a.getTitle())) cbg.add(new JCheckBox(a.getTitle()));
 					}
 					String message = MovieManagerClient.getBundle().getString("selectalbum");
 					Object[] params = {message, cbg.toArray()};
@@ -541,12 +541,14 @@ public class UserAlbumsGUI extends JFrame {
 
 				try {
 					if (MovieManagerClient.LogIn(usname, pswrd)){
-						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginsuccessful"));
+						UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginsuccessful"), MovieManagerClient.getBundle().getString("welcome"), JOptionPane.INFORMATION_MESSAGE);
 						LOGGER.info("Login successful.");
 						login(true);
 					}else{
-						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginunsuccessful"));
-						LOGGER.warn("Login unseccessful");
+						UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+						JOptionPane.showMessageDialog(btnLogIn, MovieManagerClient.getBundle().getString("loginunsuccessful"), MovieManagerClient.getBundle().getString("problem"), JOptionPane.OK_OPTION);
+						LOGGER.warn("Login unsuccessful");
 					}
 				} catch (SignupException e1) {
 					JOptionPane.showMessageDialog(btnLogIn, e1);
@@ -596,24 +598,32 @@ public class UserAlbumsGUI extends JFrame {
 					String pswrd = "";
 
 					if (password.getPassword().length == 0) {
-						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("emptypassword"));
+						UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("emptypassword"), MovieManagerClient.getBundle().getString("problem"), JOptionPane.OK_OPTION);
 						LOGGER.warn("Empty password");
 						return;
 					}
 					if(!(String.valueOf(password.getPassword()).equals(String.valueOf(passwordConf.getPassword())))) {
-						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("differentpasswords"));
+						UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("differentpasswords"), MovieManagerClient.getBundle().getString("problem"), JOptionPane.OK_OPTION);
 						LOGGER.warn("Different passwords");
 						return;
 					}
 					pswrd = String.valueOf(password.getPassword());
 					try {
-						MovieManagerClient.SignUp(usname, pswrd);
-						JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("signupsuccessful"));
-						LOGGER.info("SignUp successful.");
-						MovieManagerClient.LogIn(usname, pswrd);
-						passwordConf.setText("");
-						signin = false;
-						login(true);
+						int status = MovieManagerClient.SignUp(usname, pswrd);
+						UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("ok"));
+						if (status == 200){
+							JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("signupsuccessful"), MovieManagerClient.getBundle().getString("welcome"), JOptionPane.INFORMATION_MESSAGE);
+							LOGGER.info("SignUp successful.");
+							MovieManagerClient.LogIn(usname, pswrd);
+							passwordConf.setText("");
+							signin = false;
+							login(true);
+						}else if (status == 400){
+							JOptionPane.showMessageDialog(btnSignUp, MovieManagerClient.getBundle().getString("usernametaken"), MovieManagerClient.getBundle().getString("problem"), JOptionPane.OK_OPTION);
+
+						}
 					} catch (SignupException e1) {
 						JOptionPane.showMessageDialog(btnSignUp, e1);
 						LOGGER.warn(e1.toString());
@@ -638,8 +648,8 @@ public class UserAlbumsGUI extends JFrame {
 		btnBackFromSignUp.setBackground(buttonBackgroundColor);
 		btnBackFromSignUp.setForeground(Color.BLACK);
 		btnBackFromSignUp.setVisible(false);
-		btnMyAlbums = new JButton(MovieManagerClient.getBundle().getString("myalbums"));
-		texts.put(btnMyAlbums, "myalbums");
+		btnMyAlbums = new JButton(MovieManagerClient.getBundle().getString("myalbumsbutton"));
+		texts.put(btnMyAlbums, "myalbumsbutton");
 		btnMyAlbums.setForeground(Color.BLACK);
 		btnMyAlbums.setBackground(buttonBackgroundColor);
 		btnMyAlbums.addActionListener(new ActionListener() {
@@ -656,6 +666,7 @@ public class UserAlbumsGUI extends JFrame {
 		btnSearchForMovie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				UIManager.put("OptionPane.okButtonText", MovieManagerClient.getBundle().getString("search"));
+				UIManager.put("OptionPane.cancelButtonText", MovieManagerClient.getBundle().getString("cancel"));
 				JTextField moviename = new JTextField();
 				JTextField movieyear = new JTextField();
 				Object[] message = {
@@ -722,7 +733,8 @@ public class UserAlbumsGUI extends JFrame {
 		panelData.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE, 0.0};
 		panel_1.setLayout(panelData);
 
-		JLabel lblTitle = new JLabel("Title:");
+		JLabel lblTitle = new JLabel(MovieManagerClient.getBundle().getString("title"));
+		texts.put(lblTitle, "title");
 		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
 		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTitle.gridx = 0;
@@ -739,7 +751,8 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblTitleField.gridy = 1;
 		panel_1.add(lblTitleField, gbc_lblTitleField);
 
-		JLabel lblYear = new JLabel("Year:");
+		JLabel lblYear = new JLabel(MovieManagerClient.getBundle().getString("year"));
+		texts.put(lblYear, "year");
 		GridBagConstraints gbc_lblYear = new GridBagConstraints();
 		gbc_lblYear.insets = new Insets(0, 0, 5, 5);
 		gbc_lblYear.gridx = 0;
@@ -757,7 +770,8 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblYearField.gridy = 2;
 		panel_1.add(lblYearField, gbc_lblYearField);
 
-		JLabel lblPlot = new JLabel("Plot:");
+		JLabel lblPlot = new JLabel(MovieManagerClient.getBundle().getString("plot"));
+		texts.put(lblPlot, "plot");
 		GridBagConstraints gbc_lblPlot = new GridBagConstraints();
 		gbc_lblPlot.anchor = GridBagConstraints.NORTH;
 		gbc_lblPlot.insets = new Insets(0, 0, 5, 5);
@@ -783,17 +797,29 @@ public class UserAlbumsGUI extends JFrame {
 		gbc_lblPlotField.gridy = 3;
 		panel_1.add(areaPlot, gbc_lblPlotField);
 
-//		lblAvgRatingField = new JLabel();
-//		lblAvgRatingField.setHorizontalAlignment(SwingConstants.RIGHT);
-//		GridBagConstraints gbc_lblAvgRatingField = new GridBagConstraints();
-//		gbc_lblAvgRatingField.anchor = GridBagConstraints.WEST;
-//		gbc_lblAvgRatingField.insets = new Insets(0, 0, 5, 5);
-//		gbc_lblAvgRatingField.gridx = 1;
-//		gbc_lblAvgRatingField.gridy = 4;
-//		panel_1.add(lblAvgRatingField, gbc_lblAvgRatingField);
+		JLabel lblAvgRating = new JLabel(MovieManagerClient.getBundle().getString("avgrating"));
+		texts.put(lblAvgRating, "avgrating");
+		GridBagConstraints gbc_lblAvgRating = new GridBagConstraints();
+		gbc_lblAvgRating.anchor = GridBagConstraints.NORTH;
+		gbc_lblAvgRating.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAvgRating.gridx = 0;
+		gbc_lblAvgRating.gridy = 4;
+		panel_1.add(lblAvgRating, gbc_lblAvgRating);
+		lblAvgRating.setHorizontalAlignment(SwingConstants.LEFT);
+		lblAvgRating.setAlignmentY(1.0f);
+		
+		lblAvgRatingField = new JLabel();
+		lblAvgRatingField.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gbc_lblAvgRatingField = new GridBagConstraints();
+		gbc_lblAvgRatingField.anchor = GridBagConstraints.WEST;
+		gbc_lblAvgRatingField.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAvgRatingField.gridx = 1;
+		gbc_lblAvgRatingField.gridy = 4;
+		panel_1.add(lblAvgRatingField, gbc_lblAvgRatingField);
 
 		//TODO Labels albums and ratings
-		lblMyAlbums_1 = new JLabel("My albums:");
+		lblMyAlbums_1 = new JLabel(MovieManagerClient.getBundle().getString("myalbums"));
+		texts.put(lblMyAlbums_1, "myalbums");
 		lblMyAlbums_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMyAlbums_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		GridBagConstraints gbc_lblMyAlbums_1 = new GridBagConstraints();
@@ -829,17 +855,18 @@ public class UserAlbumsGUI extends JFrame {
 			}
 		});
 		
-		JLabel lblAvgRating = new JLabel("Score:");
-		GridBagConstraints gbc_lblAvgRating = new GridBagConstraints();
-		gbc_lblAvgRating.anchor = GridBagConstraints.NORTH;
-		gbc_lblAvgRating.insets = new Insets(0, 0, 5, 5);
-		gbc_lblAvgRating.gridx = 0;
-		gbc_lblAvgRating.gridy = 6;
-		panel_1.add(lblAvgRating, gbc_lblAvgRating);
-		lblAvgRating.setHorizontalAlignment(SwingConstants.LEFT);
-		lblAvgRating.setAlignmentY(1.0f);
+		JLabel lblMyRating = new JLabel(MovieManagerClient.getBundle().getString("myscore"));
+		texts.put(lblMyRating, "myscore");
+		GridBagConstraints gbc_lblMyRating = new GridBagConstraints();
+		gbc_lblMyRating.anchor = GridBagConstraints.NORTH;
+		gbc_lblMyRating.insets = new Insets(0, 0, 5, 5);
+		gbc_lblMyRating.gridx = 0;
+		gbc_lblMyRating.gridy = 6;
+		panel_1.add(lblMyRating, gbc_lblMyRating);
+		lblMyRating.setHorizontalAlignment(SwingConstants.LEFT);
+		lblMyRating.setAlignmentY(1.0f);
 
-		lblScorefield = new JLabel("scorefield");
+		lblScorefield = new JLabel();
 		GridBagConstraints gbc_lblScorefield = new GridBagConstraints();
 		gbc_lblScorefield.anchor = GridBagConstraints.NORTHWEST;
 		gbc_lblScorefield.insets = new Insets(0, 0, 5, 5);
@@ -949,17 +976,6 @@ public class UserAlbumsGUI extends JFrame {
 		displayedMovie = m;
 		albumsScrollPanel.setVisible(false);
 		btnRate.setVisible(true);
-		if (MovieManagerClient.getRating(m.getMovieID()) == -1){
-			btnRate.setText(MovieManagerClient.getBundle().getString("rate"));
-			texts.put(btnRate, "rate");
-			btnDeleteRate.setVisible(false);
-		}
-		else{
-			btnBorrarAlbum.setText(MovieManagerClient.getBundle().getString("updaterating"));
-			texts.put(btnBorrarAlbum, "updaterating");
-			btnAddToAlbum.setText(MovieManagerClient.getBundle().getString("deleterating"));
-			texts.put(btnBorrarAlbum, "deleterating");
-		}
 		lblMyAlbums.setText(m.getTitle() + ":");
 		panelMovieDetails.setPreferredSize(panelForMainOptions.getSize());
 		//TODO prueba
@@ -970,7 +986,7 @@ public class UserAlbumsGUI extends JFrame {
 		Integer score = MovieManagerClient.getRating(m.getMovieID());
 		if (score != -1) lblScorefield.setText(String.valueOf(score));
 		else lblScorefield.setText("-");
-//		lblAvgRatingField.setText(m.getavgRating());
+		lblAvgRatingField.setText(m.getavgRating());
 		ArrayList<String> albums = MovieManagerClient.getAlbumsForMovie(m.getMovieID());
 		if (!albums.isEmpty()) areaMyAlbums.setText(albums.toString().substring(1, albums.toString().length()-1));
 		else areaMyAlbums.setText("-");

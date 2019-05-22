@@ -33,24 +33,22 @@ public class MovieManagerClientTest {
         System.out.println(" done with token: " + MovieManagerClient.getSessionToken() + ".");
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void testSignUp() {
         try {
             // correct signup
-            String response = MovieManagerClient.SignUp(username, password);
-            String expected = MovieManagerClient.getBundle().getString("newuserstored");
+            int response = MovieManagerClient.SignUp(username, password);
+            int expected = 200;
             Assert.assertEquals("Failed to sign up", response, expected);
 
             // duplicated signup
             response = MovieManagerClient.SignUp(username, password);
-            expected = MovieManagerClient.getBundle().getString("generalerror");
+            expected = 400;
             Assert.assertEquals("Unexpected successful signup", response, expected);
         } catch (SignupException e) {
             fail("Unexpected exception: " + e.toString());
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void testLogIn() {
         try {
             String previousToken = MovieManagerClient.getSessionToken();

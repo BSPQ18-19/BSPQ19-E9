@@ -92,32 +92,17 @@ public enum MovieManagerClient {
 	 * @return String Returns a message with the result of the SignUp process
 	 * @throws SignupException A exception if something goes wrong
 	 */
-	public static String SignUp( String username, String password) throws SignupException {
+	public static int SignUp( String username, String password) throws SignupException {
 		// Hash password so no plaintext password is sent through the network
 		String hashedPassword = Hash.encodeHash(Hash.sha256Hash(password));
 
-		String mensaje = "";
 		WebResource webResource = client.resource(addr()).path("signup/");
 		ClientResponse response = webResource
 				.queryParam("username", username)
 				.queryParam("password", hashedPassword)
 				.post(ClientResponse.class);
-		switch(response.getStatus()){
-		case 200:
-			mensaje = MovieManagerClient.getBundle().getString("newuserstored");
-			LOGGER.info("New user Stored.");
-			break;
-		case 401:
-			mensaje = MovieManagerClient.getBundle().getString("usernametaken");
-			LOGGER.info("The Username is already taken.");
-			break;
-		default:
-			mensaje = MovieManagerClient.getBundle().getString("generalerror");
-			LOGGER.info("Error while SignUp.");
-			break;
-		}
 		response.close();
-		return mensaje;
+		return response.getStatus();
 	}
 
 	/**

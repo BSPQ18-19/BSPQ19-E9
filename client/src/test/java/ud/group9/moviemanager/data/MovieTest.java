@@ -13,7 +13,6 @@ import static junit.framework.TestCase.fail;
 
 public class MovieTest {
 
-    @SuppressWarnings("Duplicates")
     @Test
     public void fromJSON() {
         // read json example from file

@@ -41,7 +41,6 @@ def get_query(request):
 # @return album if the request method is GET
 #
 
-
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST", "PUT"])
 @silk_profile(name='Handle user albums by title')
@@ -576,15 +575,7 @@ def in_album(request):
         movie = models.Movie.objects.get(movie_id=movie_id)
     # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:
-        code, result = omdb_gw.movie_details(movie_id, True)
-        if code == 200:
-            # store movie in local DB
-            movie = omdb_gw.build_movie(models.Movie, result)
-            logger.log(INFO, "store movie {}".format(movie.__str__()))
-            movie.save()
-        else:
-            # return error returned by the gateways
-            return HttpResponse(status=code, content=result)
+        return JsonResponse({"albums": []})
 
     albums = models.Album.objects.filter(owner=user,
                                          movies=movie)

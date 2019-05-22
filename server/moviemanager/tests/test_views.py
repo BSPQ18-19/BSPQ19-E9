@@ -180,6 +180,25 @@ class ViewsTestCase(TestCase):
                             .format(self.token, self.test_movie_id))
         self.assertEqual(200, r.status_code)
 
+    def test_in_album(self):
+        # create album
+        # create album
+        r = self.client.put("/moviemanager/album/?token={}&title={}"
+                            .format(self.token, "test_in_album"))
+        album_id = loads(r.content).get("album_id")
+        # request missing movie
+        r = self.client.get("/moviemanager/in_album/?token={}&movie_id={}"
+                            .format(self.token, "notfound"))
+        self.assertEqual(0, len(loads(r.content).get("albums")))
+        # add movie to album
+        r = self.client.post("/moviemanager/album/{}/?token={}&movie_id={}"
+                             .format(album_id, self.token, self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+        # request albums
+        r = self.client.get("/moviemanager/in_album/?token={}&movie_id={}"
+                            .format(self.token, self.test_movie_id))
+        self.assertEqual(1, len(loads(r.content).get("albums")))
+
     def test_missing_params(self):
         paths = [
             "album",

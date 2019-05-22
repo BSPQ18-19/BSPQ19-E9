@@ -32,6 +32,9 @@ class ViewsTestCase(TestCase):
                              .format("test_user", "test_password"))
         # self.assertEqual(200, r.status_code)
         r = self.client.get("/moviemanager/login/?username={}&password={}"
+                            .format("test_user", "wrond_password"))
+        self.assertNotEqual(200, r.status_code)
+        r = self.client.get("/moviemanager/login/?username={}&password={}"
                             .format("test_user", "test_password"))
         self.assertEqual(200, r.status_code)
         self.token = loads(r.content).get("token")
@@ -44,6 +47,11 @@ class ViewsTestCase(TestCase):
         self.assertEqual(200, r.status_code)
         album_id = loads(r.content).get("album_id")
         self.assertIsNotNone(album_id)
+
+        # duplicated title, error should be ignored by server
+        r = self.client.put("/moviemanager/album/?token={}&title={}"
+                            .format(self.token, "test_album_title"))
+        self.assertEqual(200, r.status_code)
 
         # add movie to album
         r = self.client.post("/moviemanager/album/{}/?token={}&movie_id={}"
@@ -76,6 +84,41 @@ class ViewsTestCase(TestCase):
         r = self.client.get("/moviemanager/album/{}/?token={}"
                             .format(album_id, self.token))
         self.assertEqual(404, r.status_code)
+
+    def test_album_by_id_views(self):
+        title = "test_album_title_aux"
+        # create album
+        r = self.client.put("/moviemanager/album/?token={}&title={}"
+                            .format(self.token, title))
+        self.assertEqual(200, r.status_code)
+        album_id = loads(r.content).get("album_id")
+        self.assertIsNotNone(album_id)
+
+        # add movie to album
+        r = self.client.post("/moviemanager/album/?title={}&token={}&movie_id={}"
+                             .format(title, self.token, self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+
+        # get album
+        r = self.client.get("/moviemanager/album/?title={}&token={}"
+                            .format(title, self.token))
+        movies = loads(r.content).get("movies")
+        self.assertEqual(1, len(movies))
+
+        # remove movie from album & get album
+        self.client.delete("/moviemanager/album/?title={}&token={}&movie_id={}"
+                           .format(title, self.token, self.test_movie_id))
+        r = self.client.get("/moviemanager/album/?title={}&token={}"
+                            .format(title, self.token))
+        movies = loads(r.content).get("movies")
+        self.assertEqual(0, len(movies))
+
+        # remove album
+        self.client.delete("/moviemanager/album/?title={}&token={}"
+                           .format(title, self.token, self.test_movie_id))
+        r = self.client.get("/moviemanager/album/?title={}&token={}"
+                            .format(title, self.token))
+        self.assertEqual(200, r.status_code)
 
     def test_movie_views(self):
         # search movie
@@ -115,3 +158,54 @@ class ViewsTestCase(TestCase):
         r = self.client.delete("/moviemanager/watched/?token={}&movie_id={}"
                                .format(self.token, self.test_movie_id))
         self.assertEqual(200, r.status_code)
+
+    def test_handle_rating(self):
+        # create rating
+        r = self.client.put("/moviemanager/rating/?token={}&movie_id={}&score=80"
+                            .format(self.token, self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+
+        # edit rating
+        r = self.client.post("/moviemanager/rating/?token={}&movie_id={}&score=90"
+                            .format(self.token,self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+
+        # get rating
+        r = self.client.get("/moviemanager/rating/?token={}&movie_id={}"
+                            .format(self.token, self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+
+        # delete rating
+        r = self.client.delete("/moviemanager/rating/?token={}&movie_id={}"
+                            .format(self.token, self.test_movie_id))
+        self.assertEqual(200, r.status_code)
+
+    def test_missing_params(self):
+        paths = [
+            "album",
+            "album/fake_id",
+            "login",
+            "movie/fake_id",
+            "rating",
+            "search",
+            "watched"
+        ]
+        for p in paths:
+            r = self.client.get("/moviemanager/{}/".format(p))
+            self.assertNotEqual(200, r.status_code)
+
+    def test_unauthorized(self):
+        paths = [
+            "album",
+            "album/fake_id",
+            "login",
+            "movie/fake_id",
+            "rating",
+            "search",
+            "watched"
+        ]
+        for p in paths:
+            r = self.client.get("""/moviemanager/{}/?token=fake_token&\
+            album_id=_&title=_&movie_id=_&password=_&score=_&username=_"""
+                                .format(p))
+            self.assertNotEqual(200, r.status_code)

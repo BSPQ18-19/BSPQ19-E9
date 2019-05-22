@@ -20,16 +20,18 @@ logger = getLogger(__name__)
 # @param request REST request to extract params from
 # @return dictionary of parameters
 def get_query(request):
-    if request.GET:
-        query = request.GET
-    elif request.POST:
-        query = request.POST
-    elif request.PUT:
-        query = request.PUT
-    else:
-        query = QueryDict(request.META.get("QUERY_STRING"))
-    return query
-
+    try:
+        if request.GET:
+            query = request.GET
+        elif request.POST:
+            query = request.POST
+        elif request.PUT:
+            query = request.PUT
+        else:
+            query = QueryDict(request.META.get("QUERY_STRING"))
+        return query
+    except AttributeError:
+        return QueryDict()
 
 ## @brief Manage an album
 # Get an album, create it, add movies to it, remove movies from it or delete it
@@ -471,10 +473,20 @@ def handle_rating(request):
     user = SESSION_HANDLER.get(token).user
     movie_id = query.get("movie_id")
 
+    # if movie is stored locally in the DB, return it to the user
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
+    # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:
-        return HttpResponse("Movie '{}' not found".format(movie_id), status=404)
+        code, result = omdb_gw.movie_details(movie_id, True)
+        if code == 200:
+            # store movie in local DB
+            movie = omdb_gw.build_movie(models.Movie, result)
+            logger.log(INFO, "store movie {}".format(movie.__str__()))
+            movie.save()
+        else:
+            # return error returned by the gateways
+            return HttpResponse(status=code, content=result)
 
     try:
         rating = models.Rating.objects.get(user_id=user, movie_id=movie)
@@ -559,10 +571,20 @@ def in_album(request):
     user = SESSION_HANDLER.get(token).user
     movie_id = query.get("movie_id")
 
+    # if movie is stored locally in the DB, return it to the user
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
+    # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:
-        return JsonResponse({"albums": []})
+        code, result = omdb_gw.movie_details(movie_id, True)
+        if code == 200:
+            # store movie in local DB
+            movie = omdb_gw.build_movie(models.Movie, result)
+            logger.log(INFO, "store movie {}".format(movie.__str__()))
+            movie.save()
+        else:
+            # return error returned by the gateways
+            return HttpResponse(status=code, content=result)
 
     albums = models.Album.objects.filter(owner=user,
                                          movies=movie)

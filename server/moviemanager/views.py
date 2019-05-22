@@ -491,6 +491,6 @@ def in_album(request):
 
     return JsonResponse({
         "albums": [
-            a.json() for a in albums
+            a.title for a in albums
         ]
     })

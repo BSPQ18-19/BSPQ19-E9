@@ -120,15 +120,6 @@ def handle_album_by_title(request):
 @require_http_methods(["DELETE", "GET", "POST"])
 @silk_profile(name='Handle user albums by ID')
 def handle_album(request, album_id):
-
-## @brief handle_album
-# Get an album, create it, add movies to it, remove movies from it or delete it
-# @param token token of the current session
-# @param album_id ID of the album
-# @param movie_id ID of the movie to add to or remove from the album
-# @return album if the request method is GET
-#
-   
 """
     handle_album is used to:
         delete an album
@@ -404,15 +395,6 @@ def user_albums(request):
 @require_http_methods(["DELETE", "GET", "POST"])
 @silk_profile(name='Handle watched movies')
 def watched_movies(request):
-   
-
-## @brief watched_movies
-# Return a list of watched movvies of a user 
-# @param Request request containing token to identify the user with and the movie_id
-# @return list of movies if token was valid
-#
-
-
     """
     watched_movies returns the list of watched movies of a user
     :param request: request containing token to identify the user with and

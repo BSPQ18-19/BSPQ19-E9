@@ -33,24 +33,22 @@ public class MovieManagerClientTest {
         System.out.println(" done with token: " + MovieManagerClient.getSessionToken() + ".");
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void testSignUp() {
         try {
             // correct signup
-            String response = MovieManagerClient.SignUp(username, password);
-            String expected = MovieManagerClient.getBundle().getString("newuserstored");
+            int response = MovieManagerClient.SignUp(username, password);
+            int expected = 200;
             Assert.assertEquals("Failed to sign up", response, expected);
 
             // duplicated signup
             response = MovieManagerClient.SignUp(username, password);
-            expected = MovieManagerClient.getBundle().getString("generalerror");
+            expected = 400;
             Assert.assertEquals("Unexpected successful signup", response, expected);
         } catch (SignupException e) {
             fail("Unexpected exception: " + e.toString());
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static void testLogIn() {
         try {
             String previousToken = MovieManagerClient.getSessionToken();
@@ -196,5 +194,43 @@ public class MovieManagerClientTest {
             MovieManagerClient.getAlbumByTitle(testAlbumTitle);
             fail("Expected JSONException not thrown");
         } catch (JSONException | IllegalArgumentException e) {}
+    }
+
+    @Test
+    public void testRating() {
+        String testMovieID = "tt0446029";
+        // Create rating
+        int status = MovieManagerClient.createRating(testMovieID, 80);
+        Assert.assertEquals(200, status);
+
+        // Update rating
+        status = MovieManagerClient.updateRating(testMovieID, 90);
+        Assert.assertEquals(200, status);
+
+        // Get rating
+        int score= MovieManagerClient.getRating(testMovieID);
+        Assert.assertEquals(90, score);
+        score = MovieManagerClient.getRating("_");
+        Assert.assertEquals(-1, score);
+
+        // Delete rating
+        status = MovieManagerClient.deleteRating(testMovieID);
+        Assert.assertEquals(200, status);
+    }
+
+    @Test
+    public void testGetAlbumsForMovie() {
+        String testAlbumTitle = "__test__";
+        String testMovieID = "tt0446029";
+
+        ArrayList<String> albums = MovieManagerClient.getAlbumsForMovie(testMovieID);
+        Assert.assertEquals(0, albums.size());
+
+        MovieManagerClient.createAlbum(testAlbumTitle);
+        MovieManagerClient.addMovieToAlbumByTitle(testAlbumTitle, testMovieID);
+
+        albums = MovieManagerClient.getAlbumsForMovie(testMovieID);
+        Assert.assertEquals(1, albums.size());
+        Assert.assertEquals(testAlbumTitle, albums.get(0));
     }
 }

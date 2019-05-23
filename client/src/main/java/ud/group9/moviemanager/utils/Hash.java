@@ -7,6 +7,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * @brief Hash class
+ * 
  * Class that helps with the Hasing process
  *
  */
@@ -14,6 +16,8 @@ public class Hash {
     private static String method = "SHA-256";
 
     /**
+     * @brief Texto to Hash
+     * 
      * Tranasform a plain text to Hash
      * @param hash Plain text
      * @return String Hashed text

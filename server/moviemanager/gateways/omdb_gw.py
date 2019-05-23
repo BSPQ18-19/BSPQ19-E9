@@ -27,6 +27,12 @@ def build_movie(movie_model, omdb_json):
     movie.poster_url = omdb_json["Poster"]
     return movie
 
+## @brief Details of a movie
+# movie_details requests information about a movie to IMDB
+# given the imdbID of the movie
+# @param movie_id imdbID of the movie
+# @return (status_code, response)
+#
 
 def movie_details(movie_id, raw=False):
     """
@@ -43,17 +49,22 @@ def movie_details(movie_id, raw=False):
 
     if raw:
         return 200, info
-
     return 200, {
         "movie_id": info["imdbID"],
         "title": info["Title"],
         "year": info["Year"],
         "genre": info["Genre"],
-        "avg_rating": int(float(info["imdbRating"]) * 10),
+        "avg_rating": int(float(info["Ratings"][0]["Value"]) * 10),
         "plot": info["Plot"],
         "poster_url": info["Poster"]
     }
 
+## @brief Search for movirs
+# search_movies sends a search request to IMDB and returns
+# the processes result
+# @param kwargs title=<movie title>, year(optional)=<release year>
+# @return {"movies":[<list of movies>]}
+#
 
 def search_movies(**kwargs):
     """
@@ -81,7 +92,9 @@ def search_movies(**kwargs):
     # incorrect serach
     if "Response" in res.keys() and "Error" in res.keys():
         return 404, res["Error"]
-
+    from json import dumps
+    for m in res["Search"]:
+        print(dumps(m))
     # adapt response to the format expected by the client
     movies = {
         "movies": [
@@ -89,7 +102,7 @@ def search_movies(**kwargs):
                 "movie_id": m["imdbID"],
                 "title": m["Title"],
                 "year": m["Year"],
-                "poster_url": m["Poster"]
+                "poster_url": m["Poster"],
             } for m in res["Search"]
         ]
     }

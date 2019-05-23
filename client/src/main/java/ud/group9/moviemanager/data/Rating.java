@@ -1,6 +1,8 @@
 package ud.group9.moviemanager.data;
 
 /**
+ * @brief Rating class
+ * 
  * The Rating class represents how a Rating object is going to be
  */
 public class Rating {
@@ -9,6 +11,8 @@ public class Rating {
     private int    score;
 
     /**
+     * @brief Rating constructor
+     * 
      * Constructor for Rating type object
      * @param movieID Unique identifier of a Movie
      * @param userID Unique identifier of a User
@@ -21,6 +25,8 @@ public class Rating {
     }
 
     /**
+     * @brief Get the id of rating Movie
+     * 
      * Gets the MovieID of a Rating object
      * @return String Returns the MovieID of a Rating object
      */
@@ -29,6 +35,8 @@ public class Rating {
     }
 
     /**
+     * @brief Set the id of a Rating Movie
+     * 
      * Sets the MovieID to a Rating object
      * @param movieID New unique identifier for movieID of a Rating object
      */
@@ -37,6 +45,8 @@ public class Rating {
     }
 
     /**
+     * @brief Get the id of a Rating User
+     * 
      * Gets the UserID of a Rating object
      * @return String Returns the UserID of a Rating object
      */
@@ -45,6 +55,8 @@ public class Rating {
     }
 
     /**
+     * @brief Set the id of a Rating User
+     * 
      * Sets the UserID to a Rating object
      * @param movieID New unique identifier for userID of a Rating object
      */
@@ -53,6 +65,8 @@ public class Rating {
     }
 
     /**
+     * @brief Get the score of a Rating
+     * 
      * Gets the Score of a Rating object
      * @return String Returns the Score of a Rating object
      */
@@ -61,6 +75,8 @@ public class Rating {
     }
 
     /**
+     * @brief Set the Score of a Rating
+     * 
      * Sets the Score to a Rating object
      * @param movieID New Score of a Rating object
      */

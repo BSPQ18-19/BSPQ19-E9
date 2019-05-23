@@ -9,6 +9,13 @@ _encoding = "utf-8"
 logger = getLogger(__name__)
 
 
+## @brief Check parameters
+# check_params creates an HTTP response if any param is missing in query
+# @param query query to check
+# @param params params to look for
+# @return None if all are present, HttpResponse otherwise
+#
+
 def check_params(query, params):
     """
     check_params creates an HTTP response if any param is missing in query
@@ -22,6 +29,13 @@ def check_params(query, params):
         return HttpResponse(response, status=400)
     return None
 
+
+## @brief Check what parameters are present
+# param_present checks that all parameters are present in a query
+# @param query query to check
+# @param params params to look for
+# @return True if all are present, false otherwise
+#
 
 def _params_present(query, params):
     """
@@ -38,6 +52,12 @@ def _params_present(query, params):
     return len(missing) == 0, missing
 
 
+## @brief Hash a password
+# hash_password hashes and salts a password
+# @param password@ raw password, usually sha256sum of the original password
+# @return hashed+salted password
+#
+
 def hash_password(password):
     """
     hash_password hashes and salts a password
@@ -46,6 +66,13 @@ def hash_password(password):
     """
     return hashpw(password.encode(_encoding), gensalt()).decode(_encoding)
 
+
+## @brief Hash a password and compare it
+# compare_password compares a password to the hashed+salted stored one
+# @param unhashed: raw password
+# @param hashed: hashed+salted password to compare againts
+# @return: True if they are equivalent, False otherwise
+#
 
 def compare_password(unhashed, hashed):
     """
@@ -56,6 +83,12 @@ def compare_password(unhashed, hashed):
     """
     return checkpw(unhashed.encode(_encoding), hashed.encode(_encoding))
 
+
+## @brief Search first locally, then remotelly
+# search for a movie first in the local DB, then in OMDB
+# @param movie_id imdbID of the movie to be searched
+# @return models.Movie object of the movie
+#
 
 def search_movie_by_id(movie_id):
     """

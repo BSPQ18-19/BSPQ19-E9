@@ -15,22 +15,46 @@ from .utils import check_params, compare_password, hash_password, search_movie_b
 logger = getLogger(__name__)
 
 
+## @brief Parse a REST query
+# Extract REST query parameters from a request
+# @param request REST request to extract params from
+# @return dictionary of parameters
 def get_query(request):
-    if request.GET:
-        query = request.GET
-    elif request.POST:
-        query = request.POST
-    elif request.PUT:
-        query = request.PUT
-    else:
-        query = QueryDict(request.META.get("QUERY_STRING"))
-    return query
+    try:
+        if request.GET:
+            query = request.GET
+        elif request.POST:
+            query = request.POST
+        elif request.PUT:
+            query = request.PUT
+        else:
+            query = QueryDict(request.META.get("QUERY_STRING"))
+        return query
+    except AttributeError:
+        return QueryDict()
 
+
+## @brief Manage an album
+# Get an album, create it, add movies to it, remove movies from it or delete it
+# @param token token of the current session
+# @param title title of the album
+# @param movie_id ID of the movie to add to or remove from the album
+# @return album if the request method is GET
+#
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST", "PUT"])
 @silk_profile(name='Handle user albums by title')
 def handle_album_by_title(request):
+
+    
+## @brief Create album
+# creates an album with the specified title associated to the user
+# @param request HTTP REST request with the title of the album and the user token
+# @param title title of the album
+# @return JSON containing album_id if all went well, error otherwise
+#
+ 
     """
     create_album creates an album with the specified title associated to the
     user
@@ -83,6 +107,14 @@ def handle_album_by_title(request):
     logger.info("create album {}".format(album.json()))
     return JsonResponse({"album_id": album.album_id})
 
+
+## @brief Manage an album
+# Get an album, create it, add movies to it, remove movies from it or delete it
+# @param token token of the current session
+# @param album_id ID of the album
+# @param movie_id ID of the movie to add to or remove from the album
+# @return album if the request method is GET
+#
 
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
@@ -147,6 +179,13 @@ def handle_album(request, album_id):
     return HttpResponse("OK")
 
 
+## @brief Log in an existing user
+# Validate a user and create a new session for a them
+# @param username user name of the user
+# @param password password of the user
+# @return token of the new session
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='Log In')
@@ -187,6 +226,12 @@ def login(request):
     return JsonResponse({"token": token})
 
 
+## @brief Details of a movie
+# Get title, year, plot and rating of a movie
+# @param movie_id ID of the movie to get details of
+# @return details of the movie
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='View details of a movie')
@@ -201,6 +246,8 @@ def movie_details(request, movie_id):
     # if movie is stored locally in the DB, return it to the user
     try:
         movie = models.Movie.objects.get(movie_id=movie_id)
+        if not movie.plot:
+            raise models.Movie.DoesNotExist
         return JsonResponse(movie.json())
     # if it is not in the database, look for it using the OMDB gateways
     except models.Movie.DoesNotExist:
@@ -215,6 +262,13 @@ def movie_details(request, movie_id):
         # return error returned by the gateways
         return HttpResponse(status=code, content=result)
 
+
+## @brief Search for movies
+# Search for movies first locally at the server DB, then at OMDB
+# @param title title of the movie
+# @param year release year of the movie
+# @return list of movies matching the criteria
+#
 
 @csrf_exempt
 @require_http_methods(["GET"])
@@ -241,6 +295,12 @@ def search(request):
     # movies not found
     return HttpResponse(status=code, content=result)
 
+
+## @brief Create a new user
+# Sign up a new user
+# @param username user name of the new user
+# @param password password of the new user
+#
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -282,6 +342,12 @@ def signup(request):
     return HttpResponse("created user {}".format(username))
 
 
+## @brief Get your albums
+# Retrieve the full list of albums of a user
+# @param token token of the current session
+# @return list of albums of the user
+#
+
 @csrf_exempt
 @require_http_methods(["GET"])
 @silk_profile(name='List user albums')
@@ -318,13 +384,21 @@ def user_albums(request):
     })
 
 
+## @brief Manage your watched movies
+# watched_movies returns the list of watched movies of a user
+# @param token token of the current session
+# @param ID of the movie to manage
+# @return list of movies if token was valid
+#
+
 @csrf_exempt
 @require_http_methods(["DELETE", "GET", "POST"])
 @silk_profile(name='Handle watched movies')
 def watched_movies(request):
     """
     watched_movies returns the list of watched movies of a user
-    :param request: token to identify the user with
+    :param request: request containing token to identify the user with and
+    the movie_id
     :return: list of movies if token was valid
     """
     # check that are required parameters are present
@@ -378,3 +452,146 @@ def watched_movies(request):
         ))
 
     return HttpResponse("OK")
+
+
+## @brief Manage the ratings of a movie
+# handle_rating creates, modifies, retrieves or deletes a rating from a user to
+# a movie
+# @param token token of the current session
+# @param movie_id the id of the movie to be rated
+# @param score the score given to the movie
+# @return current rating if the request method is GET
+#
+
+@csrf_exempt
+@require_http_methods(["DELETE", "GET", "POST", "PUT"])
+def handle_rating(request):
+    # check that are required parameters are present
+    query = get_query(request)
+    params = ["token", "movie_id"] if request.method in {
+        "GET", "DELETE"} else ["token", "movie_id", "score"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # check that the token is valid
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    user = SESSION_HANDLER.get(token).user
+    movie_id = query.get("movie_id")
+
+    # if movie is stored locally in the DB, return it to the user
+    try:
+        movie = models.Movie.objects.get(movie_id=movie_id)
+    # if it is not in the database, look for it using the OMDB gateways
+    except models.Movie.DoesNotExist:
+        code, result = omdb_gw.movie_details(movie_id, True)
+        if code == 200:
+            # store movie in local DB
+            movie = omdb_gw.build_movie(models.Movie, result)
+            logger.log(INFO, "store movie {}".format(movie.__str__()))
+            movie.save()
+        else:
+            # return error returned by the gateways
+            return HttpResponse(status=code, content=result)
+
+    try:
+        rating = models.Rating.objects.get(user_id=user, movie_id=movie)
+    except models.Rating.DoesNotExist:
+        #
+        # PUT
+        #
+        if request.method == "PUT":
+            rating = models.Rating()
+            score = query.get("score")
+            rating.user_id = SESSION_HANDLER.get(token).user
+            rating.movie_id = movie
+            try:
+                rating.score = int(score)
+            except ValueError:
+                return HttpResponse("Invalid score '{}'".format(score), status=400)
+            rating.save()
+            logger.log(INFO, "create rating {}".format(rating.json()))
+            return HttpResponse("OK")
+        else:
+            return HttpResponse("No rating found for user '{}' movie '{}'".format(
+                user.username, movie_id
+            ), status=404)
+    except models.Rating.MultipleObjectsReturned:
+        ratings = models.Rating.objects.filter(user_id=user)
+        for rating in ratings:
+            rating.delete()
+        return HttpResponse(
+            "Found multiple albums. Deleted them because testing is enabled.",
+            status=500)
+
+    #
+    # GET
+    #
+    if request.method == "GET":
+        return JsonResponse(rating.json())
+
+    #
+    # POST
+    #
+    elif request.method == "POST":
+        score = query.get("score")
+        try:
+            rating.score = int(score)
+        except ValueError:
+            return HttpResponse("Invalid score '{}'".format(score), status=400)
+        models.Rating.objects.update(user_id=rating.user_id,
+                                     movie_id=rating.movie_id, score=score)
+
+    #
+    # DELETE
+    #
+    elif request.method == "DELETE":
+        rating.delete()
+
+    return HttpResponse("OK")
+
+
+## @brief List user albums containing movies
+# in_album returns all the album of a user containing a movie
+# @param token token of the current session
+# @param movie_id ID of the movie to search for
+# @return list of names of all the user albums containing the movie except
+# for the watched list
+#
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def in_album(request):
+    query = get_query(request)
+    # check that are required parameters are present
+    params = ["token", "movie_id"]
+    error_response = check_params(query, params)
+    if error_response:
+        return error_response
+
+    # check that the token is valid
+    token = query.get("token")
+    if not validate(token):
+        return HttpResponse("Invalid token '{}'".format(token), status=403)
+
+    user = SESSION_HANDLER.get(token).user
+    movie_id = query.get("movie_id")
+
+    # if movie is stored locally in the DB, return it to the user
+    try:
+        movie = models.Movie.objects.get(movie_id=movie_id)
+    # if it is not in the database, look for it using the OMDB gateways
+    except models.Movie.DoesNotExist:
+        return JsonResponse({"albums": []})
+
+    albums = models.Album.objects.filter(owner=user,
+                                         movies=movie)
+
+    return JsonResponse({
+        "albums": [
+            a.title for a in albums
+        ]
+    })

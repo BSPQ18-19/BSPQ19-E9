@@ -4,6 +4,8 @@ Team project for SPQ by group 9
 
 ---
 
+Link to the presentation [here](https://github.com/BSPQ18-19/BSPQ19-E9/tree/master/presentation.pdf)
+
 ## Components
 
 ### Client

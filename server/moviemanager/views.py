@@ -120,7 +120,7 @@ def handle_album_by_title(request):
 @require_http_methods(["DELETE", "GET", "POST"])
 @silk_profile(name='Handle user albums by ID')
 def handle_album(request, album_id):
-"""
+    """
     handle_album is used to:
         delete an album
         delete a movie from an album
